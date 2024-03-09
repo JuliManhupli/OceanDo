@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'ocean_do/base.html' %}
+{% load static %}
+{% block title %}
+Вхід
+{% endblock %}
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <title>OceanDo</title>
-</head>
 
-<body>
     <div class="wrapper">
         <div class="login-page">
             <div class="login__form">
                 <div class="login__content">
                     <div class="data-form">
                         <div class="login__logo">
-                            <img class="logo-img" src="img\logo-removebg.png" alt="No image">
+                            <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">
                             <p class="logo-name">OceanDo</p>
                         </div>
                         <form class="form-login" method="get">
@@ -52,6 +49,6 @@
             </div>
         </div>
     </div>
-</body>
 
-</html>
+
+{% endblock %}

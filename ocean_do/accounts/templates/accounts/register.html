@@ -1,21 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'ocean_do/base.html' %}
+{% load static %}
+{% block title %}
+Реєстрація
+{% endblock %}
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <title>OceanDo</title>
-</head>
-
-<body>
     <div class="wrapper">
         <div class="login-page">
             <div class="login__form">
                 <div class="login__content">
                     <div class="data-form register-data">
                         <div class="login__logo">
-                            <img class="logo-img" src="img\logo-removebg.png" alt="No image">
+                            <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">
                             <p class="logo-name">OceanDo</p>
                         </div>
                         <form class="form-login" method="get">
@@ -24,7 +20,7 @@
                                 <input class="data-input" type="text" placeholder="Ім'я">
                             </div>
                             <div class="form-area register-area">
-                                <p class="data-name">Логін</p>
+                                <p class="data-name">Пошта</p>
                                 <input class="data-input" type="email" placeholder="Пошта">
                             </div>
                             <div class="form-area register-area">
@@ -46,7 +42,7 @@
                         <div class="bg-picture">
                         </div>
                         <div class="text-container">
-                            <h2 class="invite-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </h2>
+                            <h2 class="invite-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </h2>
                             <p class="invite-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                                 Phasellus quis
                                 ornare sem.
@@ -60,6 +56,4 @@
             </div>
         </div>
     </div>
-</body>
-
-</html>
+{% endblock %}
