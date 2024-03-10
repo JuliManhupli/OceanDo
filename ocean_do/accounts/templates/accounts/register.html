@@ -5,55 +5,81 @@
 {% endblock %}
 {% block content %}
 
-    <div class="wrapper">
-        <div class="login-page">
-            <div class="login__form">
-                <div class="login__content">
-                    <div class="data-form register-data">
-                        <div class="login__logo">
-                            <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">
-                            <p class="logo-name">OceanDo</p>
-                        </div>
-                        <form class="form-login" method="get">
-                            <div class="form-area register-area">
-                                <p class="data-name">Ім'я</p>
-                                <input class="data-input" type="text" placeholder="Ім'я">
-                            </div>
-                            <div class="form-area register-area">
-                                <p class="data-name">Пошта</p>
-                                <input class="data-input" type="email" placeholder="Пошта">
-                            </div>
-                            <div class="form-area register-area">
-                                <p class="data-name">Пароль</p>
-                                <input class="data-input" type="password" placeholder="Пароль">
-                            </div>
-                            <div class="form-area register-area">
-                                <p class="data-name">Повторний пароль</p>
-                                <input class="data-input" type="password" placeholder="Повторний пароль">
-                            </div>
-                            <div class="other-options">
-                                <a class="login__link" href="#">Зареєструватися</a>
-                                <a class="login__link" href="#">Забули пароль?</a>
-                            </div>
-                        </form>
-                        <a class="account-button register-button" href="#">Реєстрація</a>
+<div class="wrapper">
+    <div class="login-page">
+        <div class="login__form">
+            <div class="login__content">
+                <div class="data-form register-data">
+                    <div class="login__logo">
+                        <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">
+                        <p class="logo-name">OceanDo</p>
                     </div>
-                    <div class="info-form">
-                        <div class="bg-picture">
+
+                    <form class="form-login" method="post">
+                        <!--                            <form method="post" class="form-login" action="{% url 'accounts:register' %}">-->
+                        {% csrf_token %}
+                        <div class="form-area register-area">
+                            <p class="data-name">Ім'я</p>
+                            <!--                                <input name='username' class="data-input" type="text" placeholder="Ім'я">-->
+                            {{ form.username }}
+                            {% if form.errors.username %}
+                            <p class="error-message">{{ form.errors.username }}</p>
+                            {% endif %}
                         </div>
-                        <div class="text-container">
-                            <h2 class="invite-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </h2>
-                            <p class="invite-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Phasellus quis
-                                ornare sem.
-                                Curabitur finibus nisl a tincidunt
-                                finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean porttitor nisl
-                                sit amet ligula faucibus porta.
-                                Etiam fermentum ante ut ligula consequat lobortis.</p>
+                        <div class="form-area register-area">
+                            <p class="data-name">Пошта</p>
+                            <!--                                <input name='email' class="data-input" type="email" placeholder="Пошта">-->
+                            {{ form.email }}
+                            {% if form.errors.email %}
+                            <p class="error-message">{{ form.errors.email }}</p>
+                            {% endif %}
                         </div>
+                        <div class="form-area register-area">
+                            <p class="data-name">Пароль</p>
+                            <!--                                <input name='password1' class="data-input" type="password" placeholder="Пароль">-->
+                            {{ form.password1 }}
+                            {% if form.errors.password1 %}
+                            <p class="error-message">{{ form.errors.password1 }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="form-area register-area">
+                            <p class="data-name">Повторіть пароль</p>
+                            <!--                                <input name='password2' class="data-input" type="password" placeholder="Повторний пароль">-->
+                            {{ form.password2 }}
+                            {% if form.errors.password2 %}
+                            <p class="error-message">{{ form.errors.password2 }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="other-options">
+                            <a class="login__link" href="#">Вже маю акаунт</a>
+                            <a class="login__link" href="#">Забули пароль?</a>
+                        </div>
+                        <h1>2</h1>
+                        {% if form.errors and form.non_field_errors %}
+                        <h1>!</h1>
+                        <h1>{{form.non_field_errors}}</h1>
+                        {% endif %}
+                        <button class="account-button register-button" type="submit">Зареєструватися</button>
+                    </form>
+                    <!--                        <a class="account-button register-button" href="#">Реєстрація</a>-->
+
+                </div>
+                <div class="info-form">
+                    <div class="bg-picture">
+                    </div>
+                    <div class="text-container">
+                        <h2 class="invite-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </h2>
+                        <p class="invite-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            Phasellus quis
+                            ornare sem.
+                            Curabitur finibus nisl a tincidunt
+                            finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean porttitor nisl
+                            sit amet ligula faucibus porta.
+                            Etiam fermentum ante ut ligula consequat lobortis.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

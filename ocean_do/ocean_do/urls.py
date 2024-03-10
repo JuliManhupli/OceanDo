@@ -7,6 +7,7 @@ from django.contrib.staticfiles.views import serve
 from . import views
 from . import settings
 
+# app_name = 'main'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.main, name='main'),

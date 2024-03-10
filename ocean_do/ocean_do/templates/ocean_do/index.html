@@ -1,24 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'ocean_do/base.html' %}
+{% load static %}
+{% block title %}
+OceanDo
+{% endblock %}
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OceanDo</title>
-</head>
+    <h1 class="justify-content-center" style="margin-top: 50px">OceanDo</h1>
+    {% for message in messages %}
+        <h3 class="justify-content-center" style="margin-left: 50px; margin-bottom: 25px"> {{ message }}</h3>
+    {% endfor %}
 
-<body>
-    <div class="wrapper">
-        <header class="header"></header>
-        <div class="left-panel">
-            <div class="menu-logo"></div>
-            <nav></nav>
-        </div>
-        <main class="page"></main>
-    </div>
-    <div>
-        <h1>OceanDo</h1>
-    </div>
-</body>
-
-</html>
+{% endblock %}
