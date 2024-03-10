@@ -51,13 +51,11 @@
                             {% endif %}
                         </div>
                         <div class="other-options">
-                            <a class="login__link" href="#">Вже маю акаунт</a>
+                            <a class="login__link" href="{% url 'accounts:login' %}">Вже маю акаунт</a>
                             <a class="login__link" href="#">Забули пароль?</a>
                         </div>
-                        <h1>2</h1>
                         {% if form.errors and form.non_field_errors %}
-                        <h1>!</h1>
-                        <h1>{{form.non_field_errors}}</h1>
+                        <p>{{form.non_field_errors}}</p>
                         {% endif %}
                         <button class="account-button register-button" type="submit">Зареєструватися</button>
                     </form>

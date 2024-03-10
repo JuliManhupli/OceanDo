@@ -1,4 +1,5 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.forms import PasswordInput, CharField, EmailField, TextInput, EmailInput
 from .models import User
@@ -40,3 +41,26 @@ class RegisterForm(UserCreationForm):
         if password1 and password2 and password1 != password2:
             raise ValidationError("Паролі не співпадають!")
         return password2
+
+
+class LoginForm(AuthenticationForm):
+    email = EmailField(max_length=25, required=True, widget=EmailInput(attrs={"class": "data-input"}))
+    password = CharField(required=True, widget=PasswordInput(attrs={"class": "data-input"}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].required = False
+
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if email and password:
+            self.user_cache = authenticate(email=email, password=password)
+            if self.user_cache is None:
+                raise ValidationError('Неправильна електронна пошта або пароль.')
+
+        return self.cleaned_data
+
+    def get_user(self):
+        return self.user_cache
