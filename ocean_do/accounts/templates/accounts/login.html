@@ -4,84 +4,67 @@
 Вхід
 {% endblock %}
 {% block content %}
-<div class="wrapper">
-    <div class="login-page">
-        <div class="login__form">
-            <div class="login__content">
-                <div class="data-form">
-                    <div class="login__logo">
-                        <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">
-                        <p class="logo-name">OceanDo</p>
+<body>
+    <div class="wrapper">
+        <div class="login-page">
+            <div class="login__form">
+                <div class="login__content">
+                    <div class="data-form">
+                        <div class="login__logo">
+                            <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">
+                            <p class="logo-name">OceanDo</p>
+                        </div>
+
+
+                        <form class="form-login" method="post">
+                            <!--                            <form method="post" class="form-login" action="{% url 'accounts:register' %}">-->
+                            {% csrf_token %}
+                            <div class="form-area">
+                                <p class="data-name">Пошта</p>
+                                <!--                                <input name='email' class="data-input" type="email" placeholder="Пошта">-->
+                                {{ form.email }}
+                                {% if form.errors.email %}
+                                <p class="error-message">{{ form.errors.email }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="form-area">
+                                <p class="data-name">Пароль</p>
+                                <!--                                <input name='password1' class="data-input" type="password" placeholder="Пароль">-->
+                                {{ form.password }}
+                                {% if form.errors.password %}
+                                <p class="error-message">{{ form.errors.password }}</p>
+                                {% endif %}
+                            </div>
+                            {% if form.errors and form.non_field_errors %}
+                            <p>{{form.non_field_errors}}</p>
+                            {% endif %}
+                            <div class="other-options">
+                                <a class="login__link" href="{% url 'accounts:register' %}">Зареєструватися</a>
+                                <a class="login__link" href="#">Забули пароль?</a>
+                            </div>
+
+                            <button class="account-button register-button" type="submit">Увійти</button>
+                        </form>
                     </div>
 
-
-                    <form class="form-login" method="post">
-                        <!--                            <form method="post" class="form-login" action="{% url 'accounts:register' %}">-->
-                        {% csrf_token %}
-                        <div class="form-area">
-                            <p class="data-name">Пошта</p>
-                            <!--                                <input name='email' class="data-input" type="email" placeholder="Пошта">-->
-                            {{ form.email }}
-                            {% if form.errors.email %}
-                            <p class="error-message">{{ form.errors.email }}</p>
-                            {% endif %}
+                    <div class="info-form">
+                        <div class="bg-picture">
                         </div>
-                        <div class="form-area">
-                            <p class="data-name">Пароль</p>
-                            <!--                                <input name='password1' class="data-input" type="password" placeholder="Пароль">-->
-                            {{ form.password }}
-                            {% if form.errors.password %}
-                            <p class="error-message">{{ form.errors.password }}</p>
-                            {% endif %}
+                        <div class="text-container">
+                            <h2 class="invite-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </h2>
+                            <p class="invite-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Phasellus quis
+                                ornare sem.
+                                Curabitur finibus nisl a tincidunt
+                                finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean porttitor nisl
+                                sit amet ligula faucibus porta.
+                                Etiam fermentum ante ut ligula consequat lobortis.</p>
                         </div>
-                        {% if form.errors and form.non_field_errors %}
-                        <p>{{form.non_field_errors}}</p>
-                        {% endif %}
-                        <div class="other-options">
-                            <a class="login__link" href="{% url 'accounts:register' %}">Зареєструватися</a>
-                            <a class="login__link" href="#">Забули пароль?</a>
-                        </div>
-
-                        <button class="account-button register-button" type="submit">Увійти</button>
-                    </form>
-
-
-                    <!--                        <form class="form-login" method="get">-->
-                    <!--                            <div class="form-area">-->
-                    <!--                                <p class="data-name">Логін</p>-->
-                    <!--                                <input class="data-input" type="email" placeholder="Пошта">-->
-                    <!--                            </div>-->
-                    <!--                            <div class="form-area">-->
-                    <!--                                <p class="data-name">Пароль</p>-->
-                    <!--                                <input class="data-input" type="password" placeholder="Пароль">-->
-                    <!--                            </div>-->
-                    <!--                            <div class="other-options">-->
-                    <!--                                <a class="login__link" href="#">Зареєструватися</a>-->
-                    <!--                                <a class="login__link" href="#">Забули пароль?</a>-->
-                    <!--                            </div>-->
-                    <!--                            <a class="account-button" href="#">Вхід</a>-->
-                    <!--                        </form>-->
-
-                </div>
-
-                <div class="info-form">
-                    <div class="bg-picture">
-                    </div>
-                    <div class="text-container">
-                        <h2 class="invite-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </h2>
-                        <p class="invite-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            Phasellus quis
-                            ornare sem.
-                            Curabitur finibus nisl a tincidunt
-                            finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean porttitor nisl
-                            sit amet ligula faucibus porta.
-                            Etiam fermentum ante ut ligula consequat lobortis.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-
+</body>
 {% endblock %}

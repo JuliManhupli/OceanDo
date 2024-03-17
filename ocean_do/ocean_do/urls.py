@@ -12,4 +12,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.main, name='main'),
     path('auth/', include('accounts.urls')),
+    path('tasks/', include('tasks.urls')),
 ] + static(settings.STATIC_URL, view=cache_control(no_cache=True, must_revalidate=True)(serve))
