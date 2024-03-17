@@ -11,17 +11,12 @@ def login_view(request):
     if user.is_authenticated:
         return HttpResponse(f"Ви вже авторизовані як {user.username}.")
 
-    print("1")
     if request.method == 'POST':
-        print("2")
         form = LoginForm(data=request.POST)
-        print("3")
         if form.is_valid():
-            print("4")
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             user = authenticate(request, email=email, password=password)
-            print("e")
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Вітаємо {user.username}!")
