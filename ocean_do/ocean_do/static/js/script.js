@@ -1,3 +1,46 @@
+// CODE VERIFICATION
+document.addEventListener('DOMContentLoaded', function () {
+    const codeInputs = document.querySelectorAll('.code-input');
+    const verifyCodeBtn = document.querySelector('.code-verify-btn');
+
+    codeInputs.forEach((input, index1) => {
+        input.addEventListener('keyup', (e) => {
+            const currentInput = input,
+                nextInput = input.nextElementSibling,
+                prevInput = input.previousElementSibling;
+
+            // if user writes more than 1 number - clear out
+            if (currentInput.value.length > 1) {
+                currentInput.value = '';
+                return;
+            }
+
+            if (nextInput && nextInput.hasAttribute('disabled') && currentInput.value !== '') {
+                nextInput.removeAttribute('disabled');
+                nextInput.focus();
+            }
+
+            if (e.key == 'Backspace') {
+                codeInputs.forEach((input, index2) => {
+                    if (index1 <= index2 && prevInput) {
+                        input.setAttribute('disabled', true);
+                        currentInput.value = '';
+                        prevInput.focus();
+                    }
+                });
+            }
+
+            if (!codeInputs[3].disabled && codeInputs[3].value !== '') {
+                verifyCodeBtn.classList.add('active');
+                return;
+            }
+            verifyCodeBtn.classList.remove('active');
+        });
+    });
+
+    codeInputs[0].focus();
+});
+
 
 /* SIDEBAR */
 document.addEventListener('DOMContentLoaded', function () {
@@ -52,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // POP UP
-
 document.addEventListener('DOMContentLoaded', function() {
     const section = document.querySelector('.tasks-class');
     const overlay = document.querySelector('.overlay');

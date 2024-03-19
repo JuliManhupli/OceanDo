@@ -50,3 +50,11 @@ def register_view(request, *args, **kwargs):
 
     context = {'form': form}
     return render(request, "accounts/register.html", context)
+
+
+def change_password_view(request):
+    return render(request, "accounts/new-password.html")
+
+
+def code_verification_view(request):
+    return render(request, "accounts/code-verification.html")
