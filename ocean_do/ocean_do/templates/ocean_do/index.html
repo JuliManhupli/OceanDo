@@ -13,9 +13,9 @@
         </div>
 
         <ul class="side-menu">
-            <a href="{% url 'main' %}" class="active"><li><i class='bx bx-home-alt icon'></i> Головна</li></a>
+            <li><a href="{% url 'main' %}" class="active"><i class='bx bx-home-alt icon'></i> Головна</a></li>
             <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
-            <a href="{% url 'tasks:all_tasks' %}"><li><i class='bx bx-task icon'></i> Завдання</li></a>
+            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>
 <!--            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>-->
         </ul>
         <!-- <div class="ads"></div> -->
@@ -51,7 +51,10 @@
                 <div class="task">
                     <div class="head">
                         <div>
-                            <p class="category">Виконання</p>
+                            <div class="status">
+                                <p class="category">Виконання</p>
+                                <i class='bx bxs-circle icon'></i>
+                            </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
                                 <p class="folder-name">А</p>
@@ -59,10 +62,14 @@
                         </div>
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
-                            <!-- <ul class="task-settings-box">
-                                <li><a href="#">Змінити</a></li>
-                                <li><a href="#">Видалити</a></li>
-                            </ul> -->
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                            </ul>
                         </div>
                     </div>
                     <h2 class="name">Назва завдання</h2>
@@ -82,7 +89,10 @@
                 <div class="task">
                     <div class="head">
                         <div>
-                            <p class="category">Виконання</p>
+                            <div class="status">
+                                <p class="category">Виконання</p>
+                                <i class='bx bxs-circle icon'></i>
+                            </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
                                 <p class="folder-name">А</p>
@@ -90,10 +100,14 @@
                         </div>
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
-                            <!-- <ul class="task-settings-box">
-                                                <li><a href="#">Змінити</a></li>
-                                                <li><a href="#">Видалити</a></li>
-                                            </ul> -->
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                            </ul>
                         </div>
                     </div>
                     <h2 class="name">Назва завдання</h2>
@@ -113,7 +127,10 @@
                 <div class="task">
                     <div class="head">
                         <div>
-                            <p class="category">Виконання</p>
+                            <div class="status">
+                                <p class="category">Виконання</p>
+                                <i class='bx bxs-circle icon'></i>
+                            </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
                                 <p class="folder-name">А</p>
@@ -121,10 +138,14 @@
                         </div>
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
-                            <!-- <ul class="task-settings-box">
-                                                <li><a href="#">Змінити</a></li>
-                                                <li><a href="#">Видалити</a></li>
-                                            </ul> -->
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                            </ul>
                         </div>
                     </div>
                     <h2 class="name">Назва завдання</h2>
@@ -144,7 +165,10 @@
                 <div class="task">
                     <div class="head">
                         <div>
-                            <p class="category">Виконання</p>
+                            <div class="status">
+                                <p class="category">Виконання</p>
+                                <i class='bx bxs-circle icon'></i>
+                            </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
                                 <p class="folder-name">А</p>
@@ -152,10 +176,14 @@
                         </div>
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
-                            <!-- <ul class="task-settings-box">
-                                                <li><a href="#">Змінити</a></li>
-                                                <li><a href="#">Видалити</a></li>
-                                            </ul> -->
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                            </ul>
                         </div>
                     </div>
                     <h2 class="name">Назва завдання</h2>
