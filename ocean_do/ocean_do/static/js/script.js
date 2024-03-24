@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 nextInput.focus();
             }
 
-            if (e.key == 'Backspace') {
+            if (e.key === 'Backspace') {
                 codeInputs.forEach((input, index2) => {
                     if (index1 <= index2 && prevInput) {
                         input.setAttribute('disabled', true);
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-            if (!codeInputs[3].disabled && codeInputs[3].value !== '') {
+            if (!codeInputs[5].disabled && codeInputs[5].value !== '') {
                 verifyCodeBtn.classList.add('active');
                 return;
             }

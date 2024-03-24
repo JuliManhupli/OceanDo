@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
-from django.forms import PasswordInput, CharField, EmailField, TextInput, EmailInput
+from django.forms import PasswordInput, CharField, EmailField, TextInput, EmailInput, Form
 from .models import User
 
 
@@ -64,3 +64,8 @@ class LoginForm(AuthenticationForm):
 
     def get_user(self):
         return self.user_cache
+
+
+class ChangePasswordForm(Form):
+    new_password = CharField(label='Новий пароль', widget=PasswordInput(attrs={"class": "data-input"}))
+    confirm_new_password = CharField(label='Підтвердіть новий пароль', widget=PasswordInput(attrs={"class": "data-input"}))
