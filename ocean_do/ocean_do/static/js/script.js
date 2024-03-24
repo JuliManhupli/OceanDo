@@ -47,17 +47,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const allMenuItems = document.querySelector('#sidebar .side-menu');
 
     if (allMenuItems) {
-        allMenuItems.querySelectorAll('a:first-child').forEach(a => {
-            a.addEventListener('click', function (e) {
-                e.preventDefault();
+        allMenuItems.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', function () {
+                // e.preventDefault();
 
                 if (!this.classList.contains('active')) {
-                    allMenuItems.querySelectorAll('a:first-child').forEach(i => {
+                    allMenuItems.querySelectorAll('a').forEach(i => {
                         i.classList.remove('active');
                     })
                 }
 
-                this.classList.toggle('active');
+                this.classList.add('active');
             });
         });
     }
@@ -79,8 +79,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (tabs) {
         tabs.querySelectorAll('.title').forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
+            button.addEventListener('click', function () {
+                // e.preventDefault();
 
                 if (!this.classList.contains('active')) {
                     tabs.querySelectorAll('.title').forEach(btn => {
@@ -88,18 +88,47 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
 
-                this.classList.toggle('active');
+                this.classList.add('active');
             });
         });
     }
 });
 
+// TASK MENU
+document.addEventListener('DOMContentLoaded', function () {
+    const allTaskItems = document.querySelectorAll('main .task .head .task-settings');
+    allTaskItems.forEach(item => {
+        const menuIcon = item.querySelector('.icon');
+        const menuOption = item.querySelector('.task-settings-box');
+
+        menuIcon.addEventListener('click', function () {
+            menuOption.classList.toggle('show');
+        })
+    })
+
+    window.addEventListener('click', function (e) {
+        allTaskItems.forEach(item => {
+            const menuIcon = item.querySelector('.icon');
+            const menuOption = item.querySelector('.task-settings-box');
+
+            if (e.target !== menuIcon) {
+                if (e.target !== menuOption) {
+                    if (menuOption.classList.contains('show')) {
+                        menuOption.classList.remove('show');
+                    }
+                }
+            }
+        })
+    });
+});
+
 // POP UP
 document.addEventListener('DOMContentLoaded', function() {
-    const section = document.querySelector('.tasks-class');
-    const overlay = document.querySelector('.overlay');
-    const createTaskBtn = document.querySelector('.create-task-btn');
-    const closePopupBtn = document.querySelector('.close-icon');
+
+    const section = document.querySelector('.tasks-class'),
+        overlay = document.querySelector('.overlay'),
+        createTaskBtn = document.querySelector('.create-task-btn'),
+        closePopupBtn = document.querySelector('.close-icon');
 
     createTaskBtn.addEventListener('click', function() {
         section.classList.add('active');
