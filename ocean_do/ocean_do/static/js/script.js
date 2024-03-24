@@ -75,10 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // TASK TAB
 document.addEventListener('DOMContentLoaded', function () {
-    const tabs = document.querySelector('main .task-title');
+    const tabs = document.querySelector('main .task-title'),
+        allContent = document.querySelectorAll('main .important-tasks');
 
     if (tabs) {
-        tabs.querySelectorAll('.title').forEach(button => {
+        tabs.querySelectorAll('.title').forEach((button, index) => {
             button.addEventListener('click', function () {
                 // e.preventDefault();
 
@@ -89,6 +90,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 this.classList.add('active');
+                allContent.forEach(content => content.classList.remove('active'));
+                allContent[index].classList.add('active');
             });
         });
     }
@@ -108,8 +111,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.addEventListener('click', function (e) {
         allTaskItems.forEach(item => {
-            const menuIcon = item.querySelector('.icon');
-            const menuOption = item.querySelector('.task-settings-box');
+            const menuIcon = item.querySelector('.icon'),
+                menuOption = item.querySelector('.task-settings-box');
 
             if (e.target !== menuIcon) {
                 if (e.target !== menuOption) {
@@ -120,25 +123,56 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
     });
+
+    const allTaskHeads = document.querySelectorAll('main .task .head');
+    allTaskHeads.forEach(item => {
+        const taskStatus = item.querySelector('.task-status'),
+            taskStatusBtn = item.querySelector('.task-status-btn'),
+            taskStatusChange = item.querySelector('.task-status-change');
+
+        taskStatusBtn.addEventListener('click', function () {
+            taskStatus.classList.toggle('done');
+            taskStatus.classList.toggle('bxs-circle');
+            taskStatus.classList.toggle('bxs-check-circle');
+
+            if (taskStatusChange.textContent === 'Позначити, як виконане') {
+                taskStatusChange.textContent = 'Позначити, як невиконане';
+            } else {
+                taskStatusChange.textContent = 'Позначити, як виконане';
+            }
+        })
+    })
 });
 
 // POP UP
-document.addEventListener('DOMContentLoaded', function() {
-
+document.addEventListener('DOMContentLoaded', function () {
     const section = document.querySelector('.tasks-class'),
         overlay = document.querySelector('.overlay'),
         createTaskBtn = document.querySelector('.create-task-btn'),
         closePopupBtn = document.querySelector('.close-icon');
 
-    createTaskBtn.addEventListener('click', function() {
+    function disableBodyScroll() {
+        document.documentElement.style.overflowY = 'hidden';
+        document.body.style.overflowY = 'hidden';
+    }
+
+    function enableBodyScroll() {
+        document.documentElement.style.overflowY = '';
+        document.body.style.overflowY = '';
+    }
+
+    createTaskBtn.addEventListener('click', () => {
         section.classList.add('active');
+        disableBodyScroll();
     });
 
-    closePopupBtn.addEventListener('click', function() {
+    closePopupBtn.addEventListener('click', () => {
         section.classList.remove('active');
+        enableBodyScroll();
     });
 
-    overlay.addEventListener('click', function() {
+    overlay.addEventListener('click', () => {
         section.classList.remove('active');
+        enableBodyScroll();
     });
 });
