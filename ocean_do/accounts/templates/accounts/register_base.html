@@ -1,0 +1,44 @@
+{% extends 'ocean_do/base.html' %}
+{% load static %}
+{% block title %}
+    {% if page_title %}
+        {{ page_title }}
+    {% else %}
+        OceanDo
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <body>
+        <div class="wrapper">
+            <div class="login-page">
+                <div class="login__form">
+                    <div class="login__content">
+                        <div class="data-form">
+                            <div class="login__logo">
+                                <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">
+                                <p class="logo-name">OceanDo</p>
+                            </div>
+                            {% block content_area %}
+                            {% endblock %}
+                        </div>
+                        <div class="info-form">
+                            <div class="bg-picture">
+                            </div>
+                            <div class="text-container">
+                                <h2 class="invite-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </h2>
+                                <p class="invite-paragraph">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Phasellus quis
+                                    ornare sem.
+                                    Curabitur finibus nisl a tincidunt
+                                    finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean porttitor nisl
+                                    sit amet ligula faucibus porta.
+                                    Etiam fermentum ante ut ligula consequat lobortis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+{% endblock %}

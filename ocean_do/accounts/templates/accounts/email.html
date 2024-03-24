@@ -1,0 +1,23 @@
+{% extends 'accounts/register_base.html' %}
+{% load static %}
+{% block title %}
+Пошта
+{% endblock %}
+
+{% block content_area %}
+<form class="form-login" method="post">
+    {% csrf_token %}
+    <p class="title-for-account">Введіть свою пошту</p>
+    <div class="form-area">
+        <p class="data-name">Пошта</p>
+        <input class="data-input" type="email" name="email" id="email" placeholder="Пошта">
+
+    </div>
+    {% if messages %}
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    <button class="account-button" type="submit">Відправити</button>
+</form>
+{% endblock %}
