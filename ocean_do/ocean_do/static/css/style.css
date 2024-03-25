@@ -368,6 +368,10 @@ body {
 }
 
 #sidebar .side-menu {
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 85%;
     margin: 34px 0;
     padding: 0 13px;
     transition: all .3s ease;
@@ -392,12 +396,13 @@ body {
     white-space: nowrap;
 }
 
-#sidebar .side-menu > li > a:hover {
+#sidebar .side-menu .upper-menu > li > a:hover,
+#sidebar .side-menu .lower-menu>li>a:hover {
     background: var(--light-grey);
 }
 
-#sidebar .side-menu > li > a.active,
-#sidebar .side-menu > li > a.active:hover{
+#sidebar .side-menu .upper-menu > li > a.active,
+#sidebar .side-menu .upper-menu > li > a.active:hover{
     color: white;
     background: var(--light-blue);
 }

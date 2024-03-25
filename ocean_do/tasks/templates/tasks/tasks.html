@@ -33,9 +33,14 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <ul class="side-menu">
+        <div class="upper-menu">
             <li><a href="{% url 'main' %}"><i class='bx bx-home-alt icon'></i> Головна</a></li>
             <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
             <li><a href="{% url 'tasks:all_tasks' %}" class="active"><i class='bx bx-task icon'></i> Завдання</a></li>
+        </div>
+        <div class="lower-menu">
+            <li><a href="#"><i class='bx bx-exit icon'></i> Вийти</a></li>
+        </div>
 <!--            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>-->
         </ul>
     <!-- <div class="ads"></div> -->
@@ -202,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
                             <ul class="task-settings-box">
-                                <a href="#">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
@@ -243,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
                             <ul class="task-settings-box">
-                                <a href="#">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
@@ -284,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
                             <ul class="task-settings-box">
-                                <a href="#">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
@@ -325,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="task-settings">
                             <i class='bx bx-dots-horizontal-rounded icon'></i>
                             <ul class="task-settings-box">
-                                <a href="#">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
