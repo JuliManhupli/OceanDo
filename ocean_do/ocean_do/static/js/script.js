@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /* SIDEBAR */
 document.addEventListener('DOMContentLoaded', function () {
-    const allMenuItems = document.querySelector('#sidebar .side-menu');
+    const allMenuItems = document.querySelector('#sidebar .side-menu .upper-menu');
 
     if (allMenuItems) {
         allMenuItems.querySelectorAll('a').forEach(a => {
@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const section = document.querySelector('.tasks-class'),
         overlay = document.querySelector('.overlay'),
         createTaskBtn = document.querySelector('.create-task-btn'),
+        editTaskBtn = document.querySelectorAll('.edit-task-btn'),
         closePopupBtn = document.querySelector('.close-icon');
 
     function disableBodyScroll() {
@@ -164,6 +165,13 @@ document.addEventListener('DOMContentLoaded', function () {
     createTaskBtn.addEventListener('click', () => {
         section.classList.add('active');
         disableBodyScroll();
+    });
+
+    editTaskBtn.forEach(btn => {
+        btn.addEventListener('click', () => {
+            section.classList.toggle('active');
+            disableBodyScroll();
+        });
     });
 
     closePopupBtn.addEventListener('click', () => {
