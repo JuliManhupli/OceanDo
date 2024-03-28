@@ -184,3 +184,20 @@ document.addEventListener('DOMContentLoaded', function () {
         enableBodyScroll();
     });
 });
+
+
+// CREATE TASK TAGS
+document.addEventListener('DOMContentLoaded', function() {
+    const addButton = document.getElementById('add-tag-input');
+    const tagInputs = document.getElementById('tag-inputs');
+    let tagCount = 1; // Початкова кількість інпутів для тегів
+
+    addButton.addEventListener('click', function() {
+        tagCount++;
+        const newTagInput = document.createElement('input');
+        newTagInput.type = 'text';
+        newTagInput.name = 'tags';
+        newTagInput.placeholder = `Введіть Тег ${tagCount}`;
+        tagInputs.appendChild(newTagInput);
+    });
+});
