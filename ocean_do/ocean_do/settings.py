@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'ocean_do',
     'accounts.apps.AccountsConfig',
     'tasks.apps.TasksConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [

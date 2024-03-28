@@ -7,7 +7,6 @@ from .models import Tag
 
 @login_required
 def all_tasks(request):
-    print("all_tasks")
 
     if request.method == 'POST':
         form = TaskForm(request.POST)

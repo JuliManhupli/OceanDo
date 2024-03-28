@@ -984,6 +984,80 @@ main .task-panel .plus-task .icon {
 }
 
 /* .task-popup .form .form-element */
-
-
 /* POPUP */
+
+
+/* ----------------------------------PROFILE PAGE---------------------------------- */
+
+
+main .profile-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main .profile-container .profile-picture{
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+main .profile-container .profile-name{
+    margin-top: 20px;
+}
+
+main .profile-container .sub-text{
+    color: var(--dark-grey);
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+main .profile-container .profile-menu{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+    gap: 130px;
+    transition: all.3s ease;
+}
+
+@media (max-width: 1200px) {
+
+    main .profile-container .profile-menu {
+        gap: 20px;
+    }
+
+}
+
+@media (max-width: 991.98px) {
+
+    main .profile-container .profile-menu {
+        flex-direction: column;
+    }
+
+}
+
+main .profile-container .profile-menu .profile-menu-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    padding: 35px 0;
+    background: white;
+    border-radius: 10px;
+}
+
+main .profile-container .profile-menu .profile-menu-item:hover{
+    background: var(--light-blue);
+    color: white;
+}
+
+main .profile-container .profile-menu .profile-menu-item .icon{
+    font-size: 100px;
+    transition: all.3s ease;
+}
+
+main .profile-container .profile-menu .profile-menu-item .menu-text{
+    margin-top: 10px;
+    text-align: center;
+}

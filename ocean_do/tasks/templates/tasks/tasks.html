@@ -1,26 +1,9 @@
 {% extends 'ocean_do/base.html' %}
 {% load static %}
 {% block title %}
-Головна
+Завдання
 {% endblock %}
 {% block content %}
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const addButton = document.getElementById('add-tag-input');
-    const tagInputs = document.getElementById('tag-inputs');
-    let tagCount = 1; // Початкова кількість інпутів для тегів
-
-    addButton.addEventListener('click', function() {
-        tagCount++;
-        const newTagInput = document.createElement('input');
-        newTagInput.type = 'text';
-        newTagInput.name = 'tags';
-        newTagInput.placeholder = `Введіть Тег ${tagCount}`;
-        tagInputs.appendChild(newTagInput);
-    });
-});
-</script>
 
 <body class="home-body">
 
@@ -64,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="badge">5</span>
         </a>
         <div class="profile">
-            <a href="#" class="link-to-profile"><img class="logo-img"
+            <a href="{% url 'users:profile' %}" class="link-to-profile"><img class="logo-img"
                                                      src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}"
                                                      alt="!">
             </a></div>

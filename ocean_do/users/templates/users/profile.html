@@ -1,0 +1,93 @@
+{% extends 'ocean_do/base.html' %}
+{% load static %}
+{% block title %}
+Профіль
+{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+<body class="home-body">
+<!-- SIDEBAR -->
+<section id="sidebar">
+    <div class="brand">
+        <a href="#" class="brand logo-brand"><img class="icon main-logo" src="{% static 'img/logo/logo-removebg.png' %}"
+                                                  alt="!">OceanDo</a>
+    </div>
+
+
+        <ul class="side-menu">
+            <div class="upper-menu">
+                <li><a href="{% url 'main' %}" class="active"><i class='bx bx-home-alt icon'></i> Головна</a></li>
+                <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
+                <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>
+            </div>
+            <div class="lower-menu">
+                <li><a href="#"><i class='bx bx-exit icon'></i> Вийти</a></li>
+            </div>
+<!--            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>-->
+        </ul>
+        <!-- <div class="ads"></div> -->
+    </section>
+    <!-- SIDEBAR -->
+
+
+<!-- CONTENT -->
+<section id="content">
+    <!-- NAVBAR -->
+    <nav>
+        <i class='bx bx-menu toggle-sidebar'></i>
+        <form action="#">
+            <div class="form-group">
+                <i class='bx bx-search icon'></i>
+                <input type="text" placeholder="Пошук...">
+            </div>
+        </form>
+        <a href="#" class="nav-link">
+            <i class='bx bx-bell icon'></i>
+            <span class="badge">5</span>
+        </a>
+        <div class="profile">
+            <a href="#" class="link-to-profile"><img class="logo-img"
+                                                     src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}"
+                                                     alt="!">
+            </a>
+        </div>
+    </nav>
+    <!-- NAVBAR -->
+
+
+        <!-- MAIN -->
+        <main>
+            <div class="profile-container">
+                <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">
+                <h1 class="title profile-name">Ім'я Користувача</h1>
+                <h2 class="sub-text">пошта@gmail.com</h2>
+                <div class="profile-menu">
+                    <a class="profile-menu-item" href="" class="menu-item-link">
+                        <i class='bx bx-edit icon'></i>
+                        <p class="menu-text">Редагувати профіль</p>
+                    </a>
+                    <a class="profile-menu-item" href="" class="menu-item-link">
+                        <i class='bx bx-check-square icon'></i>
+                        <p class="menu-text">Виконані завдання</p>
+                    </a>
+                    <a class="profile-menu-item" href="" class="menu-item-link">
+                        <i class='bx bx-moon icon'></i>
+                        <p class="menu-text">Змінити тему</p>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MAIN -->
+</section>
+<!-- CONTENT -->
+</body>
+{% else %}
+<!-- Цей блок буде видимим тільки для неавторизованих користувачів -->
+<h1>Ви не авторизовані</h1>
+<p>Будь ласка, <a href="{% url 'accounts:login' %}">увійдіть</a> або <a href="{% url 'accounts:register' %}">зареєструйтесь</a>.
+</p>
+{% endif %}
+{% endblock content %}
