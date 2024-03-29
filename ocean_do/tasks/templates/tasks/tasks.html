@@ -1,26 +1,9 @@
 {% extends 'ocean_do/base.html' %}
 {% load static %}
 {% block title %}
-Головна
+Завдання
 {% endblock %}
 {% block content %}
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const addButton = document.getElementById('add-tag-input');
-    const tagInputs = document.getElementById('tag-inputs');
-    let tagCount = 1; // Початкова кількість інпутів для тегів
-
-    addButton.addEventListener('click', function() {
-        tagCount++;
-        const newTagInput = document.createElement('input');
-        newTagInput.type = 'text';
-        newTagInput.name = 'tags';
-        newTagInput.placeholder = `Введіть Тег ${tagCount}`;
-        tagInputs.appendChild(newTagInput);
-    });
-});
-</script>
 
 <body class="home-body">
 
@@ -33,9 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <ul class="side-menu">
+        <div class="upper-menu">
             <li><a href="{% url 'main' %}"><i class='bx bx-home-alt icon'></i> Головна</a></li>
             <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
             <li><a href="{% url 'tasks:all_tasks' %}" class="active"><i class='bx bx-task icon'></i> Завдання</a></li>
+        </div>
+        <div class="lower-menu">
+            <li><a href="#"><i class='bx bx-exit icon'></i> Вийти</a></li>
+        </div>
 <!--            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>-->
         </ul>
     <!-- <div class="ads"></div> -->
@@ -59,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="badge">5</span>
         </a>
         <div class="profile">
-            <a href="#" class="link-to-profile"><img class="logo-img"
+            <a href="{% url 'users:profile' %}" class="link-to-profile"><img class="logo-img"
                                                      src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}"
                                                      alt="!">
             </a></div>
@@ -186,162 +174,339 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
 
-        <div class="important-tasks">
+        <div class="important-tasks active">
             <div class="task">
-                <div class="head">
-                    <div>
-                        <div class="status">
+                    <div class="head">
+                        <div>
+                            <div class="status">
                                 <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
+                                <i class='bx bxs-circle icon task-status'></i>
                             </div>
-                        <div class="folder">
-                            <i class='bx bx-folder icon'></i>
-                            <p class="folder-name">А</p>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <ul class="task-settings-box">
-                                <a href="#">
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
-                    </div>
-                </div>
-                <h2 class="name">Назва завдання</h2>
-                <div class="tag-box">
-                    <p class="a">Тег А</p>
-                    <p class="b">Тег Б</p>
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">12.02.2024</p>
-                </div>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">4</p>
-                </div>
-            </div>
-            <div class="task">
-                <div class="head">
-                    <div>
-                        <div class="status">
-                                <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
-                            </div>
-                        <div class="folder">
-                            <i class='bx bx-folder icon'></i>
-                            <p class="folder-name">А</p>
                         </div>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <ul class="task-settings-box">
-                                <a href="#">
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
+                    </div>
+                </div>
+            <div class="task">
+                    <div class="head">
+                        <div>
+                            <div class="status">
+                                <p class="category">Виконання</p>
+                                <i class='bx bxs-circle icon task-status'></i>
+                            </div>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
+                        </div>
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
-                    </div>
-                </div>
-                <h2 class="name">Назва завдання</h2>
-                <div class="tag-box">
-                    <p class="a">Тег А</p>
-                    <p class="b">Тег Б</p>
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">12.02.2024</p>
-                </div>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">4</p>
-                </div>
-            </div>
-            <div class="task">
-                <div class="head">
-                    <div>
-                        <div class="status">
-                                <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
-                            </div>
-                        <div class="folder">
-                            <i class='bx bx-folder icon'></i>
-                            <p class="folder-name">А</p>
                         </div>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <ul class="task-settings-box">
-                                <a href="#">
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
+                    </div>
+                </div>
+            <div class="task">
+                    <div class="head">
+                        <div>
+                            <div class="status">
+                                <p class="category">Виконання</p>
+                                <i class='bx bxs-circle icon task-status'></i>
+                            </div>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
+                        </div>
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
-                    </div>
-                </div>
-                <h2 class="name">Назва завдання</h2>
-                <div class="tag-box">
-                    <p class="a">Тег А</p>
-                    <p class="b">Тег Б</p>
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">12.02.2024</p>
-                </div>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">4</p>
-                </div>
-            </div>
-            <div class="task">
-                <div class="head">
-                    <div>
-                        <div class="status">
-                                <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
-                            </div>
-                        <div class="folder">
-                            <i class='bx bx-folder icon'></i>
-                            <p class="folder-name">А</p>
                         </div>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <ul class="task-settings-box">
-                                <a href="#">
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
+                    </div>
+                </div>
+            <div class="task">
+                    <div class="head">
+                        <div>
+                            <div class="status">
+                                <p class="category">Виконання</p>
+                                <i class='bx bxs-circle icon task-status'></i>
+                            </div>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
+                        </div>
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#" class="edit-task-btn">
                                     <li>Змінити</li>
                                 </a>
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
+                        </div>
+                    </div>
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
                     </div>
                 </div>
-                <h2 class="name">Назва завдання</h2>
-                <div class="tag-box">
-                    <p class="a">Тег А</p>
-                    <p class="b">Тег Б</p>
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">12.02.2024</p>
-                </div>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">4</p>
-                </div>
-            </div>
         </div>
 
-        </div>
+        <div class="important-tasks">
+                <div class="task">
+                    <div class="head">
+                        <div>
+                            <div class="status">
+                                <p class="category">Моніторинг</p>
+                                <i class='bx bxs-circle icon task-status'></i>
+                            </div>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
+                        </div>
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
+                    </div>
+                </div>
+                <div class="task">
+                    <div class="head">
+                        <div>
+                            <div class="status">
+                                <p class="category">Моніторинг</p>
+                                <i class='bx bxs-circle icon task-status'></i>
+                            </div>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
+                        </div>
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
+                    </div>
+                </div>
+                <div class="task">
+                    <div class="head">
+                        <div>
+                            <div class="status">
+                                <p class="category">Моніторинг</p>
+                                <i class='bx bxs-circle icon task-status'></i>
+                            </div>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
+                        </div>
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
+                    </div>
+                </div>
+                <div class="task">
+                    <div class="head">
+                        <div>
+                            <div class="status">
+                                <p class="category">Моніторинг</p>
+                                <i class='bx bxs-circle icon task-status'></i>
+                            </div>
+                            <div class="folder">
+                                <i class='bx bx-folder icon'></i>
+                                <p class="folder-name">А</p>
+                            </div>
+                        </div>
+                        <div class="task-settings">
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <ul class="task-settings-box">
+                                <a href="#">
+                                    <li>Змінити</li>
+                                </a>
+                                <a href="#">
+                                    <li>Видалити</li>
+                                </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
+                            </ul>
+                        </div>
+                    </div>
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
+                    </div>
+                </div>
+            </div>
     </main>
 
     <!-- MAIN -->

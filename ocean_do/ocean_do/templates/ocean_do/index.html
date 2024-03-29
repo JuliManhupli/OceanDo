@@ -15,9 +15,14 @@
 
 
         <ul class="side-menu">
-            <li><a href="{% url 'main' %}" class="active"><i class='bx bx-home-alt icon'></i> Головна</a></li>
-            <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
-            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>
+            <div class="upper-menu">
+                <li><a href="{% url 'main' %}" class="active"><i class='bx bx-home-alt icon'></i> Головна</a></li>
+                <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
+                <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>
+            </div>
+            <div class="lower-menu">
+                <li><a href="#"><i class='bx bx-exit icon'></i> Вийти</a></li>
+            </div>
 <!--            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>-->
         </ul>
         <!-- <div class="ads"></div> -->
@@ -41,7 +46,7 @@
             <span class="badge">5</span>
         </a>
         <div class="profile">
-            <a href="#" class="link-to-profile"><img class="logo-img"
+            <a href="{% url 'users:profile' %}" class="link-to-profile"><img class="logo-img"
                                                      src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}"
                                                      alt="!">
             </a>
@@ -53,13 +58,13 @@
         <!-- MAIN -->
         <main>
             <h1 class="title">Важливі завдання</h1>
-            <div class="important-tasks">
+            <div class="important-tasks active">
                 <div class="task">
                     <div class="head">
                         <div>
                             <div class="status">
                                 <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
+                                <i class='bx bxs-circle icon task-status'></i>
                             </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
@@ -75,16 +80,24 @@
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
-
                         </div>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <!-- <ul class="task-settings-box">
-                            <li><a href="#">Змінити</a></li>
-                            <li><a href="#">Видалити</a></li>
-                        </ul> -->
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
                     </div>
                 </div>
 
@@ -93,7 +106,7 @@
                         <div>
                             <div class="status">
                                 <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
+                                <i class='bx bxs-circle icon task-status'></i>
                             </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
@@ -109,25 +122,32 @@
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
-
                         </div>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <!-- <ul class="task-settings-box">
-                                            <li><a href="#">Змінити</a></li>
-                                            <li><a href="#">Видалити</a></li>
-                                        </ul> -->
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
                     </div>
                 </div>
-
                 <div class="task">
                     <div class="head">
                         <div>
                             <div class="status">
                                 <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
+                                <i class='bx bxs-circle icon task-status'></i>
                             </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
@@ -143,25 +163,32 @@
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
-
                         </div>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <!-- <ul class="task-settings-box">
-                                            <li><a href="#">Змінити</a></li>
-                                            <li><a href="#">Видалити</a></li>
-                                        </ul> -->
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
                     </div>
                 </div>
-
                 <div class="task">
                     <div class="head">
                         <div>
                             <div class="status">
                                 <p class="category">Виконання</p>
-                                <i class='bx bxs-circle icon'></i>
+                                <i class='bx bxs-circle icon task-status'></i>
                             </div>
                             <div class="folder">
                                 <i class='bx bx-folder icon'></i>
@@ -177,31 +204,28 @@
                                 <a href="#">
                                     <li>Видалити</li>
                                 </a>
+                                <a href="#" class="task-status-btn">
+                                    <li class="task-status-change">Позначити, як виконане</li>
+                                </a>
                             </ul>
-
                         </div>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <!-- <ul class="task-settings-box">
-                                            <li><a href="#">Змінити</a></li>
-                                            <li><a href="#">Видалити</a></li>
-                                        </ul> -->
+                    <h2 class="name">Назва завдання</h2>
+                    <div class="tag-box">
+                        <p class="a">Тег А</p>
+                        <p class="b">Тег Б</p>
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">12.02.2024</p>
+                    </div>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">4</p>
                     </div>
                 </div>
-                <h2 class="name">Назва завдання</h2>
-                <div class="tag-box">
-                    <p class="a">Тег А</p>
-                    <p class="b">Тег Б</p>
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">12.02.2024</p>
-                </div>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">4</p>
-                </div>
+
+
             </div>
         </div>
 

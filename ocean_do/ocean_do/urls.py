@@ -13,4 +13,5 @@ urlpatterns = [
     path('', views.main, name='main'),
     path('auth/', include('accounts.urls')),
     path('tasks/', include('tasks.urls')),
+    path('users/', include('users.urls')),
 ] + static(settings.STATIC_URL, view=cache_control(no_cache=True, must_revalidate=True)(serve))

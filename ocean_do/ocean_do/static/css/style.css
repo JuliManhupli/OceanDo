@@ -368,6 +368,10 @@ body {
 }
 
 #sidebar .side-menu {
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 85%;
     margin: 34px 0;
     padding: 0 13px;
     transition: all .3s ease;
@@ -392,12 +396,13 @@ body {
     white-space: nowrap;
 }
 
-#sidebar .side-menu > li > a:hover {
+#sidebar .side-menu .upper-menu > li > a:hover,
+#sidebar .side-menu .lower-menu>li>a:hover {
     background: var(--light-grey);
 }
 
-#sidebar .side-menu > li > a.active,
-#sidebar .side-menu > li > a.active:hover{
+#sidebar .side-menu .upper-menu > li > a.active,
+#sidebar .side-menu .upper-menu > li > a.active:hover{
     color: white;
     background: var(--light-blue);
 }
@@ -538,9 +543,14 @@ main .title {
 
 main .important-tasks {
     margin-top: 20px;
-    display: grid;
+    display: none;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
+    transition: all .3s ease;
+}
+
+main .important-tasks.active{
+    display: grid;
 }
 
 main .important-tasks .task{
@@ -568,13 +578,18 @@ main .task .head .status .category {
     padding: 5px 5px 7px 5px;
 }
 
-main .task .head .status .icon{
+main .task .head .status .task-status{
     color: white;
     font-size: 24px;
     background: var(--yellow);
     padding: 3px;
     border-radius: 5px;
     margin-left: 10px;
+    transition: all .3s ease;
+}
+
+main .task .head .status .task-status.done{
+    background: var(--green);
 }
 
 main .task .head .folder {
@@ -841,6 +856,7 @@ main .task-panel .plus-task .icon {
     opacity: 0;
     pointer-events: none;
     overflow-y: hidden;
+    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .tasks-class{
@@ -968,6 +984,80 @@ main .task-panel .plus-task .icon {
 }
 
 /* .task-popup .form .form-element */
-
-
 /* POPUP */
+
+
+/* ----------------------------------PROFILE PAGE---------------------------------- */
+
+
+main .profile-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main .profile-container .profile-picture{
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+main .profile-container .profile-name{
+    margin-top: 20px;
+}
+
+main .profile-container .sub-text{
+    color: var(--dark-grey);
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+main .profile-container .profile-menu{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+    gap: 130px;
+    transition: all.3s ease;
+}
+
+@media (max-width: 1200px) {
+
+    main .profile-container .profile-menu {
+        gap: 20px;
+    }
+
+}
+
+@media (max-width: 991.98px) {
+
+    main .profile-container .profile-menu {
+        flex-direction: column;
+    }
+
+}
+
+main .profile-container .profile-menu .profile-menu-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    padding: 35px 0;
+    background: white;
+    border-radius: 10px;
+}
+
+main .profile-container .profile-menu .profile-menu-item:hover{
+    background: var(--light-blue);
+    color: white;
+}
+
+main .profile-container .profile-menu .profile-menu-item .icon{
+    font-size: 100px;
+    transition: all.3s ease;
+}
+
+main .profile-container .profile-menu .profile-menu-item .menu-text{
+    margin-top: 10px;
+    text-align: center;
+}
