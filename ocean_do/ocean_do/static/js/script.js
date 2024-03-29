@@ -124,24 +124,100 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     });
 
+
     const allTaskHeads = document.querySelectorAll('main .task .head');
     allTaskHeads.forEach(item => {
-        const taskStatus = item.querySelector('.task-status'),
-            taskStatusBtn = item.querySelector('.task-status-btn'),
-            taskStatusChange = item.querySelector('.task-status-change');
-
+        const taskStatusBtn = item.querySelector('.task-status-btn');
         taskStatusBtn.addEventListener('click', function () {
-            taskStatus.classList.toggle('done');
-            taskStatus.classList.toggle('bxs-circle');
-            taskStatus.classList.toggle('bxs-check-circle');
+            const taskId = item.closest('.task').dataset.taskId;
+            const taskStatus = item.querySelector('.task-status');
+            const isCompleted = taskStatus.classList.contains('done');
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post(`/tasks/${taskId}/update-status/`, {is_completed: !isCompleted})
+                .then(response => {
+                    if (response.status === 200) {
+                        taskStatus.classList.toggle('done');
+                        taskStatus.classList.toggle('bxs-circle');
+                        taskStatus.classList.toggle('bxs-check-circle');
+                        const taskStatusChange = item.querySelector('.task-status-change');
+                        if (taskStatusChange.textContent === 'Позначити, як виконане') {
+                            taskStatusChange.textContent = 'Позначити, як невиконане';
+                        } else {
+                            taskStatusChange.textContent = 'Позначити, як виконане';
+                        }
+                    } else {
+                        throw new Error('Помилка оновлення статусу завдання.');
+                    }
+                })
+                .catch(error => console.error(error));
+        });
+    });
 
-            if (taskStatusChange.textContent === 'Позначити, як виконане') {
-                taskStatusChange.textContent = 'Позначити, як невиконане';
-            } else {
-                taskStatusChange.textContent = 'Позначити, як виконане';
-            }
-        })
-    })
+    //
+    //
+    // const allTaskHeads = document.querySelectorAll('main .task .head');
+    // allTaskHeads.forEach(item => {
+    //     const taskStatus = item.querySelector('.task-status'),
+    //         taskStatusBtn = item.querySelector('.task-status-btn'),
+    //         taskStatusChange = item.querySelector('.task-status-change');
+    //
+    //
+    //     taskStatusBtn.addEventListener('click', function () {
+    //         const taskId = item.closest('.task').dataset.taskId;
+    //         console.log("taskId", taskId);
+    //         const isCompleted = taskStatus.classList.contains('done');
+    //         const requestOptions = {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'X-CSRFToken': '{{ csrf_token }}'
+    //             },
+    //             body: JSON.stringify({
+    //                 is_completed: !isCompleted
+    //             })
+    //         };
+    //
+    //         fetch(`/tasks/${taskId}/update-status/`, requestOptions)
+    //             .then(response => {
+    //                 if (!response.ok) {
+    //                     throw new Error('Помилка оновлення статусу завдання.');
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then(data => {
+    //                 taskStatus.classList.toggle('done');
+    //                 taskStatus.classList.toggle('bxs-circle');
+    //                 taskStatus.classList.toggle('bxs-check-circle');
+    //                 if (taskStatusChange.textContent === 'Позначити, як виконане') {
+    //                     taskStatusChange.textContent = 'Позначити, як невиконане';
+    //                 } else {
+    //                     taskStatusChange.textContent = 'Позначити, як виконане';
+    //                 }
+    //             })
+    //             .catch(error => console.error(error));
+    //     });
+    // });
+
+
+    // const allTaskHeads = document.querySelectorAll('main .task .head');
+    // allTaskHeads.forEach(item => {
+    //     const taskStatus = item.querySelector('.task-status'),
+    //         taskStatusBtn = item.querySelector('.task-status-btn'),
+    //         taskStatusChange = item.querySelector('.task-status-change');
+    //
+    //     taskStatusBtn.addEventListener('click', function () {
+    //         taskStatus.classList.toggle('done');
+    //         taskStatus.classList.toggle('bxs-circle');
+    //         taskStatus.classList.toggle('bxs-check-circle');
+    //
+    //         if (taskStatusChange.textContent === 'Позначити, як виконане') {
+    //             taskStatusChange.textContent = 'Позначити, як невиконане';
+    //         } else {
+    //             taskStatusChange.textContent = 'Позначити, як виконане';
+    //         }
+    //     })
+    // })
 });
 
 // POP UP
@@ -192,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const tagInputs = document.getElementById('tag-inputs');
     let tagCount = 1; // Початкова кількість інпутів для тегів
 
-    addButton.addEventListener('click', function() {
+    addButton.addEventListener('click', function () {
         tagCount++;
         const newTagInput = document.createElement('input');
         newTagInput.type = 'text';
@@ -201,3 +277,37 @@ document.addEventListener('DOMContentLoaded', function() {
         tagInputs.appendChild(newTagInput);
     });
 });
+
+
+// DELETE TASK
+document.addEventListener('DOMContentLoaded', function () {
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    const deleteLinks = document.querySelectorAll('.delete-link');
+
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            const confirmation = confirm('Ви впевнені, що хочете видалити це завдання?');
+            if (confirmation) {
+                const taskId = this.dataset.id;
+                axios.delete(`/tasks/${taskId}/delete/`)
+                    .then(response => {
+                        if (response.status === 204) {
+                            const listItem = this.parentElement;
+                            listItem.remove();
+                            alert('Завдання успішно видалено');
+                            location.reload();
+                        } else {
+                            alert('Помилка під час видалення завдання');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Помилка під час виконання запиту:', error);
+                        alert('Помилка під час виконання запиту');
+                    });
+            }
+        });
+    });
+});
+

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 import pyotp
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -148,3 +148,8 @@ def change_password_view(request):
         messages.error(request, 'Користувача з такою поштою не знайдено.')
         return redirect('accounts:email')
     return render(request, 'accounts/new-password.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('accounts:login')

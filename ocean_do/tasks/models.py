@@ -16,6 +16,7 @@ class Task(models.Model):
     description = models.TextField()
     tags = models.ManyToManyField(Tag)
     deadline = models.DateField()
+    is_completed = models.BooleanField(default=False)
     assignees = models.ManyToManyField(User, related_name='assigned_tasks')
 
     def __str__(self):
