@@ -284,7 +284,6 @@ document.addEventListener('DOMContentLoaded', function () {
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
     const deleteLinks = document.querySelectorAll('.delete-link');
-
     deleteLinks.forEach(link => {
         link.addEventListener('click', function (event) {
             event.preventDefault();
