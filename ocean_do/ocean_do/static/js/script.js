@@ -311,3 +311,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// FILE NAME SHOW
+function displayFileName() {
+    var fileInput = document.getElementById('file-upload');
+    var fileName = document.getElementById('file-name');
+
+    if (fileInput.files.length > 0) {
+        fileName.textContent = fileInput.files[0].name;
+    } else {
+        fileName.textContent = "";
+    }
+}

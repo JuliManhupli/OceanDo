@@ -1,0 +1,43 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Профіль
+{% endblock %}
+
+
+{% block side-menu %}
+<li><a href="{% url 'main' %}"><i class='bx bx-home-alt icon'></i> Головна</a></li>
+<li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
+<li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>
+{% endblock %}
+
+{% block content_area %}
+
+
+<!-- MAIN -->
+<main>
+    <div class="profile-container">
+        <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">
+        <div class="edit-form">
+                    <form action="" class="edit-profile">
+                        <div class="form-area photo-area">
+                            <p class="data-name edit-title">Фото профілю</p>
+                            <label for="file-upload" class="custom-file-upload">Завантажити</label>
+                            <input id="file-upload" type="file" onchange="displayFileName()" />
+                            <span id="file-name"></span>
+                        </div>
+                        <div class="form-area name-area">
+                            <p class="data-name edit-title">Ім'я користувача</p>
+                            <input class="data-input" type="text" placeholder="Введіть ім'я користувача"
+                                value="Ім'я Користувача">
+                        </div>
+                        <a class="account-button edit-profile-btn" href="#">Змінити</a>
+                    </form>
+                </div>
+    </div>
+
+    </div>
+</main>
+
+<!-- MAIN -->
+{% endblock %}

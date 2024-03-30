@@ -7,7 +7,7 @@ from .models import User
 
 class RegisterForm(UserCreationForm):
     username = CharField(max_length=16, min_length=3, required=True, widget=TextInput(attrs={"class": "data-input"}))
-    email = EmailField(max_length=25, required=True, widget=EmailInput(attrs={"class": "data-input"}))
+    email = EmailField(max_length=100, required=True, widget=EmailInput(attrs={"class": "data-input"}))
     password1 = CharField(required=True, widget=PasswordInput(attrs={"class": "data-input"}))
     password2 = CharField(required=True, widget=PasswordInput(attrs={"class": "data-input"}))
 
@@ -44,7 +44,7 @@ class RegisterForm(UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    email = EmailField(max_length=25, required=True, widget=EmailInput(attrs={"class": "data-input"}))
+    email = EmailField(max_length=100, required=True, widget=EmailInput(attrs={"class": "data-input"}))
     password = CharField(required=True, widget=PasswordInput(attrs={"class": "data-input"}))
 
     def __init__(self, *args, **kwargs):
