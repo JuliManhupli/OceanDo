@@ -55,3 +55,7 @@ def update_task_status(request, task_id):
             return JsonResponse({'error': 'Не вдалося оновити статус завдання. Необхідний параметр is_completed.'}, status=400)
 
     return JsonResponse({'error': 'Метод запиту не підтримується.'}, status=405)
+
+
+def create_task(request):
+    return render(request, "tasks/create-task.html")

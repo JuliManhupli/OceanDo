@@ -551,7 +551,7 @@ main .title {
 }
 
 main .important-tasks {
-    background: #5E967C;
+    /*background: #5E967C;*/
     margin-top: 20px;
     display: none;
     grid-template-columns: repeat(auto-fit, minmax(240px, 285px));
@@ -828,170 +828,167 @@ main .task-panel .plus-task .icon {
 /* POPUP */
 
 
-.overlay {
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 64px;
-    background: rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 50;
-    transition: all .3s ease;
-}
+/*.overlay {*/
+/*    position: fixed;*/
+/*    height: 100%;*/
+/*    width: 100%;*/
+/*    top: 64px;*/
+/*    background: rgba(0, 0, 0, 0.2);*/
+/*    opacity: 0;*/
+/*    pointer-events: none;*/
+/*    z-index: 50;*/
+/*    transition: all .3s ease;*/
+/*}*/
 
-.tasks-class.active .overlay{
-    opacity: 1;
-    pointer-events: auto;
-}
+/*.tasks-class.active .overlay{*/
+/*    opacity: 1;*/
+/*    pointer-events: auto;*/
+/*}*/
 
-.task-popup {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: absolute;
-    padding: 30px;
-    margin-right: 20px;
-    max-width: 722px;
-    width: 100%;
-    height: 500px;
-    /*height: 100%;*/
-    left: 50%;
-    transform: translateX(-50%) scale(1.2);
-    top: 120px;
-    background: white;
-    border-radius: 20px;
-    z-index: 150;
-    transition: all .3s ease;
-    opacity: 0;
-    pointer-events: none;
-    overflow-y: hidden;
-    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
-}
+/*.task-popup {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    align-items: center;*/
+/*    position: absolute;*/
+/*    padding: 30px;*/
+/*    margin-right: 20px;*/
+/*    max-width: 722px;*/
+/*    width: 100%;*/
+/*    height: 500px;*/
+/*    !*height: 100%;*!*/
+/*    left: 50%;*/
+/*    transform: translateX(-50%) scale(1.2);*/
+/*    top: 120px;*/
+/*    background: white;*/
+/*    border-radius: 20px;*/
+/*    z-index: 150;*/
+/*    transition: all .3s ease;*/
+/*    !*opacity: 0;*!*/
+/*    pointer-events: none;*/
+/*    overflow-y: hidden;*/
+/*    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);*/
+/*}*/
 
-.tasks-class{
 
-}
+/*.tasks-class.active .task-popup{*/
+/*    opacity: 1;*/
+/*    pointer-events: auto;*/
+/*    transform: translateX(-50%) scale(1);*/
+/*}*/
 
-.tasks-class.active .task-popup{
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(-50%) scale(1);
-}
+/*#sidebar.hide + .task-popup {*/
+/*    left: calc(50% + 82px);*/
+/*}*/
 
-#sidebar.hide + .task-popup {
-    left: calc(50% + 82px);
-}
+/*@media screen and (max-width: 991px) {*/
+/*    .task-popup {*/
+/*        max-width: 522px;*/
+/*    }*/
+/*}*/
 
-@media screen and (max-width: 991px) {
-    .task-popup {
-        max-width: 522px;
-    }
-}
+/*.task-popup::-webkit-scrollbar {*/
+/*    display: none;*/
+/*}*/
 
-.task-popup::-webkit-scrollbar {
-    display: none;
-}
+/*.task-popup .close-icon{*/
+/*    position: absolute;*/
+/*    right: 30px;*/
+/*    top: 30px;*/
+/*    font-size: 30px;*/
+/*    cursor: pointer;*/
+/*}*/
 
-.task-popup .close-icon{
-    position: absolute;
-    right: 30px;
-    top: 30px;
-    font-size: 30px;
-    cursor: pointer;
-}
+/*.task-popup .form {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    align-items: center;*/
+/*    gap: 20px;*/
+/*    max-width: 348px;*/
+/*    width: 100%;*/
+/*    overflow-y: auto;*/
+/*    scrollbar-width: none;*/
+/*}*/
 
-.task-popup .form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    max-width: 348px;
-    width: 100%;
-    overflow-y: auto;
-    scrollbar-width: none;
-}
+/*.task-popup .form h2 {*/
+/*    font-size: 32px;*/
+/*    font-weight: 600;*/
+/*}*/
 
-.task-popup .form h2 {
-    font-size: 32px;
-    font-weight: 600;
-}
+/*.task-popup .form .form-element {*/
+/*    width: 100%;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 10px;*/
+/*}*/
 
-.task-popup .form .form-element {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+/*.task-popup .form .form-element .title {*/
+/*    font-size: 20px;*/
+/*    font-weight: 600;*/
+/*}*/
 
-.task-popup .form .form-element .title {
-    font-size: 20px;
-    font-weight: 600;
-}
+/*.task-popup .form .form-element .important-area {*/
+/*    display: flex;*/
+/*}*/
 
-.task-popup .form .form-element .important-area {
-    display: flex;
-}
+/*.task-popup .form .form-element .important-area .star {*/
+/*    margin-left: 5px;*/
+/*    color: var(--red);*/
+/*}*/
 
-.task-popup .form .form-element .important-area .star {
-    margin-left: 5px;
-    color: var(--red);
-}
+/*.task-popup .form .form-element input,*/
+/*.task-popup .form .form-element textarea{*/
+/*    padding: 10px;*/
+/*    border-radius: 5px;*/
+/*    border: 1px solid black;*/
+/*}*/
 
-.task-popup .form .form-element input,
-.task-popup .form .form-element textarea{
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid black;
-}
+/*.task-popup .form .form-element textarea{*/
+/*    height: 120px;*/
+/*}*/
 
-.task-popup .form .form-element textarea{
-    height: 120px;
-}
+/*.task-popup .form .form-element .existing-folder,*/
+/*.task-popup .form .form-element .tag-block,*/
+/*.task-popup .form .form-element .users-add-block{*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*}*/
 
-.task-popup .form .form-element .existing-folder,
-.task-popup .form .form-element .tag-block,
-.task-popup .form .form-element .users-add-block{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+/*.task-popup .form .form-element .existing-folder .icon,*/
+/*.task-popup .form .form-element .tag-block .icon,*/
+/*.task-popup .form .form-element .add .icon {*/
+/*    font-size: 22.5px;*/
+/*    padding: 3.5px;*/
+/*    background: var(--yellow);*/
+/*    border-radius: 5px;*/
+/*    cursor: pointer;*/
+/*}*/
 
-.task-popup .form .form-element .existing-folder .icon,
-.task-popup .form .form-element .tag-block .icon,
-.task-popup .form .form-element .add .icon {
-    font-size: 22.5px;
-    padding: 3.5px;
-    background: var(--yellow);
-    border-radius: 5px;
-    cursor: pointer;
-}
+/*.task-popup .form .form-element .new-folder {*/
+/*    display: none;*/
+/*    !* display: flex; *!*/
+/*    align-items: center;*/
+/*}*/
 
-.task-popup .form .form-element .new-folder {
-    display: none;
-    /* display: flex; */
-    align-items: center;
-}
+/*.task-popup .form .form-element .new-folder .folder-icon{*/
+/*    font-size: 25px;*/
+/*    padding: 7px 10px 7px 0;*/
+/*}*/
 
-.task-popup .form .form-element .new-folder .folder-icon{
-    font-size: 25px;
-    padding: 7px 10px 7px 0;
-}
+/*.task-popup .form .form-element .new-folder input{*/
+/*    width: 100%;*/
+/*}*/
 
-.task-popup .form .form-element .new-folder input{
-    width: 100%;
-}
+/*.task-popup .form .make-task{*/
+/*    background: var(--yellow);*/
+/*    width: 100%;*/
+/*    padding: 15px 0px;*/
+/*    border-radius: 10px;*/
+/*}*/
 
-.task-popup .form .make-task{
-    background: var(--yellow);
-    width: 100%;
-    padding: 15px 0px;
-    border-radius: 10px;
-}
-
-.task-popup .form .make-task:hover{
-    text-decoration: underline;
-}
+/*.task-popup .form .make-task:hover{*/
+/*    text-decoration: underline;*/
+/*}*/
 
 /* .task-popup .form .form-element */
 /* POPUP */
@@ -1142,4 +1139,128 @@ main .profile-container .edit-form .edit-profile .edit-profile-btn{
     main .profile-container .edit-form .edit-profile .edit-profile-btn {
         padding: 16px 60px;
     }
+}
+
+
+/* ----------------------------------CREATE PAGE---------------------------------- */
+
+main .task-popup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    transition: all .3s ease;
+    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (max-width: 991px) {
+    main .task-popup {
+        max-width: 522px;
+    }
+}
+
+main .task-popup .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 60%;
+}
+
+main .task-popup .form h2 {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+main .task-popup .form .form-element {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+main .task-popup .form .form-element .title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+main .task-popup .form .form-element .important-area {
+    display: flex;
+}
+
+main .task-popup .form .form-element .important-area .star {
+    margin-left: 5px;
+    color: var(--red);
+}
+
+main .task-popup .form .form-element input,
+main .task-popup .form .form-element textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+main .task-popup .form .form-element textarea {
+    height: 120px;
+}
+
+main .task-popup .form .form-element .custom-file-upload {
+    background: var(--yellow);
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 150px;
+    text-align: center;
+}
+
+main .task-popup .form .form-element .existing-folder,
+main .task-popup .form .form-element .tag-block,
+main .task-popup .form .form-element .users-add-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+main .task-popup .form .form-element .existing-folder input{
+    width: 100%;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+main .task-popup .form .form-element .existing-folder .icon,
+main .task-popup .form .form-element .tag-block .icon,
+main .task-popup .form .form-element .add .icon {
+    font-size: 22.5px;
+    padding: 3.5px;
+    background: var(--yellow);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+main .task-popup .form .form-element .new-folder {
+    display: none;
+    /* display: flex; */
+    align-items: center;
+}
+
+main .task-popup .form .form-element .new-folder .folder-icon {
+    font-size: 25px;
+    padding: 7px 10px 7px 0;
+}
+
+main .task-popup .form .form-element .new-folder input {
+    width: 100%;
+}
+
+main .task-popup .form .make-task {
+    background: var(--yellow);
+    width: 100%;
+    padding: 15px 0px;
+    border-radius: 10px;
+}
+
+main .task-popup .form .make-task:hover {
+    text-decoration: underline;
 }

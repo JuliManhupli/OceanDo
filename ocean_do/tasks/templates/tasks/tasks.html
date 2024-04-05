@@ -14,102 +14,102 @@
 {% block content_area %}
 
 <!-- POPUP -->
-<span class="overlay"></span>
-<div class="task-popup">
-    <i class='bx bx-x-circle close-icon'></i>
-    <form method="post" class="form">
-        <!--        <div>-->
+<!--<span class="overlay"></span>-->
+<!--<div class="task-popup">-->
+<!--    <i class='bx bx-x-circle close-icon'></i>-->
+<!--    <form method="post" class="form">-->
+<!--        &lt;!&ndash;        <div>&ndash;&gt;-->
 
-        {% csrf_token %}
-        <h2>Нове завдання</h2>
+<!--        {% csrf_token %}-->
+<!--        <h2>Нове завдання</h2>-->
 
-        <!--                <form method="post">-->
-        <!--                    {% csrf_token %}-->
-        <!--                    {{ form.as_p }}-->
-        <!--                    <button type="submit">Create</button>-->
-        <!--                </form>-->
-
-
-            <div class="form-element">
-                <div class="important-area">
-                    <p class="title">Назва </p>
-                    <p class="star">*</p>
-                </div>
-                {{ form.title }}
-                {% if form.title.errors %}
-                <span>{{ form.title.errors }}</span>
-                {% endif %}
-            </div>
-            <div class="form-element">
-                <p class="title">Опис</p>
-                <!--                    <textarea name="" id="" placeholder="Введіть опис"></textarea>-->
-                {{ form.description }}
-            </div>
-            <div class="form-element">
-                <div class="existing-folder">
-                    <p class="title">Папка</p>
-                    <input type="text" placeholder="Введіть назву папки">
-                    <i class='bx bx-plus-circle icon'></i>
-                </div>
-                <div class="new-folder">
-                    <div class="add">
-                        <i class='bx bx-folder folder-icon'></i>
-                    </div>
-                    <input type="text" placeholder="Введіть назву нової папки">
-                </div>
-            </div>
-            <div class="form-element">
-                <div class="tag-block">
-                    <p class="title">Теги</p>
-                    <div class="add" id="add-tag-input">
-                        <i class='bx bx-plus-circle icon'></i>
-                    </div>
-                </div>
-                <!--                    {{ form.tags }}-->
-                <!--                    <input type="text" placeholder="Введіть Тег 1">-->
-                <!--                    <input type="text" placeholder="Введіть Тег 2">-->
-
-                <!--                <input type="text" name="tag_1" placeholder="Введіть Тег">-->
-                <!--                <input type="text" name="tag_2" placeholder="Введіть Тег">-->
-                <div id="tag-inputs">
-                    <!-- Поле для першого тегу -->
-                    <input type="text" name="tags" placeholder="Введіть Тег 1">
-                </div>
-            </div>
-            <div class="form-element">
-                <div class="important-area">
-                    <p class="title">Термін виконання </p>
-                    <p class="star">*</p>
-                </div>
-                <!--                    <input type="date" placeholder="Введіть термін виконання">-->
-                {{ form.deadline }}
-                {% if form.deadline.errors %}
-                <span>{{ form.deadline.errors }}</span>
-                {% endif %}
-            </div>
-            <div class="form-element">
-                <div class="users-add-block">
-                    <div class="important-area">
-                        <p class="title">Виконавці</p>
-                        <p class="star">*</p>
-                    </div>
-                    <div class="add">
-                        <i class='bx bx-plus-circle icon'></i>
-                    </div>
-                </div>
-                <!--                    <input type="text" placeholder="Введіть виконавця">-->
-                {{ form.assignees }}
-                {% if form.assignees.errors %}
-                <span>{{ form.assignees.errors }}</span>
-                {% endif %}
-            </div>
-            <!--                <button class="make-task">Створити</button>-->
-            <button type="submit" class="make-task">Створити</button>
+<!--        &lt;!&ndash;                <form method="post">&ndash;&gt;-->
+<!--        &lt;!&ndash;                    {% csrf_token %}&ndash;&gt;-->
+<!--        &lt;!&ndash;                    {{ form.as_p }}&ndash;&gt;-->
+<!--        &lt;!&ndash;                    <button type="submit">Create</button>&ndash;&gt;-->
+<!--        &lt;!&ndash;                </form>&ndash;&gt;-->
 
 
-            <!--        </div>-->
-        </form>
-    </div>
+<!--            <div class="form-element">-->
+<!--                <div class="important-area">-->
+<!--                    <p class="title">Назва </p>-->
+<!--                    <p class="star">*</p>-->
+<!--                </div>-->
+<!--                {{ form.title }}-->
+<!--                {% if form.title.errors %}-->
+<!--                <span>{{ form.title.errors }}</span>-->
+<!--                {% endif %}-->
+<!--            </div>-->
+<!--            <div class="form-element">-->
+<!--                <p class="title">Опис</p>-->
+<!--                &lt;!&ndash;                    <textarea name="" id="" placeholder="Введіть опис"></textarea>&ndash;&gt;-->
+<!--                {{ form.description }}-->
+<!--            </div>-->
+<!--            <div class="form-element">-->
+<!--                <div class="existing-folder">-->
+<!--                    <p class="title">Папка</p>-->
+<!--                    <input type="text" placeholder="Введіть назву папки">-->
+<!--                    <i class='bx bx-plus-circle icon'></i>-->
+<!--                </div>-->
+<!--                <div class="new-folder">-->
+<!--                    <div class="add">-->
+<!--                        <i class='bx bx-folder folder-icon'></i>-->
+<!--                    </div>-->
+<!--                    <input type="text" placeholder="Введіть назву нової папки">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="form-element">-->
+<!--                <div class="tag-block">-->
+<!--                    <p class="title">Теги</p>-->
+<!--                    <div class="add" id="add-tag-input">-->
+<!--                        <i class='bx bx-plus-circle icon'></i>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash;                    {{ form.tags }}&ndash;&gt;-->
+<!--                &lt;!&ndash;                    <input type="text" placeholder="Введіть Тег 1">&ndash;&gt;-->
+<!--                &lt;!&ndash;                    <input type="text" placeholder="Введіть Тег 2">&ndash;&gt;-->
+
+<!--                &lt;!&ndash;                <input type="text" name="tag_1" placeholder="Введіть Тег">&ndash;&gt;-->
+<!--                &lt;!&ndash;                <input type="text" name="tag_2" placeholder="Введіть Тег">&ndash;&gt;-->
+<!--                <div id="tag-inputs">-->
+<!--                    &lt;!&ndash; Поле для першого тегу &ndash;&gt;-->
+<!--                    <input type="text" name="tags" placeholder="Введіть Тег 1">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="form-element">-->
+<!--                <div class="important-area">-->
+<!--                    <p class="title">Термін виконання </p>-->
+<!--                    <p class="star">*</p>-->
+<!--                </div>-->
+<!--                &lt;!&ndash;                    <input type="date" placeholder="Введіть термін виконання">&ndash;&gt;-->
+<!--                {{ form.deadline }}-->
+<!--                {% if form.deadline.errors %}-->
+<!--                <span>{{ form.deadline.errors }}</span>-->
+<!--                {% endif %}-->
+<!--            </div>-->
+<!--            <div class="form-element">-->
+<!--                <div class="users-add-block">-->
+<!--                    <div class="important-area">-->
+<!--                        <p class="title">Виконавці</p>-->
+<!--                        <p class="star">*</p>-->
+<!--                    </div>-->
+<!--                    <div class="add">-->
+<!--                        <i class='bx bx-plus-circle icon'></i>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash;                    <input type="text" placeholder="Введіть виконавця">&ndash;&gt;-->
+<!--                {{ form.assignees }}-->
+<!--                {% if form.assignees.errors %}-->
+<!--                <span>{{ form.assignees.errors }}</span>-->
+<!--                {% endif %}-->
+<!--            </div>-->
+<!--            &lt;!&ndash;                <button class="make-task">Створити</button>&ndash;&gt;-->
+<!--            <button type="submit" class="make-task">Створити</button>-->
+
+
+<!--            &lt;!&ndash;        </div>&ndash;&gt;-->
+<!--        </form>-->
+<!--    </div>-->
     <!-- POPUP -->
     <!-- MAIN -->
     <main>
@@ -127,9 +127,9 @@
                     <input type="text" placeholder="Пошук...">
                 </div>
             </form>
-            <div class="plus-task">
+            <a href="{% url 'tasks:create_task' %}" class="plus-task">
                 <i class='bx bx-plus-circle icon create-task-btn'></i>
-            </div>
+            </a>
         </div>
 
         <div class="important-tasks active">
