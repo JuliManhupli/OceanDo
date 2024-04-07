@@ -49,9 +49,12 @@ OceanDo
             <span class="badge">5</span>
         </a>
         <div class="profile">
-            <a href="{% url 'users:profile' %}" class="link-to-profile"><img class="logo-img"
-                                                                             src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}"
-                                                                             alt="!">
+            <a href="{% url 'users:profile' %}" class="link-to-profile">
+                {% if user.photo_url %}
+                <img id="logo-img" class="profile-picture" src="{{ user.photo_url }}" alt="Avatar">
+                {% else %}
+                <img class="logo-img" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
+                {% endif %}
             </a>
         </div>
     </nav>

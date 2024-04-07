@@ -17,7 +17,12 @@
 <!-- MAIN -->
 <main>
     <div class="profile-container">
-        <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">
+<!--        <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">-->
+        {% if user.photo_url %}
+        <img class="profile-picture" src="{{ user.photo_url }}" alt="Avatar">
+        {% else %}
+        <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
+        {% endif %}
         <h1 class="title profile-name">{{ request.user.username }}</h1>
         <h2 class="sub-text">{{ request.user.email }}</h2>
         <div class="profile-menu">
