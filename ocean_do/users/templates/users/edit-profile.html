@@ -17,23 +17,42 @@
 <!-- MAIN -->
 <main>
     <div class="profile-container">
-        <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">
+        <!--        <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">-->
+        {% if user.photo_url %}
+        <img class="profile-picture" src="{{ user.photo_url }}" alt="Avatar">
+        {% else %}
+        <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
+        {% endif %}
         <div class="edit-form">
-                    <form action="" class="edit-profile">
-                        <div class="form-area photo-area">
-                            <p class="data-name edit-title">Фото профілю</p>
-                            <label for="file-upload" class="custom-file-upload">Завантажити</label>
-                            <input id="file-upload" type="file" onchange="displayFileName()" />
-                            <span id="file-name"></span>
-                        </div>
-                        <div class="form-area name-area">
-                            <p class="data-name edit-title">Ім'я користувача</p>
-                            <input class="data-input" type="text" placeholder="Введіть ім'я користувача"
-                                value="Ім'я Користувача">
-                        </div>
-                        <a class="account-button edit-profile-btn" href="#">Змінити</a>
-                    </form>
+            <form action="" class="edit-profile" method="post" enctype="multipart/form-data"
+                  onsubmit="return checkFile(this)">
+                {% csrf_token %}
+                <div class="form-area photo-area">
+                    <p class="data-name edit-title">Фото профілю</p>
+                    <label for="file-upload" class="custom-file-upload">Завантажити</label>
+
+                    <input id="file-upload" type="file" name="file" style="display: none"
+                           onchange="displayFileName(this)"/>
+
+                    <span id="file-name"></span>
                 </div>
+                <div class="form-area name-area">
+                    <p class="data-name edit-title">Ім'я користувача</p>
+                    {{ form.username }}
+<!--                    <input class="data-input" type="text" placeholder="Введіть ім'я користувача"-->
+<!--                           value="Ім'я Користувача">-->
+                </div>
+                {% if form.errors and form.non_field_errors %}
+                <p>{{form.non_field_errors}}</p>
+                {% endif %}
+                {% if messages %}
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+                {% endif %}
+                <button class="account-button edit-profile-btn" type="submit">Змінити</button>
+            </form>
+        </div>
     </div>
 
     </div>
