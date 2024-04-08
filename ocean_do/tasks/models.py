@@ -13,7 +13,7 @@ class Tag(models.Model):
 class Task(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_tasks')
     title = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     tags = models.ManyToManyField(Tag)
     deadline = models.DateField()
     is_completed = models.BooleanField(default=False)
@@ -21,3 +21,5 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
+
+

@@ -13,25 +13,7 @@ def all_tasks(request):
     user = request.user
     assigned_tasks = Task.objects.filter(assignees=user, is_completed=False)
     created_tasks = Task.objects.filter(creator=user, is_completed=False)
-
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-
-        if form.is_valid():
-            creator = request.user
-            form.instance.creator = creator
-            tags = request.POST.getlist('tags')
-            task = form.save()
-            for tag_name in tags:
-                tag_name = tag_name.strip().title()
-                if tag_name:
-                    tag, _ = Tag.objects.get_or_create(name=tag_name)
-                    task.tags.add(tag)
-            return redirect('tasks:all_tasks')
-    else:
-        form = TaskForm()
-    return render(request, "tasks/tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks,
-                                                'form': form})
+    return render(request, "tasks/tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
 def delete_task(request, task_id):
@@ -58,4 +40,21 @@ def update_task_status(request, task_id):
 
 
 def create_task(request):
-    return render(request, "tasks/create-task.html")
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+
+        if form.is_valid():
+            creator = request.user
+            form.instance.creator = creator
+            tags = request.POST.getlist('tags')
+            task = form.save()
+            for tag_name in tags:
+                tag_name = tag_name.strip().title()
+                if tag_name:
+                    tag, _ = Tag.objects.get_or_create(name=tag_name)
+                    task.tags.add(tag)
+            return redirect('tasks:all_tasks')
+    else:
+        form = TaskForm()
+    return render(request, "tasks/create-task.html", {'form': form})
