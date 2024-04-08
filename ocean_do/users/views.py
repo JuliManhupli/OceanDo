@@ -23,7 +23,7 @@ def edit_profile_view(request):
             if avatar_file:
                 avatar_url = upload_avatar_to_s3(user_email, avatar_file)
                 if avatar_url:
-                    user.photo_url = avatar_url
+                    user.photo = avatar_url
 
             if username:
                 user.username = username

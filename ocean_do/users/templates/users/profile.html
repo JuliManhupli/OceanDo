@@ -18,8 +18,8 @@
 <main>
     <div class="profile-container">
 <!--        <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">-->
-        {% if user.photo_url %}
-        <img class="profile-picture" src="{{ user.photo_url }}" alt="Avatar">
+        {% if user.photo %}
+        <img class="profile-picture" src="{{ user.photo.url }}" alt="Avatar">
         {% else %}
         <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
         {% endif %}
