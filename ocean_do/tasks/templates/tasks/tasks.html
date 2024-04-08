@@ -171,6 +171,11 @@
                     <p class="limit-block-title">Термін виконання:</p>
                     <p class="time-limit">{{ task.deadline }}</p>
                 </div>
+                <ul>
+                    {% for file in task.files.all %}
+                    <li>{{ file.title }} - <a href="{{ file.file }}">Завантажити</a></li>
+                    {% endfor %}
+                </ul>
                 <div class="participants">
                     <i class='bx bxs-user icon'></i>
                     <p class="user-number">{{ task.assignees.count }}</p>
@@ -185,7 +190,7 @@
                 <div class="head">
                     <div>
                         <div class="status">
-                                <p class="category">Виконання</p>
+                                <p class="category">Моніторинг</p>
                             <i class='bx bxs-circle icon task-status'></i>
                         </div>
                         <div class="folder">
@@ -218,6 +223,11 @@
                     <p class="limit-block-title">Термін виконання:</p>
                     <p class="time-limit">{{ task.deadline }}</p>
                 </div>
+                <ul>
+                    {% for file in task.files.all %}
+                    <li>{{ file.title }} - <a href="{{ file.file.url }}" onclick="window.open(this.href, '_blank'); return false;">Перегляд</a></li>
+                    {% endfor %}
+                </ul>
                 <div class="participants">
                     <i class='bx bxs-user icon'></i>
                     <p class="user-number">{{ task.assignees.count }}</p>
