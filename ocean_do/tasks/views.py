@@ -5,11 +5,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from .form import TaskForm
-from .models import Tag, Task
+from .models import Tag, Task, File
+from ocean_do.aws import upload_file_to_s3
 
 
 @login_required
 def all_tasks(request):
+
     user = request.user
     assigned_tasks = Task.objects.filter(assignees=user, is_completed=False)
     created_tasks = Task.objects.filter(creator=user, is_completed=False)
@@ -54,7 +56,15 @@ def create_task(request):
                 if tag_name:
                     tag, _ = Tag.objects.get_or_create(name=tag_name)
                     task.tags.add(tag)
+
+            print(request.FILES.getlist('files'))
+            for file in request.FILES.getlist('files'):
+                upload_file_to_s3(file, task.id)
+                print(file)
             return redirect('tasks:all_tasks')
     else:
         form = TaskForm()
     return render(request, "tasks/create-task.html", {'form': form})
+
+
+

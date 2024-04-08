@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     codeInputs[0].focus();
 });
 
-
 /* SIDEBAR */
 document.addEventListener('DOMContentLoaded', function () {
     const allMenuItems = document.querySelector('#sidebar .side-menu .upper-menu');
@@ -311,9 +310,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // FILE NAME SHOW
-function displayFileName() {
-    var fileInput = document.getElementById('file-upload');
-    var fileName = document.getElementById('file-name');
+function displayFileName(inputId, spanId) {
+    var fileInput = document.getElementById(inputId);
+    var fileName = document.getElementById(spanId);
 
     if (fileInput.files.length > 0) {
         fileName.textContent = fileInput.files[0].name;
@@ -322,5 +321,19 @@ function displayFileName() {
     }
 }
 
-
-
+// ADD NEW FILES
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("1")
+    var counter = 0; // Змінна для зберігання лічильника
+    document.getElementById('add-file-input').addEventListener('click', function() {
+        var container = document.getElementById('file-inputs');
+        var newInput = document.createElement('div');
+        var inputId = 'file-upload-' + counter; // Генерація унікального id для input
+        var spanId = 'file-name-' + counter; // Генерація унікального id для span
+        newInput.innerHTML = '<br><br><label for="' + inputId + '" class="custom-file-upload">Завантажити</label> \
+                              <input id="' + inputId + '" type="file" name="files" onchange="displayFileName(\'' + inputId + '\', \'' + spanId + '\')"/> \
+                              <span id="' + spanId + '"></span><br><br>';
+        container.appendChild(newInput);
+        counter++; // Збільшення лічильника для наступної ітерації
+    });
+});
