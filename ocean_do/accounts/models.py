@@ -8,7 +8,7 @@ from .manager import UserManager
 class User(AbstractBaseUser):
     email = models.EmailField(max_length=100, unique=True)
     username = models.CharField(max_length=100, unique=False)
-    photo_url = models.URLField(blank=True, null=True)
+    photo = models.FileField(upload_to='avatars/', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
