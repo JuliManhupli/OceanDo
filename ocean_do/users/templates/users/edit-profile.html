@@ -35,6 +35,9 @@
                            onchange="displayFileName(this)"/>
 
                     <span id="file-name"></span>
+                    {% if form.file.errors %}
+                    <p class="error">{{ form.file.errors }}</p>
+                    {% endif %}
                 </div>
                 <div class="form-area name-area">
                     <p class="data-name edit-title">Ім'я користувача</p>

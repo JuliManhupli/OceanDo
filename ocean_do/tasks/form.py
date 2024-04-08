@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django import forms
 
 from .models import Task, Tag
@@ -14,6 +15,12 @@ class TaskForm(forms.ModelForm):
             'deadline': forms.DateInput(attrs={'type': 'date'}),
             'assignees': forms.SelectMultiple(attrs={'class': 'assignees-input'})
         }
+
+    def clean_deadline(self):
+        deadline = self.cleaned_data.get('deadline')
+        if deadline and deadline < timezone.now().date():
+            raise forms.ValidationError("Дедлайн не може бути раніше сьогоднішньої дати.")
+        return deadline
 
     def clean(self):
         cleaned_data = super().clean()

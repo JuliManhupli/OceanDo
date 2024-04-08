@@ -12,4 +12,9 @@ class UserUpdateForm(Form):
             max_size = 2 * 1024 * 1024
             if file.size > max_size:
                 raise ValidationError('Розмір файлу не повинен перевищувати 2 МБ.')
+
+            allowed_extensions = ['jpg', 'jpeg', 'png']
+            file_extension = file.name.split('.')[-1].lower()
+            if file_extension not in allowed_extensions:
+                raise ValidationError('Файл повинен бути зображенням у форматі JPG, JPEG або PNG.')
         return file
