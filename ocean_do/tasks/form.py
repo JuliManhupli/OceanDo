@@ -1,8 +1,7 @@
 from django.utils import timezone
 from django import forms
 
-from .models import Task, Tag
-from accounts.models import User
+from .models import Task
 
 
 class TaskForm(forms.ModelForm):
@@ -13,7 +12,6 @@ class TaskForm(forms.ModelForm):
         fields = ['title', 'description', 'deadline', 'assignees', 'tags']
         widgets = {
             'deadline': forms.DateInput(attrs={'type': 'date'}),
-            'assignees': forms.SelectMultiple(attrs={'class': 'assignees-input'})
         }
 
     def clean_deadline(self):

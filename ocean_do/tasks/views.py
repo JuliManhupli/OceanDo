@@ -50,20 +50,24 @@ def update_task_status(request, task_id):
 
 
 def create_task(request):
-
     if request.method == 'POST':
         form = TaskForm(request.POST)
 
         if form.is_valid():
             creator = request.user
-            form.instance.creator = creator
-            tags = request.POST.getlist('tags')
-            task = form.save()
-            for tag_name in tags:
-                tag_name = tag_name.strip().title()
-                if tag_name:
-                    tag, _ = Tag.objects.get_or_create(name=tag_name)
-                    task.tags.add(tag)
+            tags = request.POST.getlist('tags')  # Отримання списку тегів
+            print(tags)
+            task = form.save(commit=False)
+            task.creator = creator
+            task.save()  # Збереження завдання без тегів
+
+            # Додавання тегів до завдання
+            if tags:
+                for tag_name in tags:
+                    tag_name = tag_name.strip()
+                    if tag_name:
+                        tag, _ = Tag.objects.get_or_create(name=tag_name)
+                        task.tags.add(tag)
 
             for file in request.FILES.getlist('files'):
                 upload_file_to_s3(file, task.id)
@@ -71,6 +75,3 @@ def create_task(request):
     else:
         form = TaskForm()
     return render(request, "tasks/create-task.html", {'form': form})
-
-
-

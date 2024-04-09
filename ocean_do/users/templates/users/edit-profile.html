@@ -30,23 +30,23 @@
                 <div class="form-area photo-area">
                     <p class="data-name edit-title">Фото профілю</p>
                     <label for="file-upload" class="custom-file-upload">Завантажити</label>
-
                     <input id="file-upload" type="file" name="file" style="display: none"
                            onchange="displayFileName('file-upload', 'file-name')"/>
-
                     <span id="file-name"></span>
                     {% if form.file.errors %}
                     <p class="error">{{ form.file.errors }}</p>
                     {% endif %}
                 </div>
+                {% if user.photo %}
+                <button class="delete-avatar-btn" onclick="deleteAvatar()">Видалити фото профілю</button>
+
+                {% endif %}
                 <div class="form-area name-area">
                     <p class="data-name edit-title">Ім'я користувача</p>
                     {{ form.username }}
-<!--                    <input class="data-input" type="text" placeholder="Введіть ім'я користувача"-->
-<!--                           value="Ім'я Користувача">-->
                 </div>
                 {% if form.errors and form.non_field_errors %}
-                <p>{{form.non_field_errors}}</p>
+                <p>{{ form.non_field_errors }}</p>
                 {% endif %}
                 {% if messages %}
                 {% for message in messages %}
@@ -55,6 +55,7 @@
                 {% endif %}
                 <button class="account-button edit-profile-btn" type="submit">Змінити</button>
             </form>
+
         </div>
     </div>
 
