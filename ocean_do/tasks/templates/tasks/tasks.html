@@ -149,12 +149,14 @@
                     <div class="task-settings">
                         <i class='bx bx-dots-horizontal-rounded icon'></i>
                         <ul class="task-settings-box">
+                            {% if task.creator == request.user %}
                             <a href="#" class="edit-task-btn">
                                 <li>Змінити</li>
                             </a>
                             <a href="#" class="delete-link" data-id="{{ task.id }}">
                                 <li>Видалити</li>
                             </a>
+                            {% endif %}
                             <a href="#" class="task-status-btn">
                                 <li class="task-status-change">Позначити, як виконане</li>
                             </a>
