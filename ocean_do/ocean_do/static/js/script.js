@@ -264,28 +264,33 @@ document.addEventListener('DOMContentLoaded', function () {
 // CREATE TASK TAGS
 document.addEventListener('DOMContentLoaded', function() {
     const addButton = document.getElementById('add-tag-input');
-    const minusButton = document.getElementById('minus-tag-input');
     const tagInputs = document.getElementById('tag-inputs');
     let tagCount = 1;
 
     addButton.addEventListener('click', function () {
         tagCount++;
+
+        const tagWrapper = document.createElement('div');
+        tagWrapper.classList.add('tag-wrapper');
+
         const newTagInput = document.createElement('input');
         newTagInput.type = 'text';
         newTagInput.name = 'tags';
         newTagInput.placeholder = "Введіть тег";
-        tagInputs.appendChild(newTagInput);
 
         const minusIcon = document.createElement('i');
         minusIcon.classList.add('bx', 'bx-minus-circle', 'icon', 'remove-tag');
+
         const minusButton = document.createElement('div');
         minusButton.classList.add('add', 'minus-tag-input');
+
+        tagWrapper.appendChild(newTagInput);
         minusButton.appendChild(minusIcon);
-        tagInputs.appendChild(minusButton);
+        tagWrapper.appendChild(minusButton);
+        tagInputs.appendChild(tagWrapper);
 
         minusButton.addEventListener('click', function () {
-            tagInputs.removeChild(newTagInput);
-            tagInputs.removeChild(minusButton);
+            tagInputs.removeChild(tagWrapper);
             tagCount--;
         });
     });
@@ -343,27 +348,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Функція для додавання нового поля для завантаження файлу
     function addFileInput() {
+        var fileWrapper = document.createElement('div');
+        fileWrapper.classList.add('file-wrapper');
+
         var container = document.getElementById('file-inputs');
         var newInput = document.createElement('div');
         var inputId = 'file-upload-' + counter;
         var spanId = 'file-name-' + counter;
-        newInput.innerHTML = '<br><br><label for="' + inputId + '" class="custom-file-upload">Завантажити</label> \
+
+        newInput.innerHTML = '<label for="' + inputId + '" class="custom-file-upload">Завантажити</label> \
                               <input id="' + inputId + '" type="file" name="files" onchange="displayFileName(\'' + inputId + '\', \'' + spanId + '\')"/> \
-                              <span id="' + spanId + '"></span><br><br>';
-        container.appendChild(newInput);
-        counter++;
+                              <span id="' + spanId + '"></span>';
 
         // Додавання кнопки для видалення поля для завантаження файлу
         var minusIcon = document.createElement('i');
         minusIcon.classList.add('bx', 'bx-minus-circle', 'icon', 'remove-file');
         var minusButton = document.createElement('div');
         minusButton.classList.add('add', 'minus-file-input');
+
+        fileWrapper.appendChild(newInput);
         minusButton.appendChild(minusIcon);
-        container.appendChild(minusButton);
+        fileWrapper.appendChild(minusButton);
+        container.appendChild(fileWrapper);
+        counter++;
 
         minusButton.addEventListener('click', function () {
-            container.removeChild(newInput); // Видалення поля для завантаження файлу
-            container.removeChild(minusButton); // Видалення кнопки мінус
+            container.removeChild(fileWrapper);
             counter--;
         });
     }

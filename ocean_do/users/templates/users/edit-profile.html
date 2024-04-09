@@ -23,6 +23,7 @@
         {% else %}
         <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
         {% endif %}
+        <h1 class="title profile-name">{{ request.user.username }}</h1>
         <div class="edit-form">
             <form action="" class="edit-profile" method="post" enctype="multipart/form-data"
                   onsubmit="return checkFile(this)">
