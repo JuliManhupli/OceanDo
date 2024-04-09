@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const newTagInput = document.createElement('input');
         newTagInput.type = 'text';
         newTagInput.name = 'tags';
-        newTagInput.placeholder = `Введіть тег`;
+        newTagInput.placeholder = "Введіть тег";
         tagInputs.appendChild(newTagInput);
 
         const minusIcon = document.createElement('i');
@@ -290,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-
 
 // DELETE TASK
 document.addEventListener('DOMContentLoaded', function () {
@@ -371,3 +370,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('add-file-input').addEventListener('click', addFileInput);
 });
+
+
+function deleteAvatar() {
+    const confirmation = confirm('Ви впевнені, що хочете видалити фото профілю?');
+    if (confirmation) {
+        axios.delete("/users/delete-avatar/")
+            .then(response => {
+                console.log(response);
+                if (response.status === 204) {
+                    window.location.reload();
+                    alert("Фото профілю було успішно видалено.");
+
+                }
+            })
+            .catch(error => {
+                console.error("Помилка при видаленні фото профілю:", error);
+                alert("Сталася помилка під час видалення фото профілю. Будь ласка, спробуйте ще раз.");
+            });
+    }
+}
