@@ -1,11 +1,12 @@
 import json
 
+from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from .form import TaskForm
-from .models import Tag, Task, File
+from .models import Tag, Task
 from ocean_do.aws import upload_file_to_s3
 
 
@@ -14,14 +15,21 @@ def all_tasks(request):
 
     user = request.user
     assigned_tasks = Task.objects.filter(assignees=user, is_completed=False)
-    created_tasks = Task.objects.filter(creator=user, is_completed=False)
+    created_tasks = Task.objects.filter(creator=user, is_completed=False).annotate(assignees_count=Count('assignees'))
+
+    solo_assignee_tasks = created_tasks.filter(assignees=user, assignees_count=1)
+    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
+
     return render(request, "tasks/tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    task.delete()
-    return JsonResponse({'message': 'Task deleted successfully'}, status=204)
+    if task.creator == request.user:
+        task.delete()
+        return JsonResponse({'message': 'Завдання успішно видалено'}, status=204)
+    else:
+        return JsonResponse({'error': 'Ви не маєте права видаляти це завдання'}, status=403)
 
 
 def update_task_status(request, task_id):
@@ -57,10 +65,8 @@ def create_task(request):
                     tag, _ = Tag.objects.get_or_create(name=tag_name)
                     task.tags.add(tag)
 
-            print(request.FILES.getlist('files'))
             for file in request.FILES.getlist('files'):
                 upload_file_to_s3(file, task.id)
-                print(file)
             return redirect('tasks:all_tasks')
     else:
         form = TaskForm()
