@@ -1206,13 +1206,30 @@ main .task-popup .form .form-element textarea {
     height: 120px;
 }
 
-main .task-popup .form .form-element .custom-file-upload {
+main .task-popup .form .form-element #file-inputs{
+    /*background-color: #5E967C;*/
+}
+
+main .task-popup .form .form-element #file-inputs .file-wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    /*height: 100px;*/
+}
+
+main .task-popup .form .form-element #file-inputs .file-wrapper .custom-file-upload {
+    display: block;
     background: var(--yellow);
     padding: 15px;
     cursor: pointer;
     border-radius: 10px;
     width: 150px;
     text-align: center;
+}
+main .task-popup .form .form-element #file-inputs .file-wrapper span{
+
+    margin-top: 5px;
 }
 
 main .task-popup .form .form-element .existing-folder,
@@ -1239,9 +1256,19 @@ main .task-popup .form .form-element .add .icon {
     cursor: pointer;
 }
 
+main .task-popup .form .form-element #tag-inputs #first-tag{
+    margin-bottom: 5px;
+}
+
+main .task-popup .form .form-element #tag-inputs .tag-wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
 main .task-popup .form .form-element .new-folder {
     display: none;
-    /* display: flex; */
     align-items: center;
 }
 
