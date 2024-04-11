@@ -92,10 +92,21 @@
                         <i class='bx bx-plus-circle icon'></i>
                     </div>
                 </div>
-                {{ form.assignees }}
-                {% if form.assignees.errors %}
-                <span>{{ form.assignees.errors }}</span>
-                {% endif %}
+                <div class="users-search">
+                    <div class="form-group">
+                        <i class='bx bx-search icon'></i>
+                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
+                        <input type="hidden" id="chosen-user-block">
+                    </div>
+<!--                    <div class="chosen-user">-->
+<!--                        <p id="chosen-user-email"></p>-->
+<!--                        <i id="minus-user" class='bx icon'></i>-->
+<!--                    </div>-->
+                </div>
+<!--                {{ form.assignees }}-->
+<!--                {% if form.assignees.errors %}-->
+<!--                <span>{{ form.assignees.errors }}</span>-->
+<!--                {% endif %}-->
             </div>
             <button type="submit" class="make-task">Створити</button>
         </form>
