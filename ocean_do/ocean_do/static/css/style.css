@@ -1142,7 +1142,7 @@ main .profile-container .edit-form .edit-profile .edit-profile-btn{
 }
 
 
-/* ----------------------------------CREATE PAGE---------------------------------- */
+/* ----------------------------------CREATE TASK PAGE---------------------------------- */
 
 main .task-popup {
     display: flex;
@@ -1279,6 +1279,58 @@ main .task-popup .form .form-element .new-folder .folder-icon {
 
 main .task-popup .form .form-element .new-folder input {
     width: 100%;
+}
+
+main .task-popup .form .form-element .users-search .form-group {
+    position: relative;
+}
+
+main .task-popup .form .form-element .users-search .form-group input {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px 10px 10px 40px;
+    transition: all .3s ease;
+    border: 1px solid black;
+    outline: none;
+}
+
+main .task-popup .form .form-element .users-search .form-group .icon {
+    color: var(--dark-grey);
+    position: absolute;
+    font-size: 24px;
+    top: 55%;
+    left: 10px;
+    transform: translateY(-50%);
+}
+
+main .task-popup .form .form-element .users-search .chosen-user{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+main .task-popup .form .form-element .users-search .chosen-user .chosen-user-info{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+main .task-popup .form .form-element .users-search .chosen-user .chosen-user-info .chosen-user-name{
+    font-weight: 500;
+}
+
+main .task-popup .form .form-element .users-search .chosen-user .chosen-user-info .chosen-user-email{
+    padding: 5px;
+    background: var(--light-grey);
+}
+
+main .task-popup .form .form-element .users-search .chosen-user .icon{
+    font-size: 22.5px;
+    padding: 3.5px;
+    background: var(--yellow);
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 main .task-popup .form .make-task {
