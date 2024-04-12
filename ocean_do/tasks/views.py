@@ -1,12 +1,12 @@
 import json
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from .form import TaskForm
-from .models import Tag, Task
+from .models import Tag, Task, User
 from ocean_do.aws import upload_file_to_s3
 
 
@@ -75,3 +75,14 @@ def create_task(request):
     else:
         form = TaskForm()
     return render(request, "tasks/create-task.html", {'form': form})
+
+
+def get_users(request):
+    if 'term' in request.GET:
+        term = request.GET.get('term')
+        users = User.objects.filter(
+            Q(email__istartswith=term) | Q(username__istartswith=term)
+        )
+        users_data = list(users.values('email', 'username'))
+        return JsonResponse(users_data, safe=False)
+    return render(request, "tasks/create-task.html")
