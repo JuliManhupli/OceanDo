@@ -114,4 +114,53 @@
 
 </main>
 <!-- MAIN -->
+
+<script>
+    // SEARCH USERS AUTO-COMPLETE
+    $( function() {
+        var selectedItems = [];
+        $( "#users-search-bar" ).autocomplete({
+            source: "{% url 'tasks:get_users' %}",
+            minLength: 3,
+            focus: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                $("#chosen-user-block").val(ui.item.email);
+
+                if (selectedItems.indexOf(ui.item.email) === -1) {
+                    var newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+
+                    var newUserInfo = $("<div class='chosen-user-info'>");
+                    newUserInfo.append("<p class='chosen-user-name'>" + ui.item.username + "</p>");
+                    newUserInfo.append("<p class='chosen-user-email'>" + ui.item.email + "</p>");
+
+                    newChosenUser.append(newUserInfo);
+                    newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+
+                    selectedItems.push(ui.item.email);
+                }
+                return false;
+            }
+        })
+        .autocomplete( "instance" )._renderItem = function( ul, item ) {
+          return $( "<li>" )
+            .append( "<div class='autosearch-name'>" + item.username + "</div>"
+                + "<div class='autosearch-email'>" + item.email + "</div>" )
+            .appendTo( ul );
+        };
+
+        //delete user
+        $(".users-search").on("click", ".delete-item", function() {
+            const itemValue = $(this).prev(".chosen-user-info").find(".chosen-user-email").text();
+            const index = selectedItems.indexOf(itemValue);
+            if (index !== -1) {
+                selectedItems.splice(index, 1);
+            }
+            $(this).parent(".chosen-user").remove();
+        });
+    });
+</script>
 {% endblock %}
