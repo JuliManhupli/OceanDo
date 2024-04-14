@@ -9,7 +9,7 @@ class TaskForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ['title', 'description', 'deadline', 'assignees', 'tags']
+        fields = ['title', 'description', 'deadline', 'tags']
         widgets = {
             'deadline': forms.DateInput(attrs={'type': 'date'}),
         }
@@ -24,12 +24,9 @@ class TaskForm(forms.ModelForm):
         cleaned_data = super().clean()
         title = cleaned_data.get('title')
         deadline = cleaned_data.get('deadline')
-        assignees = cleaned_data.get('assignees')
 
         # Перевірка обов'язкових полів
         if not title:
             self.add_error('title', 'Це поле є обов\'язковим.')
         if not deadline:
             self.add_error('deadline', 'Це поле є обов\'язковим.')
-        if not assignees:
-            self.add_error('assignees', 'Це поле є обов\'язковим.')

@@ -1,25 +1,23 @@
 import json
 
+from accounts.models import User
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from ocean_do.aws import upload_file_to_s3
 
 from .form import TaskForm
-from .models import Tag, Task, User
-from ocean_do.aws import upload_file_to_s3
+from .models import Tag, Task, TaskAssignment
 
 
 @login_required
 def all_tasks(request):
-
     user = request.user
-    assigned_tasks = Task.objects.filter(assignees=user, is_completed=False)
-    created_tasks = Task.objects.filter(creator=user, is_completed=False).annotate(assignees_count=Count('assignees'))
-
-    solo_assignee_tasks = created_tasks.filter(assignees=user, assignees_count=1)
+    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
+    created_tasks = Task.objects.filter(creator=user, is_completed=False)
+    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
-
     return render(request, "tasks/tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
@@ -68,6 +66,16 @@ def create_task(request):
                     if tag_name:
                         tag, _ = Tag.objects.get_or_create(name=tag_name)
                         task.tags.add(tag)
+
+            # Збереження виконавців у TaskAssignment
+            assignees = request.POST.getlist('assignees')[0].split(',')
+            for assignee_email in assignees:
+                task_assignment = TaskAssignment.objects.create(
+                    user=User.objects.get(email=assignee_email),
+                    is_completed=False,
+                    completion_time=None,
+                )
+                task.assignees.add(task_assignment)
 
             for file in request.FILES.getlist('files'):
                 upload_file_to_s3(file, task.id)

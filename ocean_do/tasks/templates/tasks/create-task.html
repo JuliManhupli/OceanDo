@@ -88,25 +88,17 @@
                         <p class="title">Виконавці</p>
                         <p class="star">*</p>
                     </div>
-                    <div class="add">
-                        <i class='bx bx-plus-circle icon'></i>
-                    </div>
                 </div>
                 <div class="users-search">
                     <div class="form-group">
                         <i class='bx bx-search icon'></i>
-                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
-                        <input type="hidden" id="chosen-user-block">
+                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців..." required>
+                        <input type="hidden" name="assignees" id="chosen-user-block">
                     </div>
-<!--                    <div class="chosen-user">-->
-<!--                        <p id="chosen-user-email"></p>-->
-<!--                        <i id="minus-user" class='bx icon'></i>-->
-<!--                    </div>-->
+                    {% if form.assignees.errors %}
+                    <span>{{ form.assignees.errors }}</span>
+                    {% endif %}
                 </div>
-<!--                {{ form.assignees }}-->
-<!--                {% if form.assignees.errors %}-->
-<!--                <span>{{ form.assignees.errors }}</span>-->
-<!--                {% endif %}-->
             </div>
             <button type="submit" class="make-task">Створити</button>
         </form>
@@ -128,20 +120,17 @@
             },
             select: function (event, ui) {
                 $("#users-search-bar").val(ui.item.username);
-                $("#chosen-user-block").val(ui.item.email);
+                selectedItems.push(ui.item.email);
+                var newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
 
-                if (selectedItems.indexOf(ui.item.email) === -1) {
-                    var newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+                var newUserInfo = $("<div class='chosen-user-info'>");
+                newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "</p>");
+                newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
 
-                    var newUserInfo = $("<div class='chosen-user-info'>");
-                    newUserInfo.append("<p class='chosen-user-name'>" + ui.item.username + "</p>");
-                    newUserInfo.append("<p class='chosen-user-email'>" + ui.item.email + "</p>");
+                newChosenUser.append(newUserInfo);
+                newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
 
-                    newChosenUser.append(newUserInfo);
-                    newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
-
-                    selectedItems.push(ui.item.email);
-                }
+                updateHiddenInput();
                 return false;
             }
         })
@@ -153,7 +142,7 @@
         };
 
         //delete user
-        $(".users-search").on("click", ".delete-item", function() {
+        $(".users-search").on("click", ".delete-item", function () {
             const itemValue = $(this).prev(".chosen-user-info").find(".chosen-user-email").text();
             const index = selectedItems.indexOf(itemValue);
             if (index !== -1) {
@@ -161,6 +150,10 @@
             }
             $(this).parent(".chosen-user").remove();
         });
+
+        function updateHiddenInput() {
+            $("#chosen-user-block").val(selectedItems.join(',')); // Concatenate emails with a delimiter
+        }
     });
 </script>
 {% endblock %}
