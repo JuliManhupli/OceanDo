@@ -134,7 +134,7 @@
 
         <div class="important-tasks active">
             {% for task in assigned_tasks  %}
-            <div class="task" data-task-id="{{ task.id }}">
+            <div class="task" data-task-id="{{ task.id }}" onclick='location.href="/tasks/task-info";'>
                 <div class="head">
                     <div>
                         <div class="status">
@@ -175,7 +175,7 @@
                 </div>
                 <ul>
                     {% for file in task.files.all %}
-                    <li>{{ file.title }} - <a href="{{ file.file }}">Завантажити</a></li>
+                    <li>{{ file.title }} - <a href="{{ file.file.url }}">Завантажити</a></li>
                     {% endfor %}
                 </ul>
                 <div class="participants">
@@ -188,7 +188,7 @@
 
         <div class="important-tasks">
                {% for task in created_tasks  %}
-            <div class="task"  data-task-id="{{ task.id }}">
+            <div class="task"  data-task-id="{{ task.id }}" onclick='location.href="/tasks/task-info";'>
                 <div class="head">
                     <div>
                         <div class="status">

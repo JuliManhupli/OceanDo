@@ -94,3 +94,7 @@ def get_users(request):
         users_data = list(users.values('email', 'username'))
         return JsonResponse(users_data, safe=False)
     return render(request, "tasks/create-task.html")
+
+
+def task_info(request):
+    return render(request, "tasks/task-info.html")
