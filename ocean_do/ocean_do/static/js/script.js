@@ -401,3 +401,28 @@ function deleteAvatar() {
             });
     }
 }
+
+
+// NOTIFICATION NUMBER
+document.addEventListener('DOMContentLoaded', function () {
+    let numberSpan = document.getElementById('notification-number');
+
+    document.body.addEventListener('htmx:wsAfterMessage', (e) => {
+        let numberOfNotifications = numberSpan.innerHTML;
+        console.log(numberOfNotifications)
+        if (!numberOfNotifications) {
+            numberSpan.innerHTML = 1;
+        } else {
+            numberSpan.innerHTML = parseInt(numberOfNotifications) + 1;
+        }
+    });
+
+    let clearBtn = document.getElementById('clear-btn');
+
+    clearBtn.addEventListener('click', (e) => {
+        let dropdown = document.getElementById('notification-dropdown');
+        let notifications = dropdown.querySelectorAll('div')
+        notifications.forEach(notification => notification.remove())
+        numberSpan.innerHTML = ''
+    });
+});

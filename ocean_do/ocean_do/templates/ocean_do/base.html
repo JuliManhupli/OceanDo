@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.11/dist/htmx.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/ws.js"></script>
+
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--    <link rel="stylesheet" href="{% static 'css/style.css' %}">-->
@@ -21,9 +24,12 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1">
 <!--    <link rel="stylesheet" href="{% static 'css/reset.css' %}?v=1">-->
 
+
 </head>
 <!--        <img class="logo-img" src="{% static 'img/logo/logo-removebg.png' %}" alt="No image">-->
+<div  class="home-body" hx-ext="ws" ws-connect="/ws/notifications/">
 {% block content %}
 
 {% endblock %}
+    </div>
 </html>
