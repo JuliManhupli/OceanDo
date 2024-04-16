@@ -134,9 +134,9 @@
 
         <div class="important-tasks active">
             {% for task in assigned_tasks  %}
-            <div class="task" data-task-id="{{ task.id }}" onclick='location.href="/tasks/task-info";'>
+            <div class="task" data-task-id="{{ task.id }}">
                 <div class="head">
-                    <div>
+                    <div onclick='location.href="/tasks/task-info";'>
                         <div class="status">
                                 <p class="category">Виконання</p>
                             <i class='bx bxs-circle icon task-status'></i>
@@ -163,24 +163,26 @@
                         </ul>
                     </div>
                 </div>
-                <h2 class="name">{{ task.title }}</h2>
-                <div class="tag-box">
-                    {% for tag in task.tags.all %}
-                    <p>{{ tag.name }}</p>
-                    {% endfor %}
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">{{ task.deadline }}</p>
-                </div>
-                <ul>
-                    {% for file in task.files.all %}
-                    <li>{{ file.title }} - <a href="{{ file.file.url }}">Завантажити</a></li>
-                    {% endfor %}
-                </ul>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">{{ task.assignees.count }}</p>
+                <div class="task-body" onclick='location.href="/tasks/task-info";'>
+                    <h2 class="name">{{ task.title }}</h2>
+                    <div class="tag-box">
+                        {% for tag in task.tags.all %}
+                        <p>{{ tag.name }}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">{{ task.deadline }}</p>
+                    </div>
+                    <ul>
+                        {% for file in task.files.all %}
+                        <li>{{ file.title }} - <a href="{{ file.file.url }}">Завантажити</a></li>
+                        {% endfor %}
+                    </ul>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">{{ task.assignees.count }}</p>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -188,9 +190,9 @@
 
         <div class="important-tasks">
                {% for task in created_tasks  %}
-            <div class="task"  data-task-id="{{ task.id }}" onclick='location.href="/tasks/task-info";'>
+            <div class="task" data-task-id="{{ task.id }}">
                 <div class="head">
-                    <div>
+                    <div onclick='location.href="/tasks/task-info";'>
                         <div class="status">
                                 <p class="category">Моніторинг</p>
                             <i class='bx bxs-circle icon task-status'></i>
@@ -215,24 +217,26 @@
                         </ul>
                     </div>
                 </div>
-                <h2 class="name">{{ task.title }}</h2>
-                <div class="tag-box">
-                    {% for tag in task.tags.all %}
-                    <p>{{ tag.name }}</p>
-                    {% endfor %}
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">{{ task.deadline }}</p>
-                </div>
-                <ul>
-                    {% for file in task.files.all %}
-                    <li>{{ file.title }} - <a href="{{ file.file.url }}" onclick="window.open(this.href, '_blank'); return false;">Перегляд</a></li>
-                    {% endfor %}
-                </ul>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">{{ task.assignees.count }}</p>
+                <div class="task-body" onclick='location.href="/tasks/task-info";'>
+                    <h2 class="name">{{ task.title }}</h2>
+                    <div class="tag-box">
+                        {% for tag in task.tags.all %}
+                        <p>{{ tag.name }}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="limit-block">
+                        <p class="limit-block-title">Термін виконання:</p>
+                        <p class="time-limit">{{ task.deadline }}</p>
+                    </div>
+                    <ul>
+                        {% for file in task.files.all %}
+                        <li>{{ file.title }} - <a href="{{ file.file.url }}" onclick="window.open(this.href, '_blank'); return false;">Перегляд</a></li>
+                        {% endfor %}
+                    </ul>
+                    <div class="participants">
+                        <i class='bx bxs-user icon'></i>
+                        <p class="user-number">{{ task.assignees.count }}</p>
+                    </div>
                 </div>
             </div>
             {% endfor %}

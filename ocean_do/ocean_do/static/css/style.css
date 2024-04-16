@@ -58,11 +58,13 @@ body {
 .login-page::before {
     left: 42%;
     background-color: var(--light-blue);
+    transition: all .3s ease;
 }
 
 .login-page::after {
     left: 48%;
     background-color: var(--dark-blue);
+    transition: all .3s ease;
 }
 
 .login__content{
@@ -70,14 +72,10 @@ body {
     flex-direction: row;
     justify-content: space-between;
     height: 100%;
+    transition: all .3s ease;
 }
 
-@media (max-width: 1981px) {
-    .login__form {
-    }
-}
-
-@media (max-width: 991.98px) {
+@media screen and (max-width: 991.98px) {
 
     .login-page::before {
         left: 8%;
@@ -101,6 +99,7 @@ body {
     flex-direction: column;
     width: 360px;
     margin-left: 30px;
+    transition: all .3s ease;
 }
 
 .register-data {
@@ -120,14 +119,16 @@ body {
 
 .logo-img {
     height: 100px;
+    transition: all .3s ease;
 }
 
 .logo-name {
     font-size: 48px;
     color: var(--dark-blue);
+    transition: all .3s ease;
 }
 
-@media (max-width: 991.98px) {
+@media screen and (max-width: 991.98px) {
     .login__logo {
         border-radius: 10px;
     }
@@ -137,7 +138,12 @@ body {
     }
 }
 
-@media (max-width: 575.98px) {
+.form-login {
+    width: 100%;
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 575.98px) {
 
     .login__logo {
         max-height: 80px;
@@ -146,10 +152,15 @@ body {
     .logo-name {
         font-size: 30px;
     }
-}
 
-.form-login {
-    width: 100%;
+    .data-form{
+        display: flex;
+        align-items: center;
+    }
+
+    .form-login {
+        width: 80%;
+    }
 }
 
 .form-area {
@@ -178,15 +189,22 @@ body {
     justify-content: space-between;
     width: 100%;
     color: #3453D8;
+    transition: all .3s ease;
 }
 
-@media (max-width: 991.98px) {
+@media screen and (max-width: 991.98px) {
     .form-login {
         color: white;
     }
 
     .other-options {
         color: white;
+    }
+}
+
+@media screen and (max-width: 575.98px) {
+    .other-options {
+        width: 80%;
     }
 }
 
@@ -228,9 +246,10 @@ body {
     justify-content: center;
     width: 500px;
     margin-right: 30px;
+    transition: all .3s ease;
 }
 
-@media (max-width: 991.98px) {
+@media screen and (max-width: 991.98px) {
     .info-form {
         display: none;
     }
@@ -500,12 +519,6 @@ nav .nav-link {
     position: relative;
 }
 
-@media screen and (max-width: 768px) {
-    nav .nav-link {
-        display: none;
-    }
-}
-
 nav .nav-link .icon {
     color: var(--dark-grey);
     font-size: 30px;
@@ -528,6 +541,9 @@ nav .nav-link .badge {
     border: 2px solid white;
 }
 
+/*nav .notification-block ul{*/
+/*    background: white;*/
+/*}*/
 
 nav .profile img {
     width: 36px;
@@ -548,15 +564,27 @@ main {
 main .title {
     font-size: 32px;
     font-weight: 600;
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 768px) {
+    main .title {
+        text-align: center;
+    }
 }
 
 main .important-tasks {
-    /*background: #5E967C;*/
     margin-top: 20px;
     display: none;
     grid-template-columns: repeat(auto-fit, minmax(240px, 285px));
     gap: 20px;
     transition: all .3s ease;
+}
+
+@media screen and (max-width: 768px) {
+    main .important-tasks {
+        justify-content: center;
+    }
 }
 
 main .important-tasks.active{
@@ -616,6 +644,8 @@ main .task .head .folder .icon {
 
 main .task .head .folder .folder-name {
     margin-left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 main .task .head .task-settings{
@@ -664,6 +694,8 @@ main .task .head .task-settings .task-settings-box a:hover{
 main .task .name {
     font-size: 20px;
     margin-top: 17px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 main .task .tag-box {
@@ -678,6 +710,8 @@ main .task .tag-box p {
     color: white;
     background: var(--light-blue);
     border-radius: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 main .task .limit-block{
@@ -1013,12 +1047,14 @@ main .profile-container .profile-picture{
 
 main .profile-container .profile-name{
     margin-top: 20px;
+    word-break: break-all;
 }
 
 main .profile-container .sub-text{
     color: var(--dark-grey);
     margin-top: 10px;
     font-size: 20px;
+    word-break: break-all;
 }
 
 main .profile-container .profile-menu{
@@ -1029,7 +1065,7 @@ main .profile-container .profile-menu{
     transition: all.3s ease;
 }
 
-@media (max-width: 1200px) {
+@media screen and (max-width: 1200px) {
 
     main .profile-container .profile-menu {
         gap: 20px;
@@ -1037,7 +1073,7 @@ main .profile-container .profile-menu{
 
 }
 
-@media (max-width: 991.98px) {
+@media screen and (max-width: 991.98px) {
 
     main .profile-container .profile-menu {
         flex-direction: column;
@@ -1088,7 +1124,7 @@ main .profile-container .edit-form .edit-profile{
     transition: all .3s ease;
 }
 
-@media (max-width: 575.98px) {
+@media screen and (max-width: 575.98px) {
     main .profile-container .edit-form {
         display: flex;
         justify-content: center;
@@ -1097,6 +1133,17 @@ main .profile-container .edit-form .edit-profile{
 
 main .profile-container .edit-form .edit-profile .photo-area{
     margin-top: 0;
+}
+
+main .profile-container .edit-form .edit-profile .delete-avatar-btn{
+    color: white;
+    background: var(--dark-grey);
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 18px;
 }
 
 main .profile-container .edit-form .edit-profile .name-area {
@@ -1136,7 +1183,7 @@ main .profile-container .edit-form .edit-profile .edit-profile-btn{
     padding: 15px 160px;
 }
 
-@media (max-width: 575.98px) {
+@media screen and (max-width: 575.98px) {
     main .profile-container .edit-form .edit-profile .edit-profile-btn {
         padding: 16px 60px;
     }
@@ -1156,18 +1203,19 @@ main .task-popup {
     box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-@media screen and (max-width: 991px) {
-    main .task-popup {
-        max-width: 522px;
-    }
-}
-
 main .task-popup .form {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
     width: 60%;
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 991px) {
+    main .task-popup .form {
+        width: 90%;
+    }
 }
 
 main .task-popup .form h2 {
@@ -1208,7 +1256,7 @@ main .task-popup .form .form-element textarea {
 }
 
 main .task-popup .form .form-element #file-inputs{
-    /*background-color: #5E967C;*/
+    width:100%;
 }
 
 main .task-popup .form .form-element #file-inputs .file-wrapper{
@@ -1216,7 +1264,6 @@ main .task-popup .form .form-element #file-inputs .file-wrapper{
     justify-content: space-between;
     align-items: center;
     padding: 5px 0;
-    /*height: 100px;*/
 }
 
 main .task-popup .form .form-element #file-inputs .file-wrapper .custom-file-upload {
@@ -1229,7 +1276,7 @@ main .task-popup .form .form-element #file-inputs .file-wrapper .custom-file-upl
     text-align: center;
 }
 main .task-popup .form .form-element #file-inputs .file-wrapper span{
-
+    word-break: break-all;
     margin-top: 5px;
 }
 
@@ -1259,6 +1306,7 @@ main .task-popup .form .form-element .add .icon {
 
 main .task-popup .form .form-element #tag-inputs #first-tag{
     margin-bottom: 5px;
+    width: 100%;
 }
 
 main .task-popup .form .form-element #tag-inputs .tag-wrapper{
@@ -1420,7 +1468,6 @@ main .task-info-page-container .task-info-container .vertical-block{
 main .task-info-page-container .task-info-container .vertical-block .file-list{
     display: flex;
     flex-direction: column;
-    align-items: centers;
     gap: 5px;
     width: 100%;
 }
