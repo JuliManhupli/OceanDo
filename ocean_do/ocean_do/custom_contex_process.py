@@ -1,7 +1,9 @@
-from accounts.models import Notification
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def notifications(request):
-    all_notifications = Notification.objects.all().order_by('-created_at')
-    print("Notifications:", all_notifications)
-    return {'notifications': all_notifications}
+    user = request.user
+    user_notifications = user.notifications_users.all().order_by('-created_at')
+    print("User's notifications:", user_notifications)
+    return {'notifications': user_notifications}
