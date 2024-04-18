@@ -1,6 +1,6 @@
 import json
 
-from accounts.models import User
+from accounts.models import User, Notification
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import JsonResponse
@@ -70,13 +70,23 @@ def create_task(request):
             # Збереження виконавців у TaskAssignment
             assignees = request.POST.getlist('assignees')[0].split(',')
             for assignee_email in assignees:
+                assignee = User.objects.get(email=assignee_email)
                 task_assignment = TaskAssignment.objects.create(
-                    user=User.objects.get(email=assignee_email),
+                    user=assignee,
                     is_completed=False,
                     completion_time=None,
                 )
                 task.assignees.add(task_assignment)
 
+                # Створення нотифікації для кожного виконавця
+                notification_message = f"Вам призначено завдання \"{task.title}\""
+                notification = Notification.objects.create(
+                    message=notification_message,
+                )
+                notification.users.set([assignee])
+                notification.save()
+
+            # Завантаження файлів
             for file in request.FILES.getlist('files'):
                 upload_file_to_s3(file, task.id)
             return redirect('tasks:all_tasks')
