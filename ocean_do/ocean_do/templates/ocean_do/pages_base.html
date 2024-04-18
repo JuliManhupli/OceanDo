@@ -55,6 +55,9 @@ OceanDo
                 aria-labelledby="dropdownMenuButton1" id="notification-dropdown">
                 <!-- Notifications go here -->
                 <hr class="h-0 my-2 border border-solid border-t-0 border-gray-700 opacity-25"/>
+                {% for i in notifications %}
+                <li>{{ i }}</li>
+                {% endfor %}
                 <li>
                     <a href="#" id="clear-btn"
                        class="dropdown-item text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-gray-700 hover:bg-gray-100">Clear

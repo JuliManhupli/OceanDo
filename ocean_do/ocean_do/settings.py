@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'tasks.apps.TasksConfig',
     'users.apps.UsersConfig',
-    "channels"
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -76,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ocean_do.custom_contex_process.notifications',
             ],
         },
     },
@@ -117,18 +118,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "uk-UA"
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
