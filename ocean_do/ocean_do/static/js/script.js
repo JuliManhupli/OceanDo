@@ -42,13 +42,13 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 /* SIDEBAR */
+// MENU
 document.addEventListener('DOMContentLoaded', function () {
-    const allMenuItems = document.querySelector('#sidebar .side-menu .upper-menu');
+    const allMenuItems = document.querySelector('#sidebar .side-menu .upper-menu li:not(:last-child)');
 
     if (allMenuItems) {
         allMenuItems.querySelectorAll('a').forEach(a => {
             a.addEventListener('click', function () {
-                // e.preventDefault();
 
                 if (!this.classList.contains('active')) {
                     allMenuItems.querySelectorAll('a').forEach(i => {
@@ -62,6 +62,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// DROPDOWN
+document.addEventListener('DOMContentLoaded', function() {
+    const allDropdown = document.querySelectorAll('#sidebar .side-dropdown'),
+        upperPartMenu = document.querySelector('.upper-menu');
+
+    allDropdown.forEach(item => {
+        const a = item.parentElement.querySelector('a:first-child');
+        a.addEventListener('click', function () {
+            if (!this.classList.contains('active')) {
+                    allDropdown.forEach(i => {
+                        const aLink = i.parentElement.querySelector('a:first-child');
+
+                        aLink.classList.remove('active');
+                        i.classList.remove('show');
+                    })
+                upperPartMenu.style.marginBottom = '200px';
+            } else {
+                upperPartMenu.style.marginBottom = '';
+            }
+            this.classList.toggle('active');
+            item.classList.toggle('show');
+        })
+    })
+});
 
 document.addEventListener('DOMContentLoaded', function() {
     const toggleSidebar = document.querySelector('nav .toggle-sidebar');
@@ -402,26 +426,72 @@ function deleteAvatar() {
     }
 }
 
-
+// NOTIFICATIONS
 const notificationSocket = new WebSocket("ws://" + window.location.host + "/ws/notifications/");
 
 notificationSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
     console.log(data);
     console.log("data" + data);
-    document.getElementById('notification-dropdown').innerHTML = `<li>${data.message}</li>` + document.getElementById('notification-dropdown').innerHTML;
+    document.getElementById('notification-dropdown').innerHTML = `<li>${data.message}</li>`
+        + document.getElementById('notification-dropdown').innerHTML;
 
-    // кількість нотифікацій
-    let numberSpan = document.getElementById('notification-number');
-    let numberOfNotifications = parseInt(numberSpan.innerHTML) || 0;
-    numberSpan.innerHTML = numberOfNotifications + 1;
+    // Update notification count in local storage
+    let numberOfNotifications = parseInt(localStorage.getItem('notificationCount')) || 0;
+    localStorage.setItem('notificationCount', numberOfNotifications + 1);
+    updateNotificationCount();
+
     console.log("numberOfNotifications: " + numberOfNotifications);
 };
 
-notificationSocket.onclose = function (e) {
+notificationSocket.onclose = function () {
     console.error('Chat socket closed unexpectedly');
-
 };
+
+// Function to update the notification count
+function updateNotificationCount() {
+    let numberSpan = document.getElementById('notification-number');
+    let numberOfNotifications = parseInt(localStorage.getItem('notificationCount')) || 0;
+    if (numberOfNotifications === 0) {
+        numberSpan.style.display = 'none';
+    } else {
+        numberSpan.style.display = 'flex';
+        numberSpan.innerHTML = numberOfNotifications;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateNotificationCount();
+
+    const notifBlock = document.querySelectorAll('.notification-block');
+    notifBlock.forEach(item => {
+        const bellIcon = item.querySelector('.icon');
+        const allNotifs = item.querySelector('.dropdown-menu');
+
+        bellIcon.addEventListener('click', function () {
+            allNotifs.classList.toggle('show');
+
+            // Clear notification count when bell icon is clicked
+            localStorage.setItem('notificationCount', 0);
+            updateNotificationCount();
+        })
+    })
+
+    window.addEventListener('click', function (e) {
+        notifBlock.forEach(item => {
+            const bellIcon = item.querySelector('.icon');
+            const allNotifs = item.querySelector('.dropdown-menu');
+
+            if (!bellIcon.contains(e.target) && !allNotifs.contains(e.target)) {
+                if (allNotifs.classList.contains('show')) {
+                    allNotifs.classList.remove('show');
+                }
+            }
+        })
+    });
+});
+
+
 
 
 // // Establish WebSocket connection
