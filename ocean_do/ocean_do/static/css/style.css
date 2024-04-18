@@ -425,7 +425,7 @@ body {
 }
 
 #sidebar .side-menu .upper-menu > li > a:hover,
-#sidebar .side-menu .lower-menu>li>a:hover {
+#sidebar .side-menu .lower-menu > li > a:hover {
     background: var(--light-grey);
 }
 
@@ -433,6 +433,47 @@ body {
 #sidebar .side-menu .upper-menu > li > a.active:hover{
     color: white;
     background: var(--light-blue);
+}
+
+#sidebar .side-dropdown{
+    /*background: var(--light-grey);*/
+    /*border: var(--light-grey) solid 5px;*/
+    border-radius: 10px;
+    max-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: all .3s ease;
+}
+
+#sidebar .icon-right{
+    margin-left: auto;
+    font-size: 24px;
+}
+
+#sidebar .side-dropdown.show {
+	max-height: 200px;
+    border: var(--light-blue) solid 5px;
+}
+
+#sidebar .side-dropdown li {
+    margin-bottom: 0;
+
+}
+
+#sidebar .side-dropdown a{
+    width: 100%;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-radius: 0;
+}
+
+#sidebar .side-dropdown a:hover{
+    background: var(--light-grey);
 }
 /* SIDE BAR */
 
@@ -515,16 +556,23 @@ nav .form-group .icon {
     transform: translateY(-50%);
 }
 
-nav .nav-link {
+nav .notification-block{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav .notification-block .nav-link {
     position: relative;
 }
 
-nav .nav-link .icon {
+nav .notification-block .nav-link .icon {
     color: var(--dark-grey);
     font-size: 30px;
 }
 
-nav .nav-link .badge {
+nav .notification-block .nav-link .badge {
     background: var(--red);
     position: absolute;
     display: flex;
@@ -539,6 +587,32 @@ nav .nav-link .badge {
     height: 20px;
     border-radius: 50%;
     border: 2px solid white;
+}
+
+nav .notification-block #notification-dropdown{
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 300px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .3s ease;
+}
+
+nav .notification-block #notification-dropdown.show{
+    top: 100%;
+    opacity: 1;
+    pointer-events: visible;
+}
+
+nav .notification-block #notification-dropdown li {
+    padding: 10px 15px;
+    word-break: break-all;
+    border-bottom: 2px solid var(--light-grey);
 }
 
 /*nav .notification-block ul{*/
