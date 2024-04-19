@@ -1,25 +1,25 @@
 {% extends 'ocean_do/pages_base.html' %}
 {% load static %}
 {% block title %}
-Завдання
+{{ task.title }}
 {% endblock %}
 
 
 {% block side-menu %}
 <li><a href="{% url 'main' %}"><i class='bx bx-home-alt icon'></i> Головна</a></li>
 <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
-<li><a href="{% url 'tasks:all_tasks' %}" class="active"><i class='bx bx-task icon'></i> Завдання</a></li>
+<li><a href="{% url 'tasks:all_tasks' %}" class="active"><i class='bx bx-task icon'></i>Завдання</a></li>
 <li><a href="#"><i class='bx bx-folder icon'></i> Папки <i
-                            class='bx bx-chevron-right icon-right'></i></a>
-                    <ul class="side-dropdown">
-                        <li><a href="#">Папкаaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1</a></li>
-                        <li><a href="#">Папка 2</a></li>
-                        <li><a href="#">Папка 3</a></li>
-                        <li><a href="#">Папка 4</a></li>
-                        <li><a href="#">Папка 5</a></li>
-                        <li><a href="#">Папка 6</a></li>
-                        <li><a href="#">Папка 7</a></li>
-                    </ul>
+        class='bx bx-chevron-right icon-right'></i></a>
+    <ul class="side-dropdown">
+        <li><a href="#">Папкаaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1</a></li>
+        <li><a href="#">Папка 2</a></li>
+        <li><a href="#">Папка 3</a></li>
+        <li><a href="#">Папка 4</a></li>
+        <li><a href="#">Папка 5</a></li>
+        <li><a href="#">Папка 6</a></li>
+        <li><a href="#">Папка 7</a></li>
+    </ul>
 </li>
 {% endblock %}
 
@@ -29,7 +29,7 @@
         <div class="task-path">
                 <h1 class="title folder">Папка</h1>
                 <h1 class="title divider">/</h1>
-                <h1 class="title task-name">Завдання</h1>
+            <h1 class="title task-name">{{ task.title }}</h1>
             </div>
 
             <div class="task-info-page-container">
@@ -41,38 +41,44 @@
                         </div>
                         <i class='bx bx-dots-horizontal-rounded icon'></i>
                     </div>
+                    {% if task.tags.all %}
                     <div class="info-block">
+
                         <p class="title">Теги:</p>
                         <div class="tags-values">
-                            <p class="tag">1</p>
-                            <p class="tag">2</p>
-                            <p class="tag">3</p>
+                            {% for tag in task.tags.all %}
+                            <p class="tag">{{ tag.name }}</p>
+                            {% endfor %}
                         </div>
+
                     </div>
+                    {% endif %}
+                    {% if task.description %}
                     <div class="info-block vertical-block">
                         <p class="title">Опис:</p>
-                        <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis
-                            ornare sem. Curabitur finibus nisl a tincidunt
-                            finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean porttitor nisl sit
-                            amet ligula faucibus porta.
-                            Etiam fermentum ante ut ligula consequat lobortis.</p>
+                        <p class="description">{{ task.description }}</p>
                     </div>
+                    {% endif %}
+                    {% if task.files.all %}
                     <div class="info-block vertical-block">
                         <p class="title">Файли:</p>
                         <ul class="file-list">
+                            {% for file in task.files.all %}
                             <div class="file-div">
-                                <li class="file-li"> Файл 1 </li>
-                                <a href="#">Завантажити</a>
+                                <li class="file-li">{{ file.title }}</li>
+                                <a href="{{ file.file.url }}"
+                                   onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                                </li>
                             </div>
-                            <div class="file-div">
-                                <li class="file-li"> Файл 2 </li>
-                                <a href="#">Завантажити</a>
-                            </div>
+                            {% endfor %}
+
                         </ul>
+
                     </div>
+                    {% endif %}
                     <div class="info-block time-block">
                         <p class="title">Термін виконання</p>
-                        <p class="time-value">20.01.2025</p>
+                        <p class="time-value">{{ task.deadline }}</p>
                     </div>
                 </div>
 

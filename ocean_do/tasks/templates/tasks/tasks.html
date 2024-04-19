@@ -10,150 +10,137 @@
 <li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
 <li><a href="{% url 'tasks:all_tasks' %}" class="active"><i class='bx bx-task icon'></i> Завдання</a></li>
 <li><a href="#"><i class='bx bx-folder icon'></i> Папки <i
-                            class='bx bx-chevron-right icon-right'></i></a>
-                    <ul class="side-dropdown">
-                        <li><a href="#">Папкаaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1</a></li>
-                        <li><a href="#">Папка 2</a></li>
-                        <li><a href="#">Папка 3</a></li>
-                        <li><a href="#">Папка 4</a></li>
-                        <li><a href="#">Папка 5</a></li>
-                        <li><a href="#">Папка 6</a></li>
-                        <li><a href="#">Папка 7</a></li>
-                    </ul>
+        class='bx bx-chevron-right icon-right'></i></a>
+    <ul class="side-dropdown">
+        <li><a href="#">Папкаaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1</a></li>
+        <li><a href="#">Папка 2</a></li>
+        <li><a href="#">Папка 3</a></li>
+        <li><a href="#">Папка 4</a></li>
+        <li><a href="#">Папка 5</a></li>
+        <li><a href="#">Папка 6</a></li>
+        <li><a href="#">Папка 7</a></li>
+    </ul>
 </li>
 {% endblock %}
 
 {% block content_area %}
-    <!-- MAIN -->
-    <main>
-        <div class="task-title">
-            <button class="title active">Виконання</button>
-            <button class="title">Моніторинг</button>
-        </div>
+<!-- MAIN -->
+<main>
+    <div class="task-title">
+        <button class="title active">Виконання</button>
+        <button class="title">Моніторинг</button>
+    </div>
 
-        <div class="task-panel">
-            <div class="sorting">Сортування</div>
-            <div class="filter">Фільтри</div>
-            <form action="#">
-                <div class="form-group">
-                    <i class='bx bx-search icon'></i>
-                    <input type="text" placeholder="Пошук...">
-                </div>
-            </form>
-            <a href="{% url 'tasks:create_task' %}" class="plus-task">
-                <i class='bx bx-plus-circle icon create-task-btn'></i>
-            </a>
-        </div>
+    <div class="task-panel">
+        <div class="sorting">Сортування</div>
+        <div class="filter">Фільтри</div>
+        <form action="#">
+            <div class="form-group">
+                <i class='bx bx-search icon'></i>
+                <input type="text" placeholder="Пошук...">
+            </div>
+        </form>
+        <a href="{% url 'tasks:create_task' %}" class="plus-task">
+            <i class='bx bx-plus-circle icon create-task-btn'></i>
+        </a>
+    </div>
 
-        <div class="important-tasks active">
-            {% for task in assigned_tasks  %}
-            <div class="task" data-task-id="{{ task.id }}">
-                <div class="head">
-                    <div onclick='location.href="/tasks/task-info";'>
-                        <div class="status">
-                                <p class="category">Виконання</p>
-                            <i class='bx bxs-circle icon task-status'></i>
-                        </div>
-                        <div class="folder">
-                            <i class='bx bx-folder icon'></i>
-                            <p class="folder-name">{{ task.folder }}</p>
-                        </div>
+    <div class="important-tasks active">
+        {% for task in assigned_tasks %}
+        <div class="task" data-task-id="{{ task.id }}">
+            <div class="head">
+                <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+                    <div class="status">
+                        <p class="category">Виконання</p>
+                        <i class='bx bxs-circle icon task-status'></i>
                     </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <ul class="task-settings-box">
-                            {% if task.creator == request.user %}
-                            <a href="#" class="edit-task-btn">
-                                <li>Змінити</li>
-                            </a>
-                            <a href="#" class="delete-link" data-id="{{ task.id }}">
-                                <li>Видалити</li>
-                            </a>
-                            {% endif %}
-                            <a href="#" class="task-status-btn">
-                                <li class="task-status-change">Позначити, як виконане</li>
-                            </a>
-                        </ul>
+                    <div class="folder">
+                        <i class='bx bx-folder icon'></i>
+                        <p class="folder-name">{{ task.folder }}</p>
                     </div>
                 </div>
-                <div class="task-body" onclick='location.href="/tasks/task-info";'>
-                    <h2 class="name">{{ task.title }}</h2>
-                    <div class="tag-box">
-                        {% for tag in task.tags.all %}
-                        <p>{{ tag.name }}</p>
-                        {% endfor %}
-                    </div>
-                    <div class="limit-block">
-                        <p class="limit-block-title">Термін виконання:</p>
-                        <p class="time-limit">{{ task.deadline }}</p>
-                    </div>
-                    <ul>
-                        {% for file in task.files.all %}
-                        <li>{{ file.title }} - <a href="{{ file.file.url }}">Завантажити</a></li>
-                        {% endfor %}
+                <div class="task-settings">
+                    <i class='bx bx-dots-horizontal-rounded icon'></i>
+                    <ul class="task-settings-box">
+                        {% if task.creator == request.user %}
+                        <a href="#" class="edit-task-btn">
+                            <li>Змінити</li>
+                        </a>
+                        <a href="#" class="delete-link" data-id="{{ task.id }}">
+                            <li>Видалити</li>
+                        </a>
+                        {% endif %}
+                        <a href="#" class="task-status-btn">
+                            <li class="task-status-change">Позначити, як виконане</li>
+                        </a>
                     </ul>
-                    <div class="participants">
-                        <i class='bx bxs-user icon'></i>
-                        <p class="user-number">{{ task.assignees.count }}</p>
-                    </div>
                 </div>
             </div>
-            {% endfor %}
-        </div>
-
-        <div class="important-tasks">
-               {% for task in created_tasks  %}
-            <div class="task" data-task-id="{{ task.id }}">
-                <div class="head">
-                    <div onclick='location.href="/tasks/task-info";'>
-                        <div class="status">
-                                <p class="category">Моніторинг</p>
-                            <i class='bx bxs-circle icon task-status'></i>
-                        </div>
-                        <div class="folder">
-                            <i class='bx bx-folder icon'></i>
-                            <p class="folder-name">{{ task.folder }}</p>
-                        </div>
-                    </div>
-                    <div class="task-settings">
-                        <i class='bx bx-dots-horizontal-rounded icon'></i>
-                        <ul class="task-settings-box">
-                            <a href="#" class="edit-task-btn">
-                                <li>Змінити</li>
-                            </a>
-                            <a href="#" class="delete-link" data-id="{{ task.id }}">
-                                <li>Видалити</li>
-                            </a>
-                            <a href="#" class="task-status-btn">
-                                <li class="task-status-change">Позначити, як виконане</li>
-                            </a>
-                        </ul>
-                    </div>
+            <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+                <h2 class="name">{{ task.title }}</h2>
+                <div class="tag-box">
+                    {% for tag in task.tags.all %}
+                    <p>{{ tag.name }}</p>
+                    {% endfor %}
                 </div>
-                <div class="task-body" onclick='location.href="/tasks/task-info";'>
-                    <h2 class="name">{{ task.title }}</h2>
-                    <div class="tag-box">
-                        {% for tag in task.tags.all %}
-                        <p>{{ tag.name }}</p>
-                        {% endfor %}
-                    </div>
-                    <div class="limit-block">
-                        <p class="limit-block-title">Термін виконання:</p>
-                        <p class="time-limit">{{ task.deadline }}</p>
-                    </div>
-                    <ul>
-                        {% for file in task.files.all %}
-                        <li>{{ file.title }} - <a href="{{ file.file.url }}" onclick="window.open(this.href, '_blank'); return false;">Перегляд</a></li>
-                        {% endfor %}
-                    </ul>
-                    <div class="participants">
-                        <i class='bx bxs-user icon'></i>
-                        <p class="user-number">{{ task.assignees.count }}</p>
-                    </div>
+                <div class="limit-block">
+                    <p class="limit-block-title">Термін виконання:</p>
+                    <p class="time-limit">{{ task.deadline }}</p>
+                </div>
+                <div class="participants">
+                    <i class='bx bxs-user icon'></i>
+                    <p class="user-number">{{ task.assignees.count }}</p>
                 </div>
             </div>
-            {% endfor %}
         </div>
-    </main>
+        {% endfor %}
+    </div>
+
+    <div class="important-tasks">
+        {% for task in created_tasks %}
+        <div class="task" data-task-id="{{ task.id }}">
+            <div class="head">
+                <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+                    <div class="status">
+                        <p class="category">Моніторинг</p>
+                        <i class='bx bxs-circle icon task-status'></i>
+                    </div>
+                    <div class="folder">
+                        <i class='bx bx-folder icon'></i>
+                        <p class="folder-name">{{ task.folder }}</p>
+                    </div>
+                </div>
+                <div class="task-settings">
+                    <i class='bx bx-dots-horizontal-rounded icon'></i>
+                    <ul class="task-settings-box">
+                        <a href="#" class="edit-task-btn">
+                            <li>Змінити</li>
+                        </a>
+                        <a href="#" class="delete-link" data-id="{{ task.id }}">
+                            <li>Видалити</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+                <h2 class="name">{{ task.title }}</h2>
+                <div class="tag-box">
+                    {% for tag in task.tags.all %}
+                    <p>{{ tag.name }}</p>
+                    {% endfor %}
+                </div>
+                <div class="limit-block">
+                    <p class="limit-block-title">Термін виконання:</p>
+                    <p class="time-limit">{{ task.deadline }}</p>
+                </div>
+                <div class="participants">
+                    <i class='bx bxs-user icon'></i>
+                    <p class="user-number">{{ task.assignees.count }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
 <!-- MAIN -->
 {% endblock %}
