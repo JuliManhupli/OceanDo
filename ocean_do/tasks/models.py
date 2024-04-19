@@ -23,7 +23,7 @@ class TaskAssignment(models.Model):
     completion_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.task.title} - {self.user.username}"
+        return f"{self.user.username}"
 
 
 class Task(models.Model):
