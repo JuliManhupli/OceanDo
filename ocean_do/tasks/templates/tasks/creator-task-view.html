@@ -1,0 +1,156 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+{{ task.title }}
+{% endblock %}
+
+
+{% block side-menu %}
+<li><a href="{% url 'main' %}"><i class='bx bx-home-alt icon'></i> Головна</a></li>
+<li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
+<li><a href="{% url 'tasks:all_tasks' %}" class="active"><i class='bx bx-task icon'></i>Завдання</a></li>
+<li><a href="#"><i class='bx bx-folder icon'></i> Папки <i
+        class='bx bx-chevron-right icon-right'></i></a>
+    <ul class="side-dropdown">
+        <li><a href="#">Папкаaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1</a></li>
+        <li><a href="#">Папка 2</a></li>
+        <li><a href="#">Папка 3</a></li>
+        <li><a href="#">Папка 4</a></li>
+        <li><a href="#">Папка 5</a></li>
+        <li><a href="#">Папка 6</a></li>
+        <li><a href="#">Папка 7</a></li>
+    </ul>
+</li>
+{% endblock %}
+
+{% block content_area %}
+
+    <main>
+        <div class="task-path">
+                <h1 class="title folder">Папка</h1>
+                <h1 class="title divider">/</h1>
+            <h1 class="title task-name">{{ task.title }}</h1>
+            </div>
+
+                    <div class="task-divider">
+                <div class="task-info-page-container creator-task-info">
+                    <div class="task-info-container">
+                        <div class="head">
+                            <div class="category-block">
+                                <p class="title">Категорія:</p>
+                                <p class="block-value">Моніторинг</p>
+                            </div>
+                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                        </div>
+                        <div class="info-block">
+                            <p class="title">Теги:</p>
+                            <div class="tags-values">
+                                <p class="tag">1</p>
+                                <p class="tag">2</p>
+                                <p class="tag">3</p>
+                            </div>
+                        </div>
+                        <div class="info-block vertical-block">
+                            <p class="title">Опис:</p>
+                            <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
+                                quis
+                                ornare sem. Curabitur finibus nisl a tincidunt
+                                finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean porttitor nisl
+                                sit
+                                amet ligula faucibus porta.
+                                Etiam fermentum ante ut ligula consequat lobortis.</p>
+                        </div>
+                        <div class="info-block vertical-block">
+                            <p class="title">Файли:</p>
+                            <ul class="file-list">
+                                <div class="file-div">
+                                    <li class="file-li"> Файл 1 </li>
+                                    <a href="#">Завантажити</a>
+                                </div>
+                                <div class="file-div">
+                                    <li class="file-li"> Файл 2 </li>
+                                    <a href="#">Завантажити</a>
+                                </div>
+                            </ul>
+                        </div>
+                        <div class="info-block time-block">
+                            <p class="title">Термін виконання</p>
+                            <p class="time-value">20.01.2025</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h1 class="title users-block">Учасники</h1>
+
+            <div class="creator-user-view">
+                <div class="left-users">
+                    <p class="title">Користувачі</p>
+                    <ul class="users-ul">
+                        <li><a href="#" class="active"> Користувач 1</a></li>
+                        <li><a href="#"> Користувач 2</a></li>
+                        <li><a href="#"> Користувач 3</a></li>
+                    </ul>
+                </div>
+                <div class="users-data-block">
+                    <div class="users-status-files">
+                        <div class="user-status-block">
+                            <p class="title">Статус виконання</p>
+                            <p class="user-task-status">У процесі виконання</p>
+                        </div>
+                        <div class="info-block vertical-block">
+                            <p class="title">Файли:</p>
+                            <ul class="file-list">
+                                <div class="file-div">
+                                    <li class="file-li"> Файл 1 </li>
+                                    <a href="#">Завантажити</a>
+                                </div>
+                                <div class="file-div">
+                                    <li class="file-li"> Файл 2 </li>
+                                    <a href="#">Завантажити</a>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="task-info-comment-section">
+                        <div class="leave-comment">
+                            <p class="title">Залишити коментар</p>
+                            <textarea class="comment-text-to-send" name="" id=""
+                                placeholder="Введіть текст..."></textarea>
+                        </div>
+                        <div class="comment-section">
+                            <p class="title">Приватні коментарі:</p>
+                            <div class="comment">
+                                <img src="{{ user.photo.url }}" alt="Avatar">
+                                <div class="comment-text-block">
+                                    <div class="head">
+                                        <p class="user-name">Ім'я</p>
+                                        <p class="sent-date">20.01.2024</p>
+                                    </div>
+                                    <p class="comment-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                        Phasellus quis ornare sem. Curabitur finibus nisl a tincidunt
+                                        finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean
+                                        porttitor nisl sit amet ligula faucibus port.</p>
+                                </div>
+                            </div>
+
+                            <div class="comment">
+                                <img src="{{ user.photo.url }}" alt="Avatar">
+                                <div class="comment-text-block">
+                                    <div class="head">
+                                        <p class="user-name">Ім'я</p>
+                                        <p class="sent-date">20.01.2024</p>
+                                    </div>
+                                    <p class="comment-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                        Phasellus quis ornare sem. Curabitur finibus nisl a tincidunt
+                                        finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean
+                                        porttitor nisl sit amet ligula faucibus port.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </main>
+<!-- MAIN -->
+{% endblock %}
