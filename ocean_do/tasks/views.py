@@ -42,6 +42,7 @@ def update_task_status(request, task_id):
             task_assignment = task.assignees.filter(user=request.user).first()
             if task_assignment:
                 task_assignment.is_completed = is_completed
+                task_assignment.completion_time = datetime.now()
                 task_assignment.save()
                 return JsonResponse({'message': 'Статус завдання успішно оновлено.'})
             else:
