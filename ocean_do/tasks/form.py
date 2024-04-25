@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django import forms
 
-from .models import Task
+from .models import Task, ChatComment
 
 
 class TaskForm(forms.ModelForm):
@@ -30,3 +30,13 @@ class TaskForm(forms.ModelForm):
             self.add_error('title', 'Це поле є обов\'язковим.')
         if not deadline:
             self.add_error('deadline', 'Це поле є обов\'язковим.')
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = ChatComment
+        fields = ['message']
+        widgets = {
+            'message': forms.Textarea(attrs={'class': 'comment-text-to-send', 'placeholder': 'Введіть текст...'}),
+
+        }

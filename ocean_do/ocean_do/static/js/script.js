@@ -492,3 +492,47 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+// USERS IN TASK INFO
+document.addEventListener('DOMContentLoaded', function () {
+    const allUsers = document.querySelector('main .creator-user-view .left-users .users-ul');
+
+    if (allUsers) {
+        allUsers.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', function () {
+
+                if (!this.classList.contains('active')) {
+                    allUsers.querySelectorAll('a').forEach(i => {
+                        i.classList.remove('active');
+                    })
+                }
+
+                this.classList.add('active');
+            });
+        });
+    }
+});
+
+
+// USERS TAB
+document.addEventListener('DOMContentLoaded', function () {
+    const tabsUsers = document.querySelector('main .creator-user-view .left-users .users-ul'),
+        allUsersInfo = document.querySelectorAll('main .creator-user-view .users-data-block .user-info');
+
+    if (tabsUsers) {
+        tabsUsers.querySelectorAll('li').forEach((a, index) => {
+            a.addEventListener('click', function () {
+
+                if (!this.classList.contains('active')) {
+                    tabsUsers.querySelectorAll('li').forEach(link => {
+                        link.classList.remove('active');
+                    });
+                }
+
+                this.classList.add('active');
+                allUsersInfo.forEach(info => info.classList.remove('active'));
+                allUsersInfo[index].classList.add('active');
+            });
+        });
+    }
+});
+

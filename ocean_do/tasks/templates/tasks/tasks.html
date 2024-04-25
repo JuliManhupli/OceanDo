@@ -100,7 +100,7 @@
         {% for task in created_tasks %}
         <div class="task" data-task-id="{{ task.id }}">
             <div class="head">
-                <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+                <div onclick='location.href="/tasks/task-info-creator/{{ task.id }}";'>
                     <div class="status">
                         <p class="category">Моніторинг</p>
                         <i class='bx bxs-circle icon task-status'></i>
@@ -122,7 +122,7 @@
                     </ul>
                 </div>
             </div>
-            <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+            <div onclick='location.href="/tasks/task-info-creator/{{ task.id }}";'>
                 <h2 class="name">{{ task.title }}</h2>
                 <div class="tag-box">
                     {% for tag in task.tags.all %}

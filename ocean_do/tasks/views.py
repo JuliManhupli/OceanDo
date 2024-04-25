@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from accounts.models import User, Notification
 from django.contrib.auth.decorators import login_required
@@ -8,8 +9,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from ocean_do.aws import upload_file_to_s3
 
-from .form import TaskForm
-from .models import Tag, Task, TaskAssignment
+from .form import TaskForm, CommentForm
+from .models import Tag, Task, TaskAssignment, TaskChat, ChatComment
 from .utils import send_task
 
 
@@ -119,7 +120,41 @@ def get_users(request):
 def task_info(request, task_id):
     try:
         task = Task.objects.get(id=task_id)
+        task_chat, created = TaskChat.objects.get_or_create(task=task)
+
+        if request.headers.get('HX-Request'):
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.user = request.user
+                comment.task_chat = task_chat
+                comment.save()
+
+                return JsonResponse({
+                    'message': comment.message,
+                    'username': comment.user.username,
+                    'created': comment.created.strftime("%d.%m.%Y %H:%M"),
+                })
+
+        if task_chat:
+            comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+        else:
+            comments = None
+
+        form = CommentForm()
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
 
-    return render(request, "tasks/task-info.html", {'task': task})
+    return render(request, "tasks/task-info.html", {'task': task, 'comments': comments, 'form': form})
+
+
+def creator_task_view(request, task_id):
+    try:
+        task = Task.objects.get(id=task_id)
+        assignment = task.assignees.all()
+        print(assignment)
+    except Task.DoesNotExist:
+        return redirect('tasks:all_tasks')
+
+
+    return render(request, "tasks/creator-task-view.html", {'task': task, 'assignments': assignment})
