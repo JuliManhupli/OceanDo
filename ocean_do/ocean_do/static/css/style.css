@@ -1735,6 +1735,65 @@ main .creator-user-view .left-users .title{
     border-bottom: 3px solid var(--light-grey);
 }
 
+
+
+
+
+
+main .creator-user-view .left-users .users-ul {
+    height: 430px;
+    overflow-y: auto;
+    /*margin: 34px 0;*/
+    padding: 15px 10px;
+    transition: all .3s ease;
+}
+
+main .creator-user-view .left-users .users-ul li {
+    margin-bottom: 10px;
+}
+
+main .creator-user-view .left-users .users-ul a {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 20px;
+    transition: all .3s ease;
+    border-radius: 5px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+main .creator-user-view .left-users .users-ul > li > a:hover{
+    background: var(--light-grey);
+}
+
+main .creator-user-view .left-users .users-ul > li > a.active,
+main .creator-user-view .left-users .users-ul > li > a.active:hover{
+    color: white;
+    background: var(--light-blue);
+}
+
+main .creator-user-view .left-users .users-ul a .name{
+    font-weight: 600;
+}
+
+main .creator-user-view .users-data-block .user-info{
+    display: none;
+}
+
+main .creator-user-view .users-data-block .user-info.active{
+    display: block;
+}
+
+main .creator-user-view .users-data-block .users-status-files{
+    border-bottom: 1px solid var(--light-grey);
+    padding: 30px;
+}
+
+
+
+
+
 main .creator-user-view .users-data-block .users-status-files .user-status-block{
     display: flex;
     gap: 20px;
@@ -1743,4 +1802,19 @@ main .creator-user-view .users-data-block .users-status-files .user-status-block
 
 main .creator-user-view .users-data-block .users-status-files .user-status-block .title{
     font-size: 20px;
+}
+
+
+
+
+
+main .creator-user-view .users-data-block .users-status-files .user-status-block .user-task-status{
+    font-size: 14px;
+    padding: 5px;
+    border-radius: 5px;
+    background: var(--yellow);
+}
+
+main .creator-user-view .users-data-block .users-status-files .vertical-block{
+    margin-top: 30px;
 }

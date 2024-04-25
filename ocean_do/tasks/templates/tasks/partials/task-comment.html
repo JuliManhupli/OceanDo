@@ -1,0 +1,18 @@
+{% load static %}
+
+<!--<div id="chat-comment" hx-swap-oob="beforeend">-->
+    <div class="comment">
+        {% if comment.user.photo %}
+        <img class="profile-picture" src="{{ comment.user.photo.url }}" alt="Avatar">
+        {% else %}
+        <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
+        {% endif %}
+        <div class="comment-text-block">
+            <div class="head">
+                <p class="user-name">{{ comment.user.username }}</p>
+                <p class="sent-date">{{ comment.created|date:"d.m.Y H:i" }}</p>
+            </div>
+            <p class="comment-text">{{ comment.message }}</p>
+        </div>
+    </div>
+<!--</div>-->
