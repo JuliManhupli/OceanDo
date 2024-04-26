@@ -26,7 +26,6 @@ def login_view(request):
             if user is not None:
                 if user.is_verified:
                     login(request, user)
-                    messages.success(request, f"Вітаємо {user.username}!")
                     return redirect('main')
                 else:
                     request.session['email'] = email

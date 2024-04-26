@@ -111,17 +111,21 @@
                             <p class="user-task-status">{% if assignment.is_completed %}Виконано{% else %}У процесі
                                 виконання{% endif %}</p>
                         </div>
+                        {% if assignment.files.all %}
                         <div class="info-block vertical-block">
                             <p class="title">Файли:</p>
                             <ul class="file-list">
-                                {% for file in assignment.task.files.all %}
+                                {% for file in assignment.files.all %}
                                 <div class="file-div">
-                                    <li class="file-li">{{ file.name }}</li>
-                                    <a href="{{ file.url }}">Завантажити</a>
+                                    <li class="file-li">{{ file.title }}</li>
+                                    <a href="{{ file.file.url }}"
+                                       onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                                    </li>
                                 </div>
                                 {% endfor %}
                             </ul>
                         </div>
+                        {% endif %}
                     </div>
                     <div class="task-info-comment-section">
                         <div class="leave-comment">

@@ -21,6 +21,7 @@ class TaskAssignment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_completed = models.BooleanField(default=False)
     completion_time = models.DateTimeField(null=True, blank=True)
+    files = models.ManyToManyField(File, related_name='files_assignments', blank=True)
 
     def __str__(self):
         return f"{self.user.username}"
