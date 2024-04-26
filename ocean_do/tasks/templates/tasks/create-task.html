@@ -6,21 +6,7 @@
 
 
 {% block side-menu %}
-<li><a href="{% url 'main' %}"><i class='bx bx-home-alt icon'></i> Головна</a></li>
-<li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
-<li><a href="{% url 'tasks:all_tasks' %}" class="active"><i class='bx bx-task icon'></i> Завдання</a></li>
-<li><a href="#"><i class='bx bx-folder icon'></i> Папки <i
-                            class='bx bx-chevron-right icon-right'></i></a>
-                    <ul class="side-dropdown">
-                        <li><a href="#">Папкаaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1</a></li>
-                        <li><a href="#">Папка 2</a></li>
-                        <li><a href="#">Папка 3</a></li>
-                        <li><a href="#">Папка 4</a></li>
-                        <li><a href="#">Папка 5</a></li>
-                        <li><a href="#">Папка 6</a></li>
-                        <li><a href="#">Папка 7</a></li>
-                    </ul>
-</li>
+{% include 'tasks/partials/task-side-menu.html' %}
 {% endblock %}
 
 {% block content_area %}
@@ -62,15 +48,15 @@
             <div class="form-element">
                 <div class="existing-folder">
                     <p class="title">Папка</p>
-                    <input type="text" placeholder="Введіть назву папки">
-                    <i class='bx bx-plus-circle icon'></i>
-                </div>
-                <div class="new-folder">
-                    <div class="add">
-                        <i class='bx bx-folder folder-icon'></i>
+                    <input type="text" name="folders" placeholder="Введіть назву папки">
+                    <div class="add" id="add-folder-input">
+                        <i class='bx bx-plus-circle icon'></i>
                     </div>
-                    <input type="text" placeholder="Введіть назву нової папки">
                 </div>
+                <div id="folder-inputs">
+                </div>
+
+
             </div>
             <div class="form-element">
                 <div class="tag-block">

@@ -17,6 +17,13 @@ class File(models.Model):
         return f"{self.title}"
 
 
+class Folder(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
 class TaskAssignment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_completed = models.BooleanField(default=False)
@@ -35,6 +42,7 @@ class Task(models.Model):
     deadline = models.DateField()
     is_completed = models.BooleanField(default=False)
     assignees = models.ManyToManyField(TaskAssignment, related_name='assigned_tasks')
+    folders = models.ManyToManyField(Folder, related_name='folders_tasks', blank=True)
     files = models.ManyToManyField(File, related_name='files_tasks', blank=True)
 
     def __str__(self):

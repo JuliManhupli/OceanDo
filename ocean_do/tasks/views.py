@@ -10,8 +10,20 @@ from django.urls import reverse
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
 
 from .form import TaskForm, CommentForm
-from .models import Tag, Task, TaskAssignment, TaskChat, ChatComment, File
+from .models import Tag, Task, TaskAssignment, TaskChat, ChatComment, File, Folder
 from .utils import send_task
+
+
+def user_folders(request):
+    try:
+        tasks = Task.objects.filter(creator=request.user)
+        user_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
+        print(user_folders)
+        folders_data = [{'name': folder.name} for folder in user_folders]
+        print(folders_data)
+        return JsonResponse(folders_data, safe=False)
+    except Task.DoesNotExist:
+        return redirect('tasks:all_tasks')
 
 
 @login_required
@@ -98,6 +110,8 @@ def create_task(request):
         if form.is_valid():
             creator = request.user
             tags = request.POST.getlist('tags')  # Отримання списку тегів
+            folders = request.POST.getlist('folders')  # Отримання списку папок
+            print(folders)
             task = form.save(commit=False)
             task.creator = creator
             task.save()  # Збереження завдання без тегів
@@ -109,6 +123,14 @@ def create_task(request):
                     if tag_name:
                         tag, _ = Tag.objects.get_or_create(name=tag_name)
                         task.tags.add(tag)
+
+            # Додавання папок до завдання
+            if folders:
+                for folder_name in folders:
+                    folder_name = folder_name.strip()
+                    if folder_name:
+                        folder, _ = Folder.objects.get_or_create(name=folder_name)
+                        task.folders.add(folder)
 
             # Збереження виконавців у TaskAssignment
             assignees = request.POST.getlist('assignees')[0].split(',')
@@ -130,7 +152,7 @@ def create_task(request):
                 notification.save()
                 task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
                 print(task_url)
-                send_task(request, assignee.email, task.title, task_url)
+                # send_task(request, assignee.email, task.title, task_url)
 
             # Завантаження файлів
             for file in request.FILES.getlist('files'):
