@@ -1495,17 +1495,25 @@ main .task-info-page-container .task-info-container{
     gap: 20px;
     margin-top: 30px;
 }
-
+main .task-info-page-container .task-info-container .user-status-block,
 main .task-info-page-container .task-info-container .head,
+main .task-info-page-container .task-info-container .head .category-block,
 main .task-info-page-container .task-info-container .info-block,
-main .task-info-page-container .task-info-container .info-block .tags-values,
-main .task-info-page-container .task-info-container .head .category-block{
+main .task-info-page-container .task-info-container .info-block .tags-values {
     display: flex;
     align-items: center;
 }
 
-main .task-info-page-container .task-info-container .head{
+main .task-info-page-container .task-info-container .head,
+main .task-info-page-container .task-info-container .user-status-block{
     justify-content: space-between;
+}
+
+main .task-info-page-container .task-info-container .user-status-block .user-task-status{
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    background: var(--yellow);
 }
 
 main .task-info-page-container .task-info-container .head .category-block .block-value{
@@ -1579,12 +1587,15 @@ main .task-info-page-container .task-info-container .time-block .time-value{
     margin-left: 10px;
 }
 
+main .task-completion-wrapper{
+    max-width: 28%;
+    width: 100%;
+}
+
 main .task-done-container{
     background: white;
     border-radius: 10px;
     margin-top: 30px;
-    max-width: 28%;
-    width: 100%;
     height: fit-content;
     padding: 30px;
 }
@@ -1633,7 +1644,8 @@ main .task-done-container .task-done-form #file-inputs .file-wrapper span{
     margin-top: 5px;
 }
 
-main .task-done-container .task-done-form .complete-task{
+main .task-done-container .task-done-form .complete-task,
+#update-status-btn{
     width: 100%;
     height: 55px;
     background: var(--yellow);
@@ -1642,9 +1654,52 @@ main .task-done-container .task-done-form .complete-task{
     margin-top: 20px;
 }
 
+#update-status-btn{
+    margin-top: 0;
+}
+
 main .task-done-container .task-done-form .complete-task:hover{
     text-decoration: underline;
 }
+
+main .additional-container{
+    margin-top: 20px;
+}
+
+main .files-container,
+main .additional-container .file-div{
+    display: flex;
+    flex-direction: column;
+}
+
+main .files-container {
+    gap: 20px;
+}
+
+main .additional-container .file-div{
+    gap: 3px;
+}
+
+main .additional-container .file-div .file-li{
+    padding: 5px;
+    border-radius: 5px;
+    background: var(--light-grey);
+    word-break: break-all;
+}
+
+main .additional-container .file-div .user-file-btns{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+main .additional-container .file-div .user-file-btns a,
+main .additional-container .file-div .user-file-btns .delete-file-btn{
+    padding: 3.5px;
+    background: var(--yellow);
+    border-radius: 5px;
+}
+
 
 main .task-info-comment-section{
     background: white;
@@ -1668,6 +1723,19 @@ main .task-info-comment-section .leave-comment .comment-text-to-send{
     border-radius: 10px;
     padding: 10px;
     margin-top: 10px;
+}
+
+main .task-info-comment-section .leave-comment .button-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: right;
+}
+
+main .task-info-comment-section .leave-comment .button-wrapper .make-comment{
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-top: 10px;
+    background-color: var(--yellow);
 }
 
 main .task-info-comment-section .comment-section{
@@ -1708,8 +1776,6 @@ main .task-info-comment-section .comment-section .comment .comment-text-block .c
     margin-top: 5px;
 }
 
-
-
 main .users-block{
     margin-top: 30px;
 }
@@ -1734,11 +1800,6 @@ main .creator-user-view .left-users .title{
     padding: 30px 70px;
     border-bottom: 3px solid var(--light-grey);
 }
-
-
-
-
-
 
 main .creator-user-view .left-users .users-ul {
     height: 430px;
@@ -1790,10 +1851,6 @@ main .creator-user-view .users-data-block .users-status-files{
     padding: 30px;
 }
 
-
-
-
-
 main .creator-user-view .users-data-block .users-status-files .user-status-block{
     display: flex;
     gap: 20px;
@@ -1803,10 +1860,6 @@ main .creator-user-view .users-data-block .users-status-files .user-status-block
 main .creator-user-view .users-data-block .users-status-files .user-status-block .title{
     font-size: 20px;
 }
-
-
-
-
 
 main .creator-user-view .users-data-block .users-status-files .user-status-block .user-task-status{
     font-size: 14px;

@@ -332,7 +332,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // document.getElementById('add-file-input').addEventListener('click', addFileInput);
     const addFileInputBtn = document.getElementById('add-file-input');
     if (addFileInputBtn) {
         addFileInputBtn.addEventListener('click', addFileInput);
@@ -469,12 +468,65 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// USER TASK STATUS CHANGE
 document.addEventListener('DOMContentLoaded', function () {
-    const completeTaskBtn = document.getElementById('update-status-btn');
-    if (completeTaskBtn) {
-        completeTaskBtn.addEventListener('click', function () {
+    const completeTaskBtn = document.getElementById('update-status-btn'),
+        userTaskStatus = document.querySelector('.user-task-status'),
+        completeTaskFormBtn = document.querySelector('.task-done-form .complete-task'),
+        sendTaskFilesBtn = document.getElementById('send-task-files'),
+        addTaskFilesBtn = document.getElementById('add-file-input'),
+        fileInputsContainer = document.getElementById('file-inputs'),
+        allDeleteFileBtns = document.querySelectorAll('.files-container .file-div .user-file-btns .delete-file-btn');
 
-            const confirmed = confirm('Ви впевнені, що хочете змінити статус завдання?');
+    // Function to update task status color
+    function updateTaskStatusColor(isCompleted) {
+        if (isCompleted) {
+            userTaskStatus.style.background = 'var(--green)';
+            userTaskStatus.style.color = 'white';
+
+            addTaskFilesBtn.style.opacity = '0.5';
+            addTaskFilesBtn.style.pointerEvents = 'none';
+            sendTaskFilesBtn.style.opacity = '0.5';
+            sendTaskFilesBtn.style.pointerEvents = 'none';
+            allDeleteFileBtns.forEach(button => {
+                button.style.opacity = '0.5';
+                button.style.pointerEvents = 'none';
+            });
+
+        } else {
+            userTaskStatus.style.background = 'var(--yellow)';
+            userTaskStatus.style.color = 'black';
+
+            addTaskFilesBtn.style.opacity = '1';
+            addTaskFilesBtn.style.pointerEvents = 'auto';
+            sendTaskFilesBtn.style.opacity = '1';
+            sendTaskFilesBtn.style.pointerEvents = 'auto';
+            allDeleteFileBtns.forEach(button => {
+                button.style.opacity = '1';
+                button.style.pointerEvents = 'auto';
+            });
+        }
+    }
+
+    if (completeTaskBtn && userTaskStatus && completeTaskFormBtn) {
+        completeTaskFormBtn.addEventListener('click', function () {
+
+            // Check if file inputs are present and not empty
+            const fileInputs = document.querySelector('#file-inputs .file-wrapper div span');
+
+            if (fileInputsContainer.children.length !== 0 &&
+                fileInputs.textContent.trim() !== ''){
+               updateTaskStatus();
+            } else {
+                alert('Додайте файл перед відправленням!');
+            }
+        });
+
+        completeTaskBtn.addEventListener('click', updateTaskStatus);
+
+        function updateTaskStatus(){
+
+            const confirmed = confirm('Ви впевнені, що хочете відправити завдання?');
             if (!confirmed) {
                 return;
             }
@@ -489,20 +541,29 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.log(response.data.message);
                         completeTaskBtn.textContent = isCompleted ? 'Позначити як невиконане' : 'Позначити як виконане';
                         completeTaskBtn.classList.toggle('completed');
-                        const userTaskStatus = document.querySelector('.user-task-status');
                         userTaskStatus.textContent = isCompleted ? 'Виконано' : 'У процесі виконання';
+                        updateTaskStatusColor(isCompleted);
 
+                        // Store task status in local storage
+                        localStorage.setItem('taskStatus', isCompleted ? 'completed' : 'inProgress');
                     } else {
                         // Оновлення статусу не вдалося
                         console.error('Помилка оновлення статусу завдання.');
                     }
                 })
                 .catch(error => console.error(error));
-        });
+        }
+
+        // Check local storage for task status on page load
+        const storedTaskStatus = localStorage.getItem('taskStatus');
+        if (storedTaskStatus) {
+            const isCompleted = storedTaskStatus === 'completed';
+            updateTaskStatusColor(isCompleted);
+        }
     }
 });
 
-
+// DELETE FILE FROM USERS SENT TASK
 document.addEventListener('DOMContentLoaded', function () {
     const deleteFileButtons = document.querySelectorAll('.delete-file-btn');
     if (deleteFileButtons) {
@@ -517,7 +578,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         .then(response => {
                             if (response.status === 200) {
                                 // Remove the file from the UI
-                                button.parentElement.remove();
+                                button.parentElement.parentElement.remove();
+
+                                // Check if container div is empty
+                                const container = document.querySelector('.files-container');
+                                if (!container.querySelector('.file-div')) {
+                                    container.remove();
+                                }
                             } else {
                                 console.error('Failed to delete file.');
                             }
