@@ -7,10 +7,10 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from ocean_do.aws import upload_file_to_s3
+from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
 
 from .form import TaskForm, CommentForm
-from .models import Tag, Task, TaskAssignment, TaskChat, ChatComment
+from .models import Tag, Task, TaskAssignment, TaskChat, ChatComment, File
 from .utils import send_task
 
 
@@ -19,18 +19,53 @@ def all_tasks(request):
     user = request.user
     assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
     created_tasks = Task.objects.filter(creator=user, is_completed=False)
-    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(assignees__user=user)
+    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
+        assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     return render(request, "tasks/tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
+def completed_tasks(request):
+    user = request.user
+    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=True)
+    created_tasks = Task.objects.filter(creator=user, is_completed=True)
+    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
+        assignees__user=user)
+    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
+    return render(request, "tasks/completed-tasks.html",
+                  {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+
+
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
+    files = File.objects.filter(files_tasks=task)
+    print(files)
+    for file in files:
+        delete_file_from_s3(file.file)
+        file.delete()
+
+    assignees = task.assignees.all()
+    print(assignees)
+    for assignee in assignees:
+        files = assignee.files.all()
+        for file in files:
+            delete_file_from_s3(file.file)
+            file.delete()
+        assignee.delete()
     if task.creator == request.user:
         task.delete()
         return JsonResponse({'message': 'Завдання успішно видалено'}, status=204)
     else:
         return JsonResponse({'error': 'Ви не маєте права видаляти це завдання'}, status=403)
+
+
+def delete_file(request, file_id):
+    if request.method == 'POST':
+        file = get_object_or_404(File, id=file_id)
+        file.delete()
+        return JsonResponse({'message': 'File deleted successfully.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 
 def update_task_status(request, task_id):
@@ -121,7 +156,21 @@ def task_info(request, task_id):
     try:
         task = Task.objects.get(id=task_id)
         task_chat, created = TaskChat.objects.get_or_create(task=task)
+        task_assignment = get_object_or_404(TaskAssignment, user=request.user, assigned_tasks=task)
+        print(task_assignment)
 
+        if request.method == 'POST' and request.FILES:
+            files = request.FILES.getlist('files')
+            print(files)
+            for file in files:
+                print(file)
+
+                print(task_assignment)
+                upload_assignment_file_to_s3(file, task.id, request.user.id, task_assignment.id)
+                task_assignment.is_completed = True
+                task_assignment.completion_time = datetime.now()
+                task_assignment.save()
+            return redirect('tasks:task_info', task_id=task_id)
         if request.headers.get('HX-Request'):
             form = CommentForm(request.POST)
             if form.is_valid():
@@ -145,7 +194,8 @@ def task_info(request, task_id):
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
 
-    return render(request, "tasks/task-info.html", {'task': task, 'comments': comments, 'form': form})
+    return render(request, "tasks/task-info.html",
+                  {'task': task, 'comments': comments, 'form': form, 'task_assignment': task_assignment})
 
 
 def creator_task_view(request, task_id):
@@ -155,6 +205,5 @@ def creator_task_view(request, task_id):
         print(assignment)
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
-
 
     return render(request, "tasks/creator-task-view.html", {'task': task, 'assignments': assignment})

@@ -25,7 +25,7 @@
 
 {% block content_area %}
 
-<main>
+<main id="task-info" data-task-id="{{ task.id }}">
     <div class="task-path">
         <h1 class="title folder">Папка</h1>
         <h1 class="title divider">/</h1>
@@ -40,7 +40,22 @@
                         <p class="title">Категорія:</p>
                         <p class="block-value">Виконання</p>
                     </div>
-                    <i class='bx bx-dots-horizontal-rounded icon'></i>
+                    <!--                    <i class='bx bx-dots-horizontal-rounded icon'></i>-->
+
+                    <div class="user-status-block">
+                        <p class="title">Статус виконання</p>
+                        {% for assignment in task.assignees.all %}
+                        {% if assignment.user == request.user %}
+                        <p class="user-task-status">
+                            {% if assignment.is_completed %}
+                            Виконано
+                            {% else %}
+                            У процесі виконання
+                            {% endif %}
+                        </p>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
                 {% if task.tags.all %}
                 <div class="info-block">
@@ -118,23 +133,58 @@
 
         </div>
 
-        <div class="task-done-container">
-            <form action="" class="task-done-form">
-                <div class="form-element">
-                    <div class="tag-block">
-                        <p class="title">Прикріпити файл</p>
-                        <div class="add" id="add-file-input">
-                            <i class='bx bx-plus-circle icon'></i>
+        <div>
+            <div class="task-done-container">
+                <form action="" method="post" enctype="multipart/form-data" class="task-done-form">
+                    {% csrf_token %}
+                    <div class="form-element">
+                        <div class="tag-block">
+                            <p class="title">Прикріпити файл</p>
+                            <div class="add" id="add-file-input">
+                                <i class='bx bx-plus-circle icon'></i>
+                            </div>
+                        </div>
+                        <div id="file-inputs">
+
+
+                            <!--                <label for="file-upload" class="custom-file-upload">Завантажити</label>-->
+                            <!--                <input id="file-upload" type="file" name="files" onchange="displayFileName()" style="display: none;"/>-->
+                            <!--                <span id="file-name"></span>-->
                         </div>
                     </div>
-                    <div id="file-inputs">
-                        <!--                <label for="file-upload" class="custom-file-upload">Завантажити</label>-->
-                        <!--                <input id="file-upload" type="file" name="files" onchange="displayFileName()" style="display: none;"/>-->
-                        <!--                <span id="file-name"></span>-->
-                    </div>
+                    <button class="complete-task">Відправити</button>
+                </form>
+            </div>
+
+
+            <div class="task-done-container">
+                {% for file in task_assignment.files.all %}
+                <div class="file-div">
+                    <li class="file-li">{{ file.title }}</li>
+                    <a href="{{ file.file.url }}"
+                       onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                    <button class="delete-file-btn" data-file-id="{{ file.id }}">Видалити</button>
                 </div>
-                <button class="complete-task">Відправити</button>
-            </form>
+                {% endfor %}
+            </div>
+
+
+            <div class="task-done-container">
+                <!--                <button class="complete-task" id="update-status-btn">Позначити як виконане</button>-->
+
+                {% for assignment in task.assignees.all %}
+                {% if assignment.user == request.user %}
+                <button class="complete-task{% if assignment.is_completed %} completed{% endif %}"
+                        id="update-status-btn">
+                    {% if assignment.is_completed %}
+                    Позначити як невиконане
+                    {% else %}
+                    Позначити як виконане
+                    {% endif %}
+                </button>
+                {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </main>

@@ -536,3 +536,60 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    const completeTaskBtn = document.getElementById('update-status-btn');
+
+    completeTaskBtn.addEventListener('click', function () {
+
+        const confirmed = confirm('Ви впевнені, що хочете змінити статус завдання?');
+        if (!confirmed) {
+            return;
+        }
+        const taskId = document.getElementById('task-info').dataset.taskId;
+        const isCompleted = !completeTaskBtn.classList.contains('completed');
+
+        axios.defaults.xsrfCookieName = 'csrftoken';
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        axios.post(`/tasks/${taskId}/update-status/`, {is_completed: isCompleted})
+            .then(response => {
+                if (response.status === 200) {
+                    console.log(response.data.message);
+                    completeTaskBtn.textContent = isCompleted ? 'Позначити як невиконане' : 'Позначити як виконане';
+                    completeTaskBtn.classList.toggle('completed');
+                    const userTaskStatus = document.querySelector('.user-task-status');
+                    userTaskStatus.textContent = isCompleted ? 'Виконано' : 'У процесі виконання';
+
+                } else {
+                    // Оновлення статусу не вдалося
+                    console.error('Помилка оновлення статусу завдання.');
+                }
+            })
+            .catch(error => console.error(error));
+    });
+
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteFileButtons = document.querySelectorAll('.delete-file-btn');
+    deleteFileButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const fileId = button.dataset.fileId;
+            const confirmation = confirm('Ви впевнені, що хочете видалити цей файл?');
+            if (confirmation) {
+                axios.defaults.xsrfCookieName = 'csrftoken';
+                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                axios.post(`/tasks/files/delete/${fileId}/`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            // Remove the file from the UI
+                            button.parentElement.remove();
+                        } else {
+                            console.error('Failed to delete file.');
+                        }
+                    })
+                    .catch(error => console.error(error));
+            }
+        });
+    });
+});
