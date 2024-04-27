@@ -21,7 +21,7 @@
             <h1 class="title task-name">{{ task.title }}</h1>
         </div>
 
-                    <div class="task-divider">
+        <div class="task-divider">
                 <div class="task-info-page-container creator-task-info">
                     <div class="task-info-container">
                         <div class="head">
@@ -29,7 +29,26 @@
                                 <p class="title">Категорія:</p>
                                 <p class="block-value">Моніторинг</p>
                             </div>
-                            <i class='bx bx-dots-horizontal-rounded icon'></i>
+                            <div class="task-settings">
+                                <i class='bx bx-dots-horizontal-rounded icon'></i>
+                                <ul class="task-settings-box">
+                                    {% if task.creator == request.user %}
+                                    <a href="#" class="edit-task-btn">
+                                        <li>Змінити</li>
+                                    </a>
+                                    <a href="#" class="delete-link" data-id="{{ task.id }}">
+                                        <li>Видалити</li>
+                                    </a>
+                                    {% endif %}
+                                    <a href="#" class="task-status-btn">
+                                        {% if assignment.is_completed %}
+                                        <li class="task-status-change">Позначити, як невиконане</li>
+                                        {% else %}
+                                        <li class="task-status-change">Позначити, як виконане</li>
+                                        {% endif %}
+                                    </a>
+                                </ul>
+                            </div>
                         </div>
                         {% if task.tags.all %}
                         <div class="info-block">
@@ -96,8 +115,8 @@
                 <div class="user-info {% if forloop.first %}active{% endif %}">
                     <div class="users-status-files">
                         <div class="user-status-block">
-                            <p class="title">Статус виконання</p>
-                            <p class="user-task-status">{% if assignment.is_completed %}Виконано{% else %}У процесі
+                            <p class="title">Статус виконання:</p>
+                            <p class="user-task-status" id="task-status-check">{% if assignment.is_completed %}Виконано{% else %}У процесі
                                 виконання{% endif %}</p>
                         </div>
                         {% if assignment.files.all %}
@@ -107,9 +126,11 @@
                                 {% for file in assignment.files.all %}
                                 <div class="file-div">
                                     <li class="file-li">{{ file.title }}</li>
-                                    <a href="{{ file.file.url }}"
-                                       onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
-                                    </li>
+                                        <div class="user-file-btns">
+                                            <a href="{{ file.file.url }}"
+                                           onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                                        </div>
+                                     </li>
                                 </div>
                                 {% endfor %}
                             </ul>

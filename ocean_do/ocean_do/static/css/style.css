@@ -722,7 +722,7 @@ main .task .head .folder .folder-name {
     text-overflow: ellipsis;
 }
 
-main .task .head .task-settings{
+.task-settings{
     position: relative;
     display: flex;
     justify-content: center;
@@ -734,7 +734,7 @@ main .task .head .task-settings .icon {
     cursor: pointer;
 }
 
-main .task .head .task-settings .task-settings-box{
+.task-settings .task-settings-box{
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
@@ -749,19 +749,19 @@ main .task .head .task-settings .task-settings-box{
     transition: all .3s ease;
 }
 
-main .task .head .task-settings .task-settings-box.show{
+.task-settings .task-settings-box.show{
     top: 100%;
     opacity: 1;
     pointer-events: visible;
 }
 
-main .task .head .task-settings .task-settings-box a{
+.task-settings .task-settings-box a{
     display: block;
     padding: 6px 16px;
     transition: all .3s ease;
 }
 
-main .task .head .task-settings .task-settings-box a:hover{
+.task-settings .task-settings-box a:hover{
     background: var(--light-grey);
 }
 
@@ -830,6 +830,7 @@ main .task .participants .user-number{
 main .task-title {
     display: flex;
     justify-content: space-between;
+    margin-top: 30px;
 }
 
 main .task-title .title {
@@ -1441,7 +1442,7 @@ main .task-popup .form .form-element .users-search .chosen-user .chosen-user-inf
 }
 
 main .task-popup .form .form-element .users-search .chosen-user .chosen-user-info .chosen-user-name{
-    font-weight: 500;
+    font-weight: 600;
 }
 
 main .task-popup .form .form-element .users-search .chosen-user .chosen-user-info .chosen-user-email{
@@ -1781,7 +1782,7 @@ main .users-block{
 }
 
 main .creator-task-info{
-    max-width: 100%;
+    width: 100%;
 }
 
 main .creator-user-view{
@@ -1789,6 +1790,7 @@ main .creator-user-view{
     border-radius: 10px;
     margin-top: 20px;
     display: flex;
+    height: fit-content;
 }
 
 main .creator-user-view .left-users{
@@ -1838,6 +1840,10 @@ main .creator-user-view .left-users .users-ul a .name{
     font-weight: 600;
 }
 
+main .creator-user-view .users-data-block{
+    width: 100%;
+}
+
 main .creator-user-view .users-data-block .user-info{
     display: none;
 }
@@ -1847,7 +1853,7 @@ main .creator-user-view .users-data-block .user-info.active{
 }
 
 main .creator-user-view .users-data-block .users-status-files{
-    border-bottom: 1px solid var(--light-grey);
+    border-bottom: 3px solid var(--light-grey);
     padding: 30px;
 }
 
@@ -1865,9 +1871,46 @@ main .creator-user-view .users-data-block .users-status-files .user-status-block
     font-size: 14px;
     padding: 5px;
     border-radius: 5px;
-    background: var(--yellow);
+    /*background: var(--yellow);*/
 }
 
 main .creator-user-view .users-data-block .users-status-files .vertical-block{
     margin-top: 30px;
+}
+
+main .creator-user-view .users-data-block .users-status-files .vertical-block .title{
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+main .creator-user-view .users-data-block .users-status-files .vertical-block .file-list{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+main .creator-user-view .users-data-block .users-status-files .vertical-block .file-div{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+main .creator-user-view .users-data-block .users-status-files .vertical-block .file-div .file-li{
+    width: fit-content;
+    padding: 5px;
+    border-radius: 5px;
+    background: var(--light-grey);
+    word-break: break-all;
+}
+
+main .creator-user-view .users-data-block .users-status-files .vertical-block .file-div .user-file-btns{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+main .creator-user-view .users-data-block .users-status-files .vertical-block .file-div .user-file-btns a{
+    padding: 3.5px;
+    background: var(--yellow);
+    border-radius: 5px;
 }
