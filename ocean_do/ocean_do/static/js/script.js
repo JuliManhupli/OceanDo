@@ -3,40 +3,43 @@ document.addEventListener('DOMContentLoaded', function () {
     const codeInputs = document.querySelectorAll('.code-input');
     const verifyCodeBtn = document.querySelector('.code-verify-btn');
 
-    codeInputs.forEach((input, index1) => {
-        input.addEventListener('keyup', (e) => {
-            const currentInput = input, nextInput = input.nextElementSibling, prevInput = input.previousElementSibling;
+    if (codeInputs && verifyCodeBtn) {
+        codeInputs.forEach((input, index1) => {
+            input.addEventListener('keyup', (e) => {
+                const currentInput = input, nextInput = input.nextElementSibling, prevInput = input.previousElementSibling;
 
-            // if user writes more than 1 number - clear out
-            if (currentInput.value.length > 1) {
-                currentInput.value = '';
-                return;
-            }
+                // if user writes more than 1 number - clear out
+                if (currentInput.value.length > 1) {
+                    currentInput.value = '';
+                    return;
+                }
 
-            if (nextInput && nextInput.hasAttribute('disabled') && currentInput.value !== '') {
-                nextInput.removeAttribute('disabled');
-                nextInput.focus();
-            }
+                if (nextInput && nextInput.hasAttribute('disabled') && currentInput.value !== '') {
+                    nextInput.removeAttribute('disabled');
+                    nextInput.focus();
+                }
 
-            if (e.key === 'Backspace') {
-                codeInputs.forEach((input, index2) => {
-                    if (index1 <= index2 && prevInput) {
-                        input.setAttribute('disabled', true);
-                        currentInput.value = '';
-                        prevInput.focus();
-                    }
-                });
-            }
+                if (e.key === 'Backspace') {
+                    codeInputs.forEach((input, index2) => {
+                        if (index1 <= index2 && prevInput) {
+                            input.setAttribute('disabled', true);
+                            currentInput.value = '';
+                            prevInput.focus();
+                        }
+                    });
+                }
 
-            if (!codeInputs[5].disabled && codeInputs[5].value !== '') {
-                verifyCodeBtn.classList.add('active');
-                return;
-            }
-            verifyCodeBtn.classList.remove('active');
+                if (!codeInputs[5].disabled && codeInputs[5].value !== '') {
+                    verifyCodeBtn.classList.add('active');
+                    return;
+                }
+                verifyCodeBtn.classList.remove('active');
+            });
         });
-    });
 
-    codeInputs[0].focus();
+        codeInputs[0].focus();
+    }
+
 });
 
 /* SIDEBAR */
@@ -120,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // TASK MENU
 document.addEventListener('DOMContentLoaded', function () {
-    const allTaskItems = document.querySelectorAll('main .task .head .task-settings');
+    const allTaskItems = document.querySelectorAll('.task-settings');
     allTaskItems.forEach(item => {
         const menuIcon = item.querySelector('.icon');
         const menuOption = item.querySelector('.task-settings-box');
@@ -144,14 +147,15 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     });
 
-
-    const allTaskHeads = document.querySelectorAll('main .task .head');
+    const allTaskHeads = document.querySelectorAll('.task-settings');
     allTaskHeads.forEach(item => {
         const taskStatusBtn = item.querySelector('.task-status-btn');
+        console.log(taskStatusBtn);
         if (taskStatusBtn) {
             taskStatusBtn.addEventListener('click', function () {
                 const taskId = item.closest('.task').dataset.taskId;
                 const taskStatus = item.querySelector('.task-status');
+                console.log(taskStatus);
                 const isCompleted = taskStatus.classList.contains('done');
                 axios.defaults.xsrfCookieName = 'csrftoken';
                 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -516,9 +520,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (fileInputsContainer.children.length !== 0 &&
                 fileInputs.textContent.trim() !== ''){
-               updateTaskStatus();
+                updateTaskStatus();
             } else {
-                alert('Додайте файл перед відправленням!');
+                alert('Додайте файл перед відправленням або відправте без файлів за допомогою кнопки нижче!');
             }
         });
 
@@ -596,6 +600,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// CREATOR VIEW TASK STATUS
+document.addEventListener("DOMContentLoaded", function() {
+    const taskStatus = document.getElementById("task-status-check");
+    if (taskStatus) {
+        if (taskStatus.textContent.trim() === "Виконано") {
+            taskStatus.style.backgroundColor = "var(--green)";
+            taskStatus.style.color = "white";
+        } else {
+            taskStatus.style.backgroundColor = "var(--yellow)";
+            taskStatus.style.color = "black";
+        }
+    }
+});
 
 
 // SIDE MENU FOLDERS
