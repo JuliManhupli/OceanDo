@@ -597,17 +597,26 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+
+// SIDE MENU FOLDERS
 document.addEventListener('DOMContentLoaded', function () {
     const sideDropdown = document.getElementById('side-menu-folders');
+    const folderMenu = document.querySelector('.folder-menu');
+
     if (sideDropdown) {
         fetch('/tasks/get-side-menu-folder/')
             .then(response => response.json())
             .then(data => {
-                data.forEach(folder => {
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<a href="#">${folder.name}</a>`;
-                    sideDropdown.appendChild(listItem);
-                });
+                if (data.length > 0) {
+                    data.forEach(folder => {
+                        const listItem = document.createElement('li');
+                        console.log(folder.id)
+                        listItem.innerHTML = `<a href="/tasks/folders/${folder.id}/">${folder.name}</a>`;
+                        sideDropdown.appendChild(listItem);
+                    });
+                    // Показати меню папок
+                    folderMenu.style.display = 'block';
+                }
             })
             .catch(error => console.error('Error fetching user folders:', error));
     }

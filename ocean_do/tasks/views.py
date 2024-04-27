@@ -19,7 +19,7 @@ def user_folders(request):
         tasks = Task.objects.filter(creator=request.user)
         user_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
         print(user_folders)
-        folders_data = [{'name': folder.name} for folder in user_folders]
+        folders_data = [{'id': folder.id, 'name': folder.name} for folder in user_folders]
         print(folders_data)
         return JsonResponse(folders_data, safe=False)
     except Task.DoesNotExist:
@@ -34,7 +34,7 @@ def all_tasks(request):
     solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
-    return render(request, "tasks/tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+    return render(request, "tasks/all-tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
 def completed_tasks(request):
@@ -46,6 +46,21 @@ def completed_tasks(request):
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     return render(request, "tasks/completed-tasks.html",
                   {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+
+
+def folder_tasks(request, folder_id):
+    user = request.user
+    folder = Folder.objects.get(id=folder_id)
+
+    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
+    created_tasks = Task.objects.filter(creator=user, folders=folder, is_completed=False)
+    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
+        assignees__user=user)
+    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
+    print(created_tasks)
+    print(folder)
+    return render(request, "tasks/folder-tasks.html",
+                  {'folder': folder, 'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
 def delete_task(request, task_id):
@@ -75,9 +90,9 @@ def delete_file(request, file_id):
     if request.method == 'POST':
         file = get_object_or_404(File, id=file_id)
         file.delete()
-        return JsonResponse({'message': 'File deleted successfully.'})
+        return JsonResponse({'message': 'Файл успішно видалено'}, status=204)
     else:
-        return JsonResponse({'error': 'Invalid request method.'}, status=405)
+        return JsonResponse({'error': 'Метод запиту не підтримується'}, status=405)
 
 
 def update_task_status(request, task_id):

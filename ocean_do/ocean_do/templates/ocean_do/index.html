@@ -5,21 +5,7 @@
 {% endblock %}
 
 {% block side-menu %}
-<li><a href="{% url 'main' %}" class="active"><i class='bx bx-home-alt icon'></i> Головна</a></li>
-<li><a href="#"><i class='bx bx-calendar icon'></i> Календар</a></li>
-<li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>
-<li><a href="#"><i class='bx bx-folder icon'></i> Папки <i
-                            class='bx bx-chevron-right icon-right'></i></a>
-                    <ul class="side-dropdown">
-                        <li><a href="#">Папкаaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1</a></li>
-                        <li><a href="#">Папка 2</a></li>
-                        <li><a href="#">Папка 3</a></li>
-                        <li><a href="#">Папка 4</a></li>
-                        <li><a href="#">Папка 5</a></li>
-                        <li><a href="#">Папка 6</a></li>
-                        <li><a href="#">Папка 7</a></li>
-                    </ul>
-</li>
+{% include 'ocean_do/partials/main-side-menu.html' %}
 {% endblock %}
 
 {% block content_area %}

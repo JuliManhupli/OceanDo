@@ -1,7 +1,7 @@
 {% extends 'ocean_do/pages_base.html' %}
 {% load static %}
 {% block title %}
-Виконані завдання
+Завдання
 {% endblock %}
 
 
@@ -12,8 +12,8 @@
 {% block content_area %}
 <!-- MAIN -->
 <main>
-    <h1 class="title">Виконані завдання</h1>
-    {% include 'tasks/partials/tasks.html' %}
+    <h1 class="title">Завдання</h1>
+{% include 'tasks/partials/tasks.html' %}
 </main>
 <!-- MAIN -->
 {% endblock %}
