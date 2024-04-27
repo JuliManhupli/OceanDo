@@ -6,6 +6,7 @@ app_name = 'tasks'
 urlpatterns = [
     path('all', views.all_tasks, name='all_tasks'),
     path('completed-tasks', views.completed_tasks, name='completed_tasks'),
+    path('folders/<int:folder_id>/', views.folder_tasks, name='folder_tasks'),
     path('get-side-menu-folder/', views.user_folders, name='side_menu'),
     path('create-task/', views.create_task, name='create_task'),
     path('get-users/', views.get_users, name='get_users'),

@@ -1,7 +1,7 @@
 {% extends 'ocean_do/pages_base.html' %}
 {% load static %}
 {% block title %}
-Виконані завдання
+{{ folder.name }}
 {% endblock %}
 
 
@@ -12,7 +12,7 @@
 {% block content_area %}
 <!-- MAIN -->
 <main>
-    <h1 class="title">Виконані завдання</h1>
+    <h1 class="title">Папка {{ folder.name }}</h1>
     {% include 'tasks/partials/tasks.html' %}
 </main>
 <!-- MAIN -->
