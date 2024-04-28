@@ -436,8 +436,6 @@ body {
 }
 
 #sidebar .side-dropdown{
-    /*background: var(--light-grey);*/
-    /*border: var(--light-grey) solid 5px;*/
     border-radius: 10px;
     max-height: 0;
     overflow-y: auto;
@@ -614,10 +612,6 @@ nav .notification-block #notification-dropdown li {
     word-break: break-all;
     border-bottom: 2px solid var(--light-grey);
 }
-
-/*nav .notification-block ul{*/
-/*    background: white;*/
-/*}*/
 
 nav .profile img {
     width: 36px;
@@ -935,173 +929,6 @@ main .task-panel .plus-task .icon {
 
 
 /* TASK PANEL */
-/* POPUP */
-
-
-/*.overlay {*/
-/*    position: fixed;*/
-/*    height: 100%;*/
-/*    width: 100%;*/
-/*    top: 64px;*/
-/*    background: rgba(0, 0, 0, 0.2);*/
-/*    opacity: 0;*/
-/*    pointer-events: none;*/
-/*    z-index: 50;*/
-/*    transition: all .3s ease;*/
-/*}*/
-
-/*.tasks-class.active .overlay{*/
-/*    opacity: 1;*/
-/*    pointer-events: auto;*/
-/*}*/
-
-/*.task-popup {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*    position: absolute;*/
-/*    padding: 30px;*/
-/*    margin-right: 20px;*/
-/*    max-width: 722px;*/
-/*    width: 100%;*/
-/*    height: 500px;*/
-/*    !*height: 100%;*!*/
-/*    left: 50%;*/
-/*    transform: translateX(-50%) scale(1.2);*/
-/*    top: 120px;*/
-/*    background: white;*/
-/*    border-radius: 20px;*/
-/*    z-index: 150;*/
-/*    transition: all .3s ease;*/
-/*    !*opacity: 0;*!*/
-/*    pointer-events: none;*/
-/*    overflow-y: hidden;*/
-/*    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);*/
-/*}*/
-
-
-/*.tasks-class.active .task-popup{*/
-/*    opacity: 1;*/
-/*    pointer-events: auto;*/
-/*    transform: translateX(-50%) scale(1);*/
-/*}*/
-
-/*#sidebar.hide + .task-popup {*/
-/*    left: calc(50% + 82px);*/
-/*}*/
-
-/*@media screen and (max-width: 991px) {*/
-/*    .task-popup {*/
-/*        max-width: 522px;*/
-/*    }*/
-/*}*/
-
-/*.task-popup::-webkit-scrollbar {*/
-/*    display: none;*/
-/*}*/
-
-/*.task-popup .close-icon{*/
-/*    position: absolute;*/
-/*    right: 30px;*/
-/*    top: 30px;*/
-/*    font-size: 30px;*/
-/*    cursor: pointer;*/
-/*}*/
-
-/*.task-popup .form {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*    gap: 20px;*/
-/*    max-width: 348px;*/
-/*    width: 100%;*/
-/*    overflow-y: auto;*/
-/*    scrollbar-width: none;*/
-/*}*/
-
-/*.task-popup .form h2 {*/
-/*    font-size: 32px;*/
-/*    font-weight: 600;*/
-/*}*/
-
-/*.task-popup .form .form-element {*/
-/*    width: 100%;*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    gap: 10px;*/
-/*}*/
-
-/*.task-popup .form .form-element .title {*/
-/*    font-size: 20px;*/
-/*    font-weight: 600;*/
-/*}*/
-
-/*.task-popup .form .form-element .important-area {*/
-/*    display: flex;*/
-/*}*/
-
-/*.task-popup .form .form-element .important-area .star {*/
-/*    margin-left: 5px;*/
-/*    color: var(--red);*/
-/*}*/
-
-/*.task-popup .form .form-element input,*/
-/*.task-popup .form .form-element textarea{*/
-/*    padding: 10px;*/
-/*    border-radius: 5px;*/
-/*    border: 1px solid black;*/
-/*}*/
-
-/*.task-popup .form .form-element textarea{*/
-/*    height: 120px;*/
-/*}*/
-
-/*.task-popup .form .form-element .existing-folder,*/
-/*.task-popup .form .form-element .tag-block,*/
-/*.task-popup .form .form-element .users-add-block{*/
-/*    display: flex;*/
-/*    justify-content: space-between;*/
-/*    align-items: center;*/
-/*}*/
-
-/*.task-popup .form .form-element .existing-folder .icon,*/
-/*.task-popup .form .form-element .tag-block .icon,*/
-/*.task-popup .form .form-element .add .icon {*/
-/*    font-size: 22.5px;*/
-/*    padding: 3.5px;*/
-/*    background: var(--yellow);*/
-/*    border-radius: 5px;*/
-/*    cursor: pointer;*/
-/*}*/
-
-/*.task-popup .form .form-element .new-folder {*/
-/*    display: none;*/
-/*    !* display: flex; *!*/
-/*    align-items: center;*/
-/*}*/
-
-/*.task-popup .form .form-element .new-folder .folder-icon{*/
-/*    font-size: 25px;*/
-/*    padding: 7px 10px 7px 0;*/
-/*}*/
-
-/*.task-popup .form .form-element .new-folder input{*/
-/*    width: 100%;*/
-/*}*/
-
-/*.task-popup .form .make-task{*/
-/*    background: var(--yellow);*/
-/*    width: 100%;*/
-/*    padding: 15px 0px;*/
-/*    border-radius: 10px;*/
-/*}*/
-
-/*.task-popup .form .make-task:hover{*/
-/*    text-decoration: underline;*/
-/*}*/
-
-/* .task-popup .form .form-element */
-/* POPUP */
 
 
 /* ----------------------------------PROFILE PAGE---------------------------------- */
@@ -1806,7 +1633,6 @@ main .creator-user-view .left-users .title{
 main .creator-user-view .left-users .users-ul {
     height: 430px;
     overflow-y: auto;
-    /*margin: 34px 0;*/
     padding: 15px 10px;
     transition: all .3s ease;
 }
@@ -1871,7 +1697,6 @@ main .creator-user-view .users-data-block .users-status-files .user-status-block
     font-size: 14px;
     padding: 5px;
     border-radius: 5px;
-    /*background: var(--yellow);*/
 }
 
 main .creator-user-view .users-data-block .users-status-files .vertical-block{
@@ -1913,4 +1738,270 @@ main .creator-user-view .users-data-block .users-status-files .vertical-block .f
     padding: 3.5px;
     background: var(--yellow);
     border-radius: 5px;
+}
+
+
+/* ----------------------------------CALENDAR PAGE---------------------------------- */
+
+main .calendar-container{
+    position: relative;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    border-radius: 10px;
+    transition: all .3s ease;
+}
+
+main .calendar-container .left{
+    width: 1000px;
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 991.98px){
+    main .calendar-container{
+        flex-direction: column;
+    }
+
+    main .calendar-container .left{
+        width: 100%;
+    }
+}
+
+main .calendar-container .left .calendar {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border-radius: 5px;
+    background: white;
+}
+
+main .calendar-container .left .calendar .month{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    margin-top: 40px;
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: capitalize;
+    transition: all .3s ease;
+}
+
+main .calendar-container .left .calendar .month .icon{
+    cursor: pointer;
+    font-size: 20px;
+}
+
+main .calendar-container .left .calendar .weekdays{
+    width: 100%;
+    margin-top: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 20px;
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 575.98px){
+    main .calendar-container .left .calendar .month{
+        height: 75px;
+        margin-top: 20px;
+        font-size: 20px;
+    }
+
+    main .calendar-container .left .calendar .weekdays{
+        height: 50px;
+        margin-top: 10px;
+        font-size: 18px;
+
+    }
+}
+
+main .calendar-container .left .calendar .weekdays div{
+    width: 14.28%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+main .calendar-container .left .calendar .days {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin: 20px 0;
+    font-weight: 600;
+}
+
+main .calendar-container .left .calendar .days .day{
+    width: 14.28%;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--dark-grey);
+    border: 1px solid var(--light-grey);
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 575.98px){
+    main .calendar-container .left .calendar .days{
+        margin: 10px 0;
+    }
+
+    main .calendar-container .left .calendar .days .day{
+        height: 50px;
+    }
+}
+
+main .calendar-container .left .calendar .days .day:not(.prev-date , .next-date):hover{
+    color: white;
+    background: var(--light-blue);
+}
+
+main .calendar-container .left .calendar .days .prev-date,
+main .calendar-container .left .calendar .days .next-date{
+    color: var(--light-grey);
+}
+
+main .calendar-container .left .calendar .days .active{
+    position: relative;
+    font-size: 32px;
+    color: white;
+    background: var(--dark-blue);
+}
+
+main .calendar-container .left .calendar .days .active::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 4px 4px 16px var(--light-blue);
+}
+
+main .calendar-container .left .calendar .days .today{
+    font-size: 32px;
+    color: var(--dark-blue);
+}
+
+@media screen and (max-width: 575.98px){
+    main .calendar-container .left .calendar .days .active{
+        font-size: 24px;
+    }
+
+    main .calendar-container .left .calendar .days .today{
+        font-size: 24px;
+    }
+}
+
+main .calendar-container .left .calendar .days .today.active {
+    color: white;
+}
+
+main .calendar-container .left .calendar .days .task-present{
+    position: relative;
+}
+
+main .calendar-container .left .calendar .days .task-present::after{
+    content: "";
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    width: 75%;
+    height: 6px;
+    border-radius: 30px;
+    transform: translate(-50%);
+    background-color: var(--yellow);
+}
+
+main .calendar-container .left .calendar .days .task-present:hover::after{
+    background: white;
+}
+
+main .calendar-container .left .calendar .days .active::after {
+    background: white;
+    bottom: 20%;
+}
+
+main .calendar-container .left .calendar .days .active.task-present{
+    padding-bottom: 10px;
+}
+
+main .calendar-container .left .calendar .to-today{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+    color: var(--dark-grey);
+}
+
+main .calendar-container .left .calendar .to-today .go-to{
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--dark-grey);
+}
+
+main .calendar-container .left .calendar .to-today .go-to input{
+    width: 100%;
+    height: 30px;
+    outline: none;
+    border: none;
+    padding: 0 20px;
+    border-radius: 5px;
+    color: var(--dark-grey);
+}
+
+main .calendar-container .left .calendar .to-today button{
+    cursor: pointer;
+    color: var(--dark-grey);
+    border: 1px solid var(--dark-grey);
+    padding: 5px 10px;
+    border-radius: 5px;
+    background: transparent;
+}
+
+main .calendar-container .left .calendar .to-today button:hover{
+    background: var(--light-grey);
+    color: black;
+}
+
+main .calendar-container .left .calendar .to-today .go-to button{
+    border: none;
+    border-radius: 0;
+    border-left: 1px solid var(--dark-grey);
+}
+
+
+main .calendar-container .right{
+    position: relative;
+    width: 40%;
+    min-height: 100%;
+}
+
+@media screen and (max-width: 991.98px){
+
+    main .calendar-container .right{
+        width: 100%;
+    }
+}
+
+main .calendar-container .right .calendar-tasks{
+    margin-top: 0;
+    grid-template-columns: repeat(auto-fit, minmax(240px, auto));
 }

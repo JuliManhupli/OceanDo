@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
-
+from django.core.serializers.json import DjangoJSONEncoder
 from .form import TaskForm, CommentForm
 from .models import Tag, Task, TaskAssignment, TaskChat, ChatComment, File, Folder
 from .utils import send_task
@@ -35,6 +35,14 @@ def all_tasks(request):
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     return render(request, "tasks/all-tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+
+
+def calendar_view(request):
+    user = request.user
+    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
+    print(assigned_tasks)
+    all_tasks_arr = json.dumps(list(assigned_tasks.values()), cls=DjangoJSONEncoder)
+    return render(request, "tasks/calendar.html", {'all_tasks_arr': all_tasks_arr})
 
 
 def completed_tasks(request):

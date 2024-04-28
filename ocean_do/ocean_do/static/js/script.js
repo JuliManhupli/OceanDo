@@ -638,3 +638,463 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching user folders:', error));
     }
 });
+
+
+// CALERNDAR
+document.addEventListener('DOMContentLoaded', function () {
+    const date = document.querySelector('.date'),
+        daysContainer = document.querySelector('.days'),
+        prev = document.querySelector('.prev'),
+        next = document.querySelector('.next'),
+        dateInput = document.querySelector('.date-input'),
+        goToBtn = document.querySelector('.goto-btn'),
+        todayBtn = document.querySelector('.today-btn'),
+        tasksContainer = document.querySelector('.calendar-tasks');
+
+    let today = new Date();
+    let activeDay;
+    let month = today.getMonth();
+    let year = today.getFullYear();
+
+    const months = [
+        "Січень",
+        "Лютий",
+        "Березень",
+        "Квітень",
+        "Травень",
+        "Червень",
+        "Липень",
+        "Серпень",
+        "Вересень",
+        "Жовтень",
+        "Листопад",
+        "Грудень",
+    ];
+
+    const tasksArr = [
+        {
+            category: "Виконання",
+            folders: false,
+            name: "Name",
+            tags: [
+                "a", "b", "c",
+            ],
+            users: 4,
+            day: 30,
+            month: 4,
+            year: 2024,
+            date: "27 Квітня 2024"
+        },
+        {
+            category: "Моніторинг",
+            folders: [
+                "a", "b", "c",
+            ],
+            name: "Name",
+            tags: false,
+            users: 1,
+            day: 30,
+            month: 4,
+            year: 2024,
+            date: "27 Квітня 2024"
+        },
+        {
+            category: "Моніторинг",
+            folders: [
+                "a", "b", "c",
+            ],
+            name: "Name",
+            tags: false,
+            users: 1,
+            day: 30,
+            month: 4,
+            year: 2024,
+            date: "27 Квітня 2024"
+        },
+        {
+            category: "Моніторинг",
+            folders: [
+                "a", "b", "c",
+            ],
+            name: "Name",
+            tags: false,
+            users: 1,
+            day: 30,
+            month: 4,
+            year: 2024,
+            date: "27 Квітня 2024"
+        },
+        {
+            category: "Моніторинг",
+            folders: [
+                "a", "b", "c",
+            ],
+            name: "Name",
+            tags: false,
+            users: 1,
+            day: 30,
+            month: 4,
+            year: 2024,
+            date: "27 Квітня 2024"
+        },
+        {
+            category: "Моніторинг",
+            folders: [
+                "a", "b", "c",
+            ],
+            name: "Name",
+            tags: false,
+            users: 1,
+            day: 30,
+            month: 4,
+            year: 2024,
+            date: "27 Квітня 2024"
+        },
+        {
+            category: "Моніторинг",
+            folders: false,
+            name: "Name",
+            tags: false,
+            users: 1,
+            day: 3,
+            month: 5,
+            year: 2024,
+            date: "3 Травня 2024"
+        },
+        {
+            category: "Моніторинг",
+            folders: ["A"],
+            name: "Name",
+            tags: false,
+            users: 1,
+            day: 1,
+            month: 4,
+            year: 2024,
+            date: "1 Квітня 2024"
+        },
+    ];
+
+    // add days
+    function initCalendar() {
+
+        const firstDay = new Date(year, month, 1),
+            lastDay = new Date(year, month + 1, 0),
+            prevLastDay = new Date(year, month, 0),
+            prevDays = prevLastDay.getDate(),
+            lastDate = lastDay.getDate(),
+            day = (firstDay.getDay() + 6) % 7,
+            nextDays = (7 - lastDay.getDay()) % 7;
+
+        // update calendar head
+        date.innerHTML = months[month] + " " + year;
+
+        //add days to squares
+        let days = "";
+
+        //previous month days
+        for (let x = day; x > 0; x--) {
+            days += `<div class="day prev-date">${prevDays - x + 1}</div>`;
+        }
+
+        // current month days
+        for (let i = 1; i <= lastDate; i++) {
+
+            //if task ends on this day
+            let task = false;
+            tasksArr.forEach((taskObj) => {
+                if (
+                    taskObj.day === i &&
+                    taskObj.month === month + 1 &&
+                    taskObj.year === year
+                ) {
+                    task = true;
+                }
+            });
+
+
+            //if it is today then add class 'today'
+            if (
+                i === new Date().getDate() &&
+                month === new Date().getMonth() &&
+                year === new Date().getFullYear()
+            ) {
+
+                // activeDay = i;
+                // getActiveDay(i);
+                // updateTasks(i);
+
+                //if task is on this day - add task class
+                // add active to today day at the start
+                if (task) {
+                    days += `<div class="day today task-present">${i}</div>`; //active
+                } else {
+                    days += `<div class="day today">${i}</div>`; //active
+                }
+            } else {
+                // updateTasks(i);
+                //add other days
+                if (task) {
+                    days += `<div class="day task-present">${i}</div>`;
+                } else {
+                    days += `<div class="day">${i}</div>`;
+                }
+            }
+        }
+
+        // next month
+        for (let j = 1; j <= nextDays; j++) {
+            days += `<div class="day next-date">${j}</div>`;
+        }
+
+        // calendar initialisation
+        daysContainer.innerHTML = days;
+        addListener();
+    }
+
+    initCalendar();
+
+    function prevMonth() {
+        month--;
+        if (month < 0) {
+            month = 11;
+            year--;
+        }
+        initCalendar();
+    }
+
+    function nextMonth() {
+        month++;
+        if (month > 11) {
+            month = 0;
+            year++;
+        }
+        initCalendar();
+    }
+
+    // change monthes
+    prev.addEventListener('click', prevMonth);
+    next.addEventListener('click', nextMonth);
+
+    // go to today
+    todayBtn.addEventListener('click', () => {
+        today = new Date();
+        month = today.getMonth();
+        year = today.getFullYear();
+        initCalendar();
+    });
+
+    // input
+    dateInput.addEventListener('input', (e) => {
+        // only numbers are allowed, nothing else
+        dateInput.value = dateInput.value.replace(/[^0-9/]/g, '');
+
+        if (dateInput.value.length === 2) {
+            dateInput.value += '/';
+        }
+
+        if (dateInput.value.length > 7) {
+            dateInput.value = dateInput.value.slice(0, 7);
+        }
+
+        if (e.inputType === 'deleteContentBackward') {
+            if (dateInput.value.length === 3) {
+                dateInput.value = dateInput.value.slice(0, 2);
+            }
+        }
+    });
+
+    // go to entered date
+    // function goToDate() {
+    //     const dateArr = dateInput.value.split('/');
+
+    //     if (dateArr.length === 2) {
+    //         if (dateArr[0] > 0 && dateArr[0] < 13 && dateArr[1].length === 4) {
+    //             month = dateArr[0] - 1;
+    //             year = dateArr[1];
+    //             initCalendar();
+    //         }
+    //     } else {
+    //         // in case the date is invalid
+    //         alert("Неправильно введена дата!");
+    //     }
+    // }
+
+    // goToBtn.addEventListener('click', goToDate);
+
+
+    // function that adds listener on days with tasks deadlines
+    function addListener() {
+        const days = document.querySelectorAll('.day');
+        days.forEach((day) => {
+            day.addEventListener('click', (e) => {
+                //set current day as an active one
+                activeDay = Number(e.target.innerHTML);
+
+                // after click call active
+                // getActiveDay(e.target.innerHTML);
+                // updateTasks(Number(e.target.innerHTML));
+
+
+                //remove other 'active' day
+                days.forEach((day) => {
+                    day.classList.remove('active');
+                });
+
+                // go to prev month if prev month day is clicked
+                if (e.target.classList.contains('prev-date')) {
+                    prevMonth();
+
+                    setTimeout(() => {
+                        // select days of clicked month
+                        const days = document.querySelectorAll('.day');
+
+                        // then add class 'active' to clicked
+                        days.forEach((day) => {
+                            if (
+                                !day.classList.contains('prev-date') &&
+                                day.innerHTML === e.target.innerHTML
+                            ) {
+                                day.classList.add('active');
+                                //added here
+                                days.forEach((todayDay) => {
+                                    if (day !== todayDay) {
+                                        todayDay.classList.remove('active');
+                                    }
+                                });
+                                updateTasks(activeDay);
+                            }
+                        });
+                    }, 100);
+                    // go to next month if next month day is clicked
+                } else if (e.target.classList.contains('next-date')) {
+                    nextMonth();
+
+                    setTimeout(() => {
+                        // select days of clicked month
+                        const days = document.querySelectorAll('.day');
+
+                        // then add class 'active' to clicked
+                        days.forEach((day) => {
+                            if (
+                                !day.classList.contains('next-date') &&
+                                day.innerHTML === e.target.innerHTML
+                            ) {
+                                day.classList.add('active');
+                                //added here
+                                days.forEach((todayDay) => {
+                                    if (day !== todayDay) {
+                                        todayDay.classList.remove('active');
+                                    }
+                                });
+                                updateTasks(activeDay);
+                            }
+                        });
+                    }, 100);
+                } else {
+                    // stay in the current month
+                    e.target.classList.add('active');
+                    //added here
+                    days.forEach((todayDay) => {
+                        if (day !== todayDay) {
+                            todayDay.classList.remove('active');
+                        }
+                    });
+                    updateTasks(activeDay);
+                }
+            });
+        });
+    }
+
+    // show tasks on active days
+    // function getActiveDay(date) {
+
+    //     const dayOfWeek = new Date(year, month, date).getDay();
+    //     const weekDaysUkrainian = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+    //     const dayNameUkrainian = weekDaysUkrainian[dayOfWeek];
+
+    //     taskDay.innerHTML = dayNameUkrainian;
+    //     taskDate.innerHTML = date + ' ' + months[month] + ' ' + year;
+    // }
+
+    function updateTasks(date) {
+        let tasks = "";
+        tasksArr.forEach((task) => {
+            //get tasks on active day
+            if (
+                date === task.day &&
+                month + 1 === task.month &&
+                year === task.year
+            ) {
+                // then show
+
+                let foldersHTML = `<div class="folder"><i class='bx bx-folder icon'></i>`;
+                if (task.folders !== false && task.folders.length > 0) {
+                    task.folders.forEach(folder => {
+                        foldersHTML += `<p class="folder-name">${folder}</p>`;
+                    });
+                }
+                foldersHTML += '</div>';
+
+                let tagsHTML = '';
+                if (task.tags !== false && task.tags.length > 0) {
+                    tagsHTML = '<div class="tag-box">';
+                    task.tags.forEach(tag => {
+                        tagsHTML += `<p>${tag}</p>`;
+                    });
+                    tagsHTML += '</div>';
+                }
+
+                tasks += `
+                    <div class="task">
+                            <div class="head">
+                                <div>
+                                    <div class="status">
+                                        <p class="category">${task.category}</p>
+                                        <a href="#">
+                                            <i class='bx bxs-circle icon task-status'></i>
+                                        </a>
+                                    </div>
+                                    ${foldersHTML}
+                                </div>
+                                <div class="task-settings">
+                                    <i class='bx bx-dots-horizontal-rounded icon'></i>
+                                    <ul class="task-settings-box">
+                                        <a href="#" class="edit-task-btn">
+                                            <li>Змінити</li>
+                                        </a>
+                                        <a href="#" class="delete-link">
+                                            <li>Видалити</li>
+                                        </a>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h2 class="name">${task.name}</h2>
+                                ${tagsHTML}
+                                <div class="limit-block">
+                                    <p class="limit-block-title">Термін виконання:</p>
+                                    <p class="time-limit">${task.date}</p>
+                                </div>
+                                <div class="participants">
+                                    <i class='bx bxs-user icon'></i>
+                                    <p class="user-number">${task.users}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+            }
+        });
+
+        //If no task on this day
+        if (tasks === '') {
+            tasks = `
+            <div class="no-task">
+                <h3>Завдань нема</h3>
+            </div>
+            `;
+        }
+
+        tasksContainer.innerHTML = tasks;
+    }
+});
