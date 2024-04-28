@@ -1,0 +1,50 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Календар
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'tasks/partials/calendar-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+<!-- MAIN -->
+<main>
+            <div class="calendar-container">
+                <div class="left">
+                    <div class="calendar">
+                        <div class="month">
+                            <i class='bx bx-chevron-left-circle icon prev'></i>
+                            <div class="date"></div>
+                            <i class='bx bx-chevron-right-circle icon next'></i>
+                        </div>
+                        <div class="weekdays">
+                            <div>Пн</div>
+                            <div>Вт</div>
+                            <div>Ср</div>
+                            <div>Чт</div>
+                            <div>Пт</div>
+                            <div>Сб</div>
+                            <div>Нд</div>
+                        </div>
+                        <div class="days">
+                        </div>
+                        <div class="to-today">
+                            <button class="today-btn">Нинішній місяць</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="important-tasks calendar-tasks active">
+                    </div>
+                </div>
+            </div>
+</main>
+<script>
+    const tasks = JSON.parse('{{ all_tasks_arr|escapejs }}');
+    console.log(tasks);
+</script>
+<!-- MAIN -->
+{% endblock %}
