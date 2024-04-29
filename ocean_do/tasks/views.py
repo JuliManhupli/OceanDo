@@ -25,13 +25,24 @@ def user_folders(request):
         return redirect('tasks:all_tasks')
 
 
+def get_tasks(request):
+    user = request.user
+    assigned_query = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
+    created_query = Task.objects.filter(creator=user, is_completed=False)
+    solo_assignee_query = created_query.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
+        assignees__user=user).filter(assignees__is_completed=False)
+    created_query = created_query.exclude(id__in=solo_assignee_query)
+    assigned_query = assigned_query.exclude(id__in=solo_assignee_query)
+    return assigned_query, created_query, solo_assignee_query
+
+
 @login_required
 def all_tasks(request):
     user = request.user
     assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
     created_tasks = Task.objects.filter(creator=user, is_completed=False)
     solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
-        assignees__user=user)
+        assignees__user=user).filter(assignees__is_completed=False)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
 
@@ -39,15 +50,57 @@ def all_tasks(request):
     print(created_tasks)
     print(solo_assignee_tasks)
 
-    return render(request, "tasks/all-tasks.html", {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+    return render(request, "tasks/all-tasks.html",
+                  {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks,
+                   'created_tasks': created_tasks})
 
 
 def calendar_view(request):
-    user = request.user
-    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
-    print(assigned_tasks)
-    all_tasks_arr = json.dumps(list(assigned_tasks.values()), cls=DjangoJSONEncoder)
-    return render(request, "tasks/calendar.html", {'all_tasks_arr': all_tasks_arr})
+    assigned_tasks, created_tasks, assigned_tasks = get_tasks(request)
+
+    assigned_tasks_transform = transform_tasks(request, assigned_tasks, True)
+    created_tasks_transform = transform_tasks(request, created_tasks, False)
+    tasks = assigned_tasks_transform + created_tasks_transform
+    print("------------")
+    print(tasks)
+
+    tasks_json = json.dumps(tasks, cls=DjangoJSONEncoder)
+    print("------------")
+    print(tasks_json)
+
+    return render(request, "tasks/calendar.html", {'tasks_json': tasks_json})
+
+
+def transform_tasks(request, task_array, assigned):
+    tasks = []
+    for task in task_array:
+        # if (assigned):
+        #     is_completed = False
+        #     user_folders = []
+        #
+        #     for assignment in task.assignees.all():
+        #         if assignment.user == request.user:
+        #             is_completed = assignment.is_completed
+        #         for folder in assignment.folders.all():
+        #             user_folders.append(folder.name)
+        #         break
+        # else:
+        #     is_completed = False
+        #     user_folders = []
+        tasks.append({
+            'id': task.id,
+            # 'is_complete': is_completed,
+            'category': 'Виконання' if assigned else 'Моніторинг',
+            'folders': [] if assigned else [folder.name for folder in task.folders.all()],
+            'name': task.title,
+            'tags': [tag.name for tag in task.tags.all()],
+            'users': task.assignees.count(),
+            'day': task.deadline.day,
+            'month': task.deadline.month,
+            'year': task.deadline.year,
+            'date': task.deadline.strftime('%d %B %Y'),
+        })
+    return tasks
 
 
 def completed_tasks(request):

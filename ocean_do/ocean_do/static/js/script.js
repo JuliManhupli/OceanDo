@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // TASK MENU
 document.addEventListener('DOMContentLoaded', function () {
     const allTaskItems = document.querySelectorAll('.task-settings');
+    console.log(allTaskItems);
     allTaskItems.forEach(item => {
         const menuIcon = item.querySelector('.icon');
         const menuOption = item.querySelector('.task-settings-box');
@@ -133,9 +134,20 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     })
 
+    // const tasksContainer = document.querySelector('.important-tasks');
+    // tasksContainer.addEventListener('click', function(event) {
+    //     if (event.target.closest('.task-settings .icon')) {
+    //         const menuOption = event.target.closest('.task-settings').querySelector('.task-settings-box');
+    //         if (menuOption) {
+    //             menuOption.classList.toggle('show');
+    //         }
+    //     }
+    // });
+
     window.addEventListener('click', function (e) {
         allTaskItems.forEach(item => {
-            const menuIcon = item.querySelector('.icon'), menuOption = item.querySelector('.task-settings-box');
+            const menuIcon = item.querySelector('.icon'),
+                menuOption = item.querySelector('.task-settings-box');
 
             if (e.target !== menuIcon) {
                 if (e.target !== menuOption) {
@@ -150,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const allTaskHeads = document.querySelectorAll('.task-settings');
     allTaskHeads.forEach(item => {
         const taskStatusBtn = item.querySelector('.task-status-btn');
-        console.log(taskStatusBtn);
         if (taskStatusBtn) {
             taskStatusBtn.addEventListener('click', function () {
                 const taskId = item.closest('.task').dataset.taskId;
@@ -669,108 +680,116 @@ document.addEventListener('DOMContentLoaded', function () {
         "Грудень",
     ];
 
-    const tasksArr = [
-        {
-            category: "Виконання",
-            folders: false,
-            name: "Name",
-            tags: [
-                "a", "b", "c",
-            ],
-            users: 4,
-            day: 30,
-            month: 4,
-            year: 2024,
-            date: "27 Квітня 2024"
-        },
-        {
-            category: "Моніторинг",
-            folders: [
-                "a", "b", "c",
-            ],
-            name: "Name",
-            tags: false,
-            users: 1,
-            day: 30,
-            month: 4,
-            year: 2024,
-            date: "27 Квітня 2024"
-        },
-        {
-            category: "Моніторинг",
-            folders: [
-                "a", "b", "c",
-            ],
-            name: "Name",
-            tags: false,
-            users: 1,
-            day: 30,
-            month: 4,
-            year: 2024,
-            date: "27 Квітня 2024"
-        },
-        {
-            category: "Моніторинг",
-            folders: [
-                "a", "b", "c",
-            ],
-            name: "Name",
-            tags: false,
-            users: 1,
-            day: 30,
-            month: 4,
-            year: 2024,
-            date: "27 Квітня 2024"
-        },
-        {
-            category: "Моніторинг",
-            folders: [
-                "a", "b", "c",
-            ],
-            name: "Name",
-            tags: false,
-            users: 1,
-            day: 30,
-            month: 4,
-            year: 2024,
-            date: "27 Квітня 2024"
-        },
-        {
-            category: "Моніторинг",
-            folders: [
-                "a", "b", "c",
-            ],
-            name: "Name",
-            tags: false,
-            users: 1,
-            day: 30,
-            month: 4,
-            year: 2024,
-            date: "27 Квітня 2024"
-        },
-        {
-            category: "Моніторинг",
-            folders: false,
-            name: "Name",
-            tags: false,
-            users: 1,
-            day: 3,
-            month: 5,
-            year: 2024,
-            date: "3 Травня 2024"
-        },
-        {
-            category: "Моніторинг",
-            folders: ["A"],
-            name: "Name",
-            tags: false,
-            users: 1,
-            day: 1,
-            month: 4,
-            year: 2024,
-            date: "1 Квітня 2024"
-        },
-    ];
+    // const tasksArr = [
+    //     {
+    //         id: 1,
+    //         category: "Виконання",
+    //         folders: false,
+    //         name: "Name",
+    //         tags: [
+    //             "a", "b", "c",
+    //         ],
+    //         users: 4,
+    //         day: 30,
+    //         month: 4,
+    //         year: 2024,
+    //         date: "30 Квітня 2024"
+    //     },
+    //     {
+    //         id: 2,
+    //         category: "Моніторинг",
+    //         folders: [
+    //             "a", "b", "c",
+    //         ],
+    //         name: "Name",
+    //         tags: false,
+    //         users: 1,
+    //         day: 30,
+    //         month: 4,
+    //         year: 2024,
+    //         date: "30 Квітня 2024"
+    //     },
+    //     {
+    //         id: 3,
+    //         category: "Моніторинг",
+    //         folders: [
+    //             "a", "b", "c",
+    //         ],
+    //         name: "Name",
+    //         tags: false,
+    //         users: 1,
+    //         day: 30,
+    //         month: 4,
+    //         year: 2024,
+    //         date: "30 Квітня 2024"
+    //     },
+    //     {
+    //         id: 4,
+    //         category: "Моніторинг",
+    //         folders: [
+    //             "a", "b", "c",
+    //         ],
+    //         name: "Name",
+    //         tags: false,
+    //         users: 1,
+    //         day: 30,
+    //         month: 4,
+    //         year: 2024,
+    //         date: "30 Квітня 2024"
+    //     },
+    //     {
+    //         id: 5,
+    //         category: "Моніторинг",
+    //         folders: [
+    //             "a", "b", "c",
+    //         ],
+    //         name: "Name",
+    //         tags: false,
+    //         users: 1,
+    //         day: 30,
+    //         month: 4,
+    //         year: 2024,
+    //         date: "30 Квітня 2024"
+    //     },
+    //     {
+    //         id: 6,
+    //         category: "Моніторинг",
+    //         folders: [
+    //             "a", "b", "c",
+    //         ],
+    //         name: "Name",
+    //         tags: false,
+    //         users: 1,
+    //         day: 30,
+    //         month: 4,
+    //         year: 2024,
+    //         date: "30 Квітня 2024"
+    //     },
+    //     {
+    //         id: 7,
+    //         category: "Моніторинг",
+    //         folders: false,
+    //         name: "Name",
+    //         tags: false,
+    //         users: 1,
+    //         day: 3,
+    //         month: 5,
+    //         year: 2024,
+    //         date: "3 Травня 2024"
+    //     },
+    //     {
+    //         id: 8,
+    //         category: "Моніторинг",
+    //         folders: ["A"],
+    //         name: "Name",
+    //         tags: false,
+    //         users: 1,
+    //         day: 1,
+    //         month: 4,
+    //         year: 2024,
+    //         date: "1 Квітня 2024"
+    //     },
+    // ];
 
     // add days
     function initCalendar() {
@@ -799,7 +818,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             //if task ends on this day
             let task = false;
-            tasksArr.forEach((taskObj) => {
+            tasksJson.forEach((taskObj) => {
                 if (
                     taskObj.day === i &&
                     taskObj.month === month + 1 &&
@@ -817,12 +836,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 year === new Date().getFullYear()
             ) {
 
-                // activeDay = i;
-                // getActiveDay(i);
-                // updateTasks(i);
-
                 //if task is on this day - add task class
-                // add active to today day at the start
                 if (task) {
                     days += `<div class="day today task-present">${i}</div>`; //active
                 } else {
@@ -881,44 +895,6 @@ document.addEventListener('DOMContentLoaded', function () {
         initCalendar();
     });
 
-    // input
-    dateInput.addEventListener('input', (e) => {
-        // only numbers are allowed, nothing else
-        dateInput.value = dateInput.value.replace(/[^0-9/]/g, '');
-
-        if (dateInput.value.length === 2) {
-            dateInput.value += '/';
-        }
-
-        if (dateInput.value.length > 7) {
-            dateInput.value = dateInput.value.slice(0, 7);
-        }
-
-        if (e.inputType === 'deleteContentBackward') {
-            if (dateInput.value.length === 3) {
-                dateInput.value = dateInput.value.slice(0, 2);
-            }
-        }
-    });
-
-    // go to entered date
-    // function goToDate() {
-    //     const dateArr = dateInput.value.split('/');
-
-    //     if (dateArr.length === 2) {
-    //         if (dateArr[0] > 0 && dateArr[0] < 13 && dateArr[1].length === 4) {
-    //             month = dateArr[0] - 1;
-    //             year = dateArr[1];
-    //             initCalendar();
-    //         }
-    //     } else {
-    //         // in case the date is invalid
-    //         alert("Неправильно введена дата!");
-    //     }
-    // }
-
-    // goToBtn.addEventListener('click', goToDate);
-
 
     // function that adds listener on days with tasks deadlines
     function addListener() {
@@ -927,11 +903,6 @@ document.addEventListener('DOMContentLoaded', function () {
             day.addEventListener('click', (e) => {
                 //set current day as an active one
                 activeDay = Number(e.target.innerHTML);
-
-                // after click call active
-                // getActiveDay(e.target.innerHTML);
-                // updateTasks(Number(e.target.innerHTML));
-
 
                 //remove other 'active' day
                 days.forEach((day) => {
@@ -1003,20 +974,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // show tasks on active days
-    // function getActiveDay(date) {
-
-    //     const dayOfWeek = new Date(year, month, date).getDay();
-    //     const weekDaysUkrainian = ["Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
-    //     const dayNameUkrainian = weekDaysUkrainian[dayOfWeek];
-
-    //     taskDay.innerHTML = dayNameUkrainian;
-    //     taskDate.innerHTML = date + ' ' + months[month] + ' ' + year;
-    // }
-
     function updateTasks(date) {
         let tasks = "";
-        tasksArr.forEach((task) => {
+        tasksJson.forEach((task) => {
             //get tasks on active day
             if (
                 date === task.day &&
@@ -1026,7 +986,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // then show
 
                 let foldersHTML = `<div class="folder"><i class='bx bx-folder icon'></i>`;
-                if (task.folders !== false && task.folders.length > 0) {
+                if (task.folders.length > 0) {
                     task.folders.forEach(folder => {
                         foldersHTML += `<p class="folder-name">${folder}</p>`;
                     });
@@ -1034,7 +994,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 foldersHTML += '</div>';
 
                 let tagsHTML = '';
-                if (task.tags !== false && task.tags.length > 0) {
+                if (task.tags.length > 0) {
                     tagsHTML = '<div class="tag-box">';
                     task.tags.forEach(tag => {
                         tagsHTML += `<p>${tag}</p>`;
@@ -1043,25 +1003,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 tasks += `
-                    <div class="task">
+                    <div class="task" data-task-id="${task.id}">
                             <div class="head">
-                                <div>
+                                <div onclick='location.href="/tasks/task-info/${task.id}";'>
                                     <div class="status">
                                         <p class="category">${task.category}</p>
-                                        <a href="#">
-                                            <i class='bx bxs-circle icon task-status'></i>
-                                        </a>
+                                        <i class='bx bxs-circle icon task-status'></i>
                                     </div>
                                     ${foldersHTML}
                                 </div>
                                 <div class="task-settings">
                                     <i class='bx bx-dots-horizontal-rounded icon'></i>
-                                    <ul class="task-settings-box">
-                                        <a href="#" class="edit-task-btn">
+                                    <ul class="task-settings-box">`
+
+                if (task.category === 'Виконання'){
+                    console.log("YES");
+                    tasks += `
+                    {% if task.creator == request.user %}
+                    `
+                }
+
+                if (task.category === 'Моніторинг'){
+                    tasks += `
+                    <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
+                    `
+                } else {
+                    tasks += `
+                    <a href="#" class="edit-task-btn">
+                    `
+                }
+
+                tasks += `
                                             <li>Змінити</li>
                                         </a>
-                                        <a href="#" class="delete-link">
-                                            <li>Видалити</li>
+                                        <a href="#" class="delete-link"  data-id="${task.id}">
+                                            <li>Видалити</li>`
+
+                if (task.category === 'Виконання'){
+                    tasks += `
+                    {% endif %}
+                    `
+                }
+                tasks += `   
                                         </a>
                                     </ul>
                                 </div>
