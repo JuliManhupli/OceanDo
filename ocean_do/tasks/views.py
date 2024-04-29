@@ -16,9 +16,14 @@ from .models import Tag, Task, TaskAssignment, File, Folder
 
 def user_folders(request):
     try:
-        tasks = Task.objects.filter(creator=request.user)
-        user_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
-        folders_data = [{'id': folder.id, 'name': folder.name} for folder in user_folders]
+        tasks = Task.objects.filter(creator=request.user, is_completed=False)
+        task_assignments = TaskAssignment.objects.filter(user=request.user, is_completed=False)
+        task_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
+        task_assignments_folders = Folder.objects.filter(folders_assignments__in=task_assignments).distinct()
+
+        folders_data = [{'id': folder.id, 'name': folder.name} for folder in task_folders]
+        folders_data.extend([{'id': folder.id, 'name': folder.name} for folder in task_assignments_folders])
+
         print(folders_data)
         return JsonResponse(folders_data, safe=False)
     except Task.DoesNotExist:
@@ -46,6 +51,7 @@ def all_tasks(request):
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
 
+    solo_assignee_tasks = solo_assignee_tasks.filter(assignees__is_completed=False)
     print(assigned_tasks)
     print(created_tasks)
     print(solo_assignee_tasks)
@@ -125,7 +131,8 @@ def folder_tasks(request, folder_id):
     user = request.user
     folder = Folder.objects.get(id=folder_id)
 
-    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
+    task_assignments = TaskAssignment.objects.filter(folders=folder, user=user, is_completed=False)
+    assigned_tasks = Task.objects.filter(assignees__in=task_assignments)
     created_tasks = Task.objects.filter(creator=user, folders=folder, is_completed=False)
     solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
         assignees__user=user)
@@ -324,8 +331,9 @@ def assign_edit_task(request, task_id):
         tags = request.POST.getlist('tags')  # Отримання списку тегів
         folders = request.POST.getlist('folders')  # Отримання списку папок
 
-        print(tags)
-        print(folders)
+        task_assignment.tags.clear()
+        task_assignment.folders.clear()
+
         # Додавання тегів до task assignment
         if tags:
             for tag_name in tags:
@@ -342,7 +350,7 @@ def assign_edit_task(request, task_id):
                     folder, _ = Folder.objects.get_or_create(name=folder_name)
                     task_assignment.folders.add(folder)
         return redirect('tasks:all_tasks')
-    return render(request, "tasks/assign-edit-task.html", {'task': task})
+    return render(request, "tasks/assign-edit-task.html", {'task': task, 'task_assignment': task_assignment})
 
 
 def get_users(request):
