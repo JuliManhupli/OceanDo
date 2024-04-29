@@ -118,18 +118,21 @@
             },
             select: function (event, ui) {
                 $("#users-search-bar").val(ui.item.username);
-                selectedItems.push(ui.item.email);
-                const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+                $("#chosen-user-block").val(ui.item.email);
+                if (selectedItems.indexOf(ui.item.email) === -1) {
+                    selectedItems.push(ui.item.email);
+                    const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
 
-                const newUserInfo = $("<div class='chosen-user-info'>");
-                newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "</p>");
-                newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
+                    const newUserInfo = $("<div class='chosen-user-info'>");
+                    newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "</p>");
+                    newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
 
-                newChosenUser.append(newUserInfo);
-                newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+                    newChosenUser.append(newUserInfo);
+                    newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
 
-                updateHiddenInput();
-                return false;
+                    updateHiddenInput();
+                    return false;
+                }
             }
         })
         .autocomplete( "instance" )._renderItem = function( ul, item ) {

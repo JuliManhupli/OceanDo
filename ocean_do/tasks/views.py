@@ -186,6 +186,70 @@ def create_task(request):
     return render(request, "tasks/create-task.html", {'form': form})
 
 
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    folders = task.folders.all()
+    files = task.files.all()
+    tags = task.tags.all()
+    assignees = task.assignees.all()
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+
+        if form.is_valid():
+            tags = request.POST.getlist('tags')
+            folders = request.POST.getlist('folders')
+            task = form.save(commit=False)
+
+            task.tags.clear()
+            task.folders.clear()
+
+            # Додавання тегів до завдання
+            for tag_name in tags:
+                tag_name = tag_name.strip()
+                if tag_name:
+                    tag, _ = Tag.objects.get_or_create(name=tag_name)
+                    task.tags.add(tag)
+
+            for folder_name in folders:
+                folder_name = folder_name.strip()
+                if folder_name:
+                    folder, _ = Folder.objects.get_or_create(name=folder_name)
+                    task.folders.add(folder)
+
+            assignees = request.POST.getlist('assignees')[0].split(',')
+            task.assignees.clear()
+
+            for assignee_email in assignees:
+                if assignee_email:
+                    assignee = User.objects.get(email=assignee_email)
+                    task_assignment = TaskAssignment.objects.create(
+                        user=assignee,
+                        is_completed=False,
+                        completion_time=None,
+                    )
+                    task.assignees.add(task_assignment)
+
+                    # Створення нотифікації для кожного виконавця
+                    notification_message = f"Завдання \"{task.title}\" було оновлено"
+                    notification = Notification.objects.create(
+                        message=notification_message,
+                    )
+                    notification.users.set([assignee])
+                    notification.save()
+                    # task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
+                    # send_task(request, assignee.email, task.title, task_url)
+
+            for file in request.FILES.getlist('files'):
+                upload_file_to_s3(file, task.id)
+
+            task.save()
+            return redirect('tasks:all_tasks')
+    else:
+        form = TaskForm(instance=task)
+    return render(request, "tasks/edit-task.html", {'form': form, 'task': task, 'folders': folders, 'files': files, 'tags': tags, 'assignees': assignees})
+
+
 def get_users(request):
     if 'term' in request.GET:
         term = request.GET.get('term')

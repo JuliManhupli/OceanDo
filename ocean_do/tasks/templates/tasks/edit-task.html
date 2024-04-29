@@ -1,0 +1,307 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+
+{% block title %}
+Редагування завдання
+{% endblock %}
+
+{% block side-menu %}
+{% include 'tasks/partials/task-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+<!-- MAIN -->
+<main>
+    <div class="task-popup">
+        <form method="post" class="form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2>Нове завдання</h2>
+
+            <div class="form-element">
+                <div class="important-area">
+                    <p class="title">Назва </p>
+                    <p class="star">*</p>
+                </div>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <span>{{ form.title.errors }}</span>
+                {% endif %}
+            </div>
+            <div class="form-element">
+                <p class="title">Опис</p>
+                {{ form.description }}
+            </div>
+            <div class="form-element">
+                <div class="tag-block">
+                    <p class="title">Прикріпити файл</p>
+                    <div class="add" id="add-file-input">
+                        <i class='bx bx-plus-circle icon'></i>
+                    </div>
+                </div>
+                <!--                <div id="file-inputs">-->
+                <!--                    {% for file in files %}-->
+                <!--                    <div class="file-wrapper">-->
+                <!--                        <span>{{ file.title }}</span>-->
+                <!--                        <input type="hidden" name="existing_files" value="{{ file.id }}">-->
+                <!--                        <div class="add minus-file-input">-->
+                <!--                            <i class="bx bx-minus-circle icon remove-file"></i>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                    {% endfor %}-->
+                <!--                </div>-->
+
+
+                <div id="file-inputs">
+                    {% for file in files %}
+                    <div class="file-wrapper">
+                        <div>
+                            <span>{{ file.title }}</span>
+                            <button class="remove-file-btn" data-file-id="{{ file.id }}">Видалити</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <div class="form-element">
+                <div class="existing-folder">
+                    <p class="title">Папка</p>
+                    <input type="text" name="folders" placeholder="Введіть назву папки">
+                    <div class="add" id="add-folder-input">
+                        <i class='bx bx-plus-circle icon'></i>
+                    </div>
+                </div>
+                <div id="folder-inputs">
+                </div>
+            </div>
+            <div class="form-element">
+                <div class="tag-block">
+                    <p class="title">Теги</p>
+                    <div class="add" id="add-tag-input">
+                        <i class='bx bx-plus-circle icon'></i>
+                    </div>
+
+                </div>
+                <div id="tag-inputs">
+                    <!-- Поле для першого тегу -->
+                    <input id="first-tag" type="text" name="tags" placeholder="Введіть тег">
+                </div>
+            </div>
+            <div class="form-element">
+                <div class="important-area">
+                    <p class="title">Термін виконання </p>
+                    <p class="star">*</p>
+                </div>
+                <input type="date" id="deadline" name="deadline" value="{{ task.deadline|date:'Y-m-d' }}" required>
+                {% if form.deadline.errors %}
+                <span>{{ form.deadline.errors }}</span>
+                {% endif %}
+            </div>
+            <div class="form-element">
+                <div class="users-add-block">
+                    <div class="important-area">
+                        <p class="title">Виконавці</p>
+                        <p class="star">*</p>
+                    </div>
+                </div>
+                <div class="users-search">
+                    <div class="form-group">
+                        <i class='bx bx-search icon'></i>
+                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
+                        <input type="hidden" name="assignees" id="chosen-user-block" value="{{ selectedItems|join:',' }}">
+                    </div>
+
+                    <div class="chosen-user">
+<!--                        {% for assignee in task.assignees.all %}-->
+<!--                        <div class="chosen-user-info"><p class="chosen-user-name">{{ assignee.user.username }}</p>-->
+<!--                            <p class="chosen-user-email">{{ assignee.user.email }}</p></div>-->
+<!--                        <i class="bx bx-minus-circle icon delete-item"></i>-->
+<!--                        {% endfor %}-->
+                    </div>
+                    {% if form.assignees.errors %}
+                    <span>{{ form.assignees.errors }}</span>
+                    {% endif %}
+                </div>
+
+
+            </div>
+            <button type="submit" class="make-task">Створити</button>
+        </form>
+    </div>
+
+</main>
+<!-- MAIN -->
+
+<script>
+    const deleteFileButtons = document.querySelectorAll('.remove-file-btn');
+    if (deleteFileButtons) {
+        deleteFileButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const fileId = button.dataset.fileId;
+                const confirmation = confirm('Ви впевнені, що хочете видалити цей файл?');
+                if (confirmation) {
+                    axios.defaults.xsrfCookieName = 'csrftoken';
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                    axios.post(`/tasks/files/delete/${fileId}/`)
+                        .then(response => {
+                            if (response.status === 200) {
+                                button.closest('.file-wrapper').remove();
+                                location.reload();
+                            }
+                        })
+                        .catch(error => console.error(error));
+                }
+            });
+        });
+    }
+
+    // ADD NEW FOLDER
+    const folderInputs = document.getElementById('folder-inputs');
+    const existingFolders = {% if task.folders.all %}[{% for folder in task.folders.all %}"{{ folder.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% endif %};
+    let folderCount = existingFolders.length > 0 ? existingFolders.length : 0;
+
+    // Додати існуючі папки
+    if (existingFolders.length > 0) {
+        existingFolders.forEach(folder => {
+            folderCount++;
+
+            const folderWrapper = document.createElement('div');
+            folderWrapper.classList.add('folder-wrapper');
+
+            const newFolderInput = document.createElement('input');
+            newFolderInput.type = 'text';
+            newFolderInput.placeholder = "Введіть назву папки";
+            newFolderInput.name = "folders";
+            newFolderInput.value = folder;
+
+            const minusIcon = document.createElement('i');
+            minusIcon.classList.add('bx', 'bx-minus-circle', 'icon', 'remove-folder');
+
+            const minusButton = document.createElement('div');
+            minusButton.classList.add('add', 'minus-folder-input');
+
+            folderWrapper.appendChild(newFolderInput);
+            minusButton.appendChild(minusIcon);
+            folderWrapper.appendChild(minusButton);
+            folderInputs.appendChild(folderWrapper);
+
+            minusButton.addEventListener('click', function () {
+                folderInputs.removeChild(folderWrapper);
+                folderCount--;
+            });
+        });
+    }
+
+
+    // ADD EXISTING TAGS
+    const tagInputs = document.getElementById('tag-inputs');
+    const existingTags = {% if task.tags.all %}[{% for tag in task.tags.all %}"{{ tag.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% endif %};
+    let tagCount = existingTags.length > 0 ? existingTags.length : 1;
+
+    if (existingTags.length > 0) {
+        existingTags.forEach(tag => {
+            const tagWrapper = document.createElement('div');
+            tagWrapper.classList.add('tag-wrapper');
+
+            const newTagInput = document.createElement('input');
+            newTagInput.type = 'text';
+            newTagInput.name = 'tags';
+            newTagInput.placeholder = "Введіть тег";
+            newTagInput.value = tag;
+
+            const minusIcon = document.createElement('i');
+            minusIcon.classList.add('bx', 'bx-minus-circle', 'icon', 'remove-tag');
+
+            const minusButton = document.createElement('div');
+            minusButton.classList.add('add', 'minus-tag-input');
+
+            tagWrapper.appendChild(newTagInput);
+            minusButton.appendChild(minusIcon);
+            tagWrapper.appendChild(minusButton);
+            tagInputs.appendChild(tagWrapper);
+
+            minusButton.addEventListener('click', function () {
+                tagInputs.removeChild(tagWrapper);
+                tagCount--;
+            });
+        });
+    }
+
+
+    // SEARCH USERS AUTO-COMPLETE
+    $(function () {
+        var selectedItems = [];
+        const initialAssignees = {% if task.assignees.all %}[{% for assignee in task.assignees.all %}"{{ assignee.user.email }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
+        const initialAssigneeNames = {% if task.assignees.all %}[{% for assignee in task.assignees.all %}"{{ assignee.user.username }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
+
+        if (initialAssignees.length > 0) {
+            selectedItems = initialAssignees;
+            updateHiddenInput();
+
+            // Додайте HTML-код для кожного обраного виконавця
+            initialAssignees.forEach((email, index) => {
+                const userInfo = {
+                    username: initialAssigneeNames[index],
+                    email: email
+                };
+                var newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+                var newUserInfo = $("<div class='chosen-user-info'>");
+                newUserInfo.append("<p class='chosen-user-name'>" + userInfo.username + "</p>");
+                newUserInfo.append("<p class='chosen-user-email'>" + userInfo.email + "</p>");
+                newChosenUser.append(newUserInfo);
+                newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+            });
+        }
+
+        $("#users-search-bar").autocomplete({
+            source: "{% url 'tasks:get_users' %}",
+            minLength: 3,
+            focus: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                $("#chosen-user-block").val(ui.item.email);
+                if (selectedItems.indexOf(ui.item.email) === -1) {
+                    selectedItems.push(ui.item.email);
+                    const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+
+                    const newUserInfo = $("<div class='chosen-user-info'>");
+                    newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "</p>");
+                    newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
+
+                    newChosenUser.append(newUserInfo);
+                    newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+
+                    updateHiddenInput();
+                    return false;
+                }
+            }
+        })
+            .autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<div class='autosearch-name'>" + item.username + "</div>"
+                    + "<div class='autosearch-email'>" + item.email + "</div>")
+                .appendTo(ul);
+        };
+
+        //delete user
+        $(".users-search").on("click", ".delete-item", function () {
+            const itemValue = $(this).prev(".chosen-user-info").find(".chosen-user-email").text();
+            const index = selectedItems.indexOf(itemValue);
+            if (index !== -1) {
+                selectedItems.splice(index, 1);
+            }
+            $(this).parent(".chosen-user").remove();
+                        console.log(selectedItems)
+            updateHiddenInput();
+        });
+
+        function updateHiddenInput() {
+            $("#chosen-user-block").val(selectedItems.join(','));
+        }
+    });
+</script>
+{% endblock %}

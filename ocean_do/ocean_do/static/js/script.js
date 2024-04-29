@@ -542,7 +542,6 @@ document.addEventListener('DOMContentLoaded', function () {
             axios.post(`/tasks/${taskId}/update-status/`, {is_completed: isCompleted})
                 .then(response => {
                     if (response.status === 200) {
-                        console.log(response.data.message);
                         completeTaskBtn.textContent = isCompleted ? 'Позначити як невиконане' : 'Позначити як виконане';
                         completeTaskBtn.classList.toggle('completed');
                         userTaskStatus.textContent = isCompleted ? 'Виконано' : 'У процесі виконання';
@@ -627,7 +626,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.length > 0) {
                     data.forEach(folder => {
                         const listItem = document.createElement('li');
-                        console.log(folder.id)
                         listItem.innerHTML = `<a href="/tasks/folders/${folder.id}/">${folder.name}</a>`;
                         sideDropdown.appendChild(listItem);
                     });
