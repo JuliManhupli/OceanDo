@@ -110,7 +110,7 @@
     $( function() {
         const selectedItems = [];
         $( "#users-search-bar" ).autocomplete({
-            source: "{% url 'tasks:get_users' %}",
+            source: "{% url 'tasks:users_for_create' %}",
             minLength: 3,
             focus: function (event, ui) {
                 $("#users-search-bar").val(ui.item.username);

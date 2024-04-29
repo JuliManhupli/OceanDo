@@ -123,73 +123,94 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // TASK MENU
 document.addEventListener('DOMContentLoaded', function () {
-    const allTaskItems = document.querySelectorAll('.task-settings');
-    console.log(allTaskItems);
-    allTaskItems.forEach(item => {
-        const menuIcon = item.querySelector('.icon');
-        const menuOption = item.querySelector('.task-settings-box');
+    // OLD
+    // const allTaskItems = document.querySelectorAll('.task-settings');
+    // console.log(allTaskItems);
+    // allTaskItems.forEach(item => {
+    //     const menuIcon = item.querySelector('.icon');
+    //     const menuOption = item.querySelector('.task-settings-box');
+    //
+    //     menuIcon.addEventListener('click', function () {
+    //         menuOption.classList.toggle('show');
+    //     })
+    // })
 
-        menuIcon.addEventListener('click', function () {
-            menuOption.classList.toggle('show');
-        })
-    })
-
-    // const tasksContainer = document.querySelector('.important-tasks');
-    // tasksContainer.addEventListener('click', function(event) {
-    //     if (event.target.closest('.task-settings .icon')) {
-    //         const menuOption = event.target.closest('.task-settings').querySelector('.task-settings-box');
-    //         if (menuOption) {
-    //             menuOption.classList.toggle('show');
-    //         }
-    //     }
-    // });
-
-    window.addEventListener('click', function (e) {
-        allTaskItems.forEach(item => {
-            const menuIcon = item.querySelector('.icon'),
-                menuOption = item.querySelector('.task-settings-box');
-
-            if (e.target !== menuIcon) {
-                if (e.target !== menuOption) {
-                    if (menuOption.classList.contains('show')) {
-                        menuOption.classList.remove('show');
-                    }
+    const tasksContainers = document.querySelectorAll('.important-tasks');
+    tasksContainers.forEach(tasksContainer => {
+        tasksContainer.addEventListener('click', function(event) {
+            console.log('Clicked!', event.target);
+            if (event.target.closest('.task-settings .icon')) {
+                const menuOption = event.target.closest('.task-settings').querySelector('.task-settings-box');
+                if (menuOption) {
+                    menuOption.classList.toggle('show');
                 }
             }
-        })
+        });
     });
 
-    const allTaskHeads = document.querySelectorAll('.task-settings');
-    allTaskHeads.forEach(item => {
-        const taskStatusBtn = item.querySelector('.task-status-btn');
-        if (taskStatusBtn) {
-            taskStatusBtn.addEventListener('click', function () {
-                const taskId = item.closest('.task').dataset.taskId;
-                const taskStatus = item.querySelector('.task-status');
-                console.log(taskStatus);
-                const isCompleted = taskStatus.classList.contains('done');
-                axios.defaults.xsrfCookieName = 'csrftoken';
-                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-                axios.post(`/tasks/${taskId}/update-status/`, {is_completed: !isCompleted})
-                    .then(response => {
-                        if (response.status === 200) {
-                            taskStatus.classList.toggle('done');
-                            taskStatus.classList.toggle('bxs-circle');
-                            taskStatus.classList.toggle('bxs-check-circle');
-                            const taskStatusChange = item.querySelector('.task-status-change');
-                            if (taskStatusChange.textContent === 'Позначити, як виконане') {
-                                taskStatusChange.textContent = 'Позначити, як невиконане';
-                            } else {
-                                taskStatusChange.textContent = 'Позначити, як виконане';
-                            }
-                        } else {
-                            throw new Error('Помилка оновлення статусу завдання.');
-                        }
-                    })
-                    .catch(error => console.error(error));
-            });
-        }
+    // OLD
+    // window.addEventListener('click', function (e) {
+    //     allTaskItems.forEach(item => {
+    //         const menuIcon = item.querySelector('.icon'),
+    //             menuOption = item.querySelector('.task-settings-box');
+    //
+    //         if (e.target !== menuIcon) {
+    //             if (e.target !== menuOption) {
+    //                 if (menuOption.classList.contains('show')) {
+    //                     menuOption.classList.remove('show');
+    //                 }
+    //             }
+    //         }
+    //     })
+    // });
+
+    document.addEventListener('click', function (e) {
+        tasksContainers.forEach(tasksContainer => {
+            const menuOptions = tasksContainer.querySelectorAll('.task-settings-box');
+            menuOptions.forEach(menuOption => {
+                const isIconClicked = e.target.closest('.task-settings .icon');
+                const isMenuClicked = e.target.closest('.task-settings-box');
+
+                if (!isIconClicked && !isMenuClicked && menuOption.classList.contains('show')) {
+                    menuOption.classList.remove('show');
+                }
+            })
+        });
     });
+
+
+
+    // const allTaskHeads = document.querySelectorAll('.task-settings');
+    // allTaskHeads.forEach(item => {
+    //     const taskStatusBtn = item.querySelector('.task-status-btn');
+    //     if (taskStatusBtn) {
+    //         taskStatusBtn.addEventListener('click', function () {
+    //             const taskId = item.closest('.task').dataset.taskId;
+    //             const taskStatus = item.querySelector('.task-status');
+    //             console.log(taskStatus);
+    //             const isCompleted = taskStatus.classList.contains('done');
+    //             axios.defaults.xsrfCookieName = 'csrftoken';
+    //             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    //             axios.post(`/tasks/${taskId}/update-status/`, {is_completed: !isCompleted})
+    //                 .then(response => {
+    //                     if (response.status === 200) {
+    //                         taskStatus.classList.toggle('done');
+    //                         taskStatus.classList.toggle('bxs-circle');
+    //                         taskStatus.classList.toggle('bxs-check-circle');
+    //                         const taskStatusChange = item.querySelector('.task-status-change');
+    //                         if (taskStatusChange.textContent === 'Позначити, як виконане') {
+    //                             taskStatusChange.textContent = 'Позначити, як невиконане';
+    //                         } else {
+    //                             taskStatusChange.textContent = 'Позначити, як виконане';
+    //                         }
+    //                     } else {
+    //                         throw new Error('Помилка оновлення статусу завдання.');
+    //                     }
+    //                 })
+    //                 .catch(error => console.error(error));
+    //         });
+    //     }
+    // });
 });
 
 // CREATE TASK TAGS
@@ -395,6 +416,12 @@ notificationSocket.onclose = function () {
     console.error('Chat socket closed unexpectedly');
 };
 
+// Function to clear notification count from local storage
+function clearNotificationCount() {
+    localStorage.removeItem('notificationCount');
+    updateNotificationCount(); // Update the displayed count
+}
+
 // Function to update the notification count
 function updateNotificationCount() {
     let numberSpan = document.getElementById('notification-number');
@@ -420,7 +447,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Clear notification count when bell icon is clicked
             localStorage.setItem('notificationCount', 0);
-            updateNotificationCount();
+            // updateNotificationCount();
+            clearNotificationCount();
         })
     })
 
@@ -435,6 +463,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         })
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+        clearNotificationCount();
     });
 });
 
@@ -496,7 +528,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to update task status color
     function updateTaskStatusColor(isCompleted) {
         if (isCompleted) {
-            console.log("isCompleted: " + isCompleted);
             userTaskStatus.style.background = 'var(--green)';
             userTaskStatus.style.color = 'white';
 
@@ -560,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         updateTaskStatusColor(isCompleted);
 
                         // Store task status in local storage
-                        localStorage.setItem('taskStatus', isCompleted ? 'completed' : 'inProgress');
+                        // localStorage.setItem('taskStatus_${taskId}', isCompleted ? 'completed' : 'inProgress');
                     } else {
                         // Оновлення статусу не вдалося
                         console.error('Помилка оновлення статусу завдання.');
@@ -570,13 +601,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Check local storage for task status on page load
-        const storedTaskStatus = localStorage.getItem('taskStatus');
-        console.log(storedTaskStatus)
-        if (storedTaskStatus) {
-            localStorage.removeItem('taskStatus');
-            const isCompleted = storedTaskStatus === 'completed';
-            updateTaskStatusColor(isCompleted);
-
+        // const storedTaskStatus = localStorage.getItem('taskStatus_${taskId}');
+        // const taskId = document.getElementById('task-info').dataset.taskId;
+        // console.log(taskId, storedTaskStatus);
+        if (completeTaskBtn.classList.contains('completed')) {
+            // const taskId = document.getElementById('task-info').dataset.taskId;
+            // const isCompleted = storedTaskStatus === 'completed';
+            // console.log(taskId, storedTaskStatus, isCompleted);
+            updateTaskStatusColor(true);
         }
     }
 });
@@ -659,8 +691,6 @@ document.addEventListener('DOMContentLoaded', function () {
         daysContainer = document.querySelector('.days'),
         prev = document.querySelector('.prev'),
         next = document.querySelector('.next'),
-        dateInput = document.querySelector('.date-input'),
-        goToBtn = document.querySelector('.goto-btn'),
         todayBtn = document.querySelector('.today-btn'),
         tasksContainer = document.querySelector('.calendar-tasks');
 
@@ -684,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function () {
         "Грудень",
     ];
 
-    // const tasksArr = [
+    // const tasksJson = [
     //     {
     //         id: 1,
     //         category: "Виконання",
@@ -988,75 +1018,74 @@ document.addEventListener('DOMContentLoaded', function () {
                 year === task.year
             ) {
                 // then show
-
-                let foldersHTML = `<div class="folder"><i class='bx bx-folder icon'></i>`;
+                let foldersHTML = "";
                 if (task.folders.length > 0) {
                     task.folders.forEach(folder => {
-                        foldersHTML += `<p class="folder-name">${folder}</p>`;
+                        foldersHTML += `<p class="folder-name">${folder}</p><p class="folder-name">|</p>`;
                     });
                 }
-                foldersHTML += '</div>';
 
                 let tagsHTML = '';
                 if (task.tags.length > 0) {
-                    tagsHTML = '<div class="tag-box">';
                     task.tags.forEach(tag => {
                         tagsHTML += `<p>${tag}</p>`;
                     });
-                    tagsHTML += '</div>';
                 }
 
                 tasks += `
-                    <div class="task" data-task-id="${task.id}">
-                            <div class="head">
-                                <div onclick='location.href="/tasks/task-info/${task.id}";'>
+                        <div class="task" data-task-id="${task.id}">
+                            <div class="head">`
+
+                if (task.category === 'Виконання') {
+                        tasks += `<div onclick='location.href="/tasks/task-info/${task.id}";'>`
+                } else {
+                        tasks += `<div onclick='location.href="/tasks/task-info-creator/${task.id}";'>`
+                }
+                tasks += `
                                     <div class="status">
                                         <p class="category">${task.category}</p>
                                         <i class='bx bxs-circle icon task-status'></i>
                                     </div>
-                                    ${foldersHTML}
+                                    <div class="folder">
+                                        <i class='bx bx-folder icon'></i>
+                                        ${foldersHTML}
+                                    </div>
                                 </div>
                                 <div class="task-settings">
                                     <i class='bx bx-dots-horizontal-rounded icon'></i>
                                     <ul class="task-settings-box">`
-
-                if (task.category === 'Виконання'){
-                    console.log("YES");
-                    tasks += `
-                    {% if task.creator == request.user %}
-                    `
-                }
-
-                if (task.category === 'Моніторинг'){
-                    tasks += `
-                    <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
-                    `
+                if (task.type === 'assigned') {
+                        tasks += `
+                        <a href="/tasks/${task.id}/assign-edit/" class="edit-task-btn">
+                            <li>Змінити теги і папки</li>
+                        </a>
+                        `
                 } else {
-                    tasks += `
-                    <a href="#" class="edit-task-btn">
-                    `
+                        tasks += `
+                        <a href="/tasks/${task.id}/edit/" class="edit-task-btn">
+                             <li>Змінити</li>
+                        </a>
+                        <a href="#" class="delete-link" data-id="${task.id}">
+                            <li>Видалити</li>
+                        </a>
+                        `
+                }
+                tasks += `           
+                                      </ul>
+                                </div>
+                            </div>
+                            `
+                if (task.category === 'Виконання') {
+                        tasks += `<div onclick='location.href="/tasks/task-info/${task.id}";'>`
+                } else if (task.type === 'created') {
+                        tasks += `<div onclick='location.href="/tasks/task-info-creator/${task.id}";'>`
                 }
 
                 tasks += `
-                                            <li>Змінити</li>
-                                        </a>
-                                        <a href="#" class="delete-link"  data-id="${task.id}">
-                                            <li>Видалити</li>`
-
-                if (task.category === 'Виконання'){
-                    tasks += `
-                    {% endif %}
-                    `
-                }
-                tasks += `   
-                                        </a>
-                                    </ul>
-                                </div>
-                            </div>
-                            
-                            <div>
                                 <h2 class="name">${task.name}</h2>
-                                ${tagsHTML}
+                                <div class="tag-box">
+                                    ${tagsHTML}
+                                </div>
                                 <div class="limit-block">
                                     <p class="limit-block-title">Термін виконання:</p>
                                     <p class="time-limit">${task.date}</p>
@@ -1067,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </div>
                             </div>
                         </div>
-                    `;
+                 `;
             }
         });
 

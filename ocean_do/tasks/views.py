@@ -36,22 +36,16 @@ def get_tasks(request):
     created_query = Task.objects.filter(creator=user, is_completed=False)
     solo_assignee_query = created_query.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
         assignees__user=user).filter(assignees__is_completed=False)
+
     created_query = created_query.exclude(id__in=solo_assignee_query)
     assigned_query = assigned_query.exclude(id__in=solo_assignee_query)
+    solo_assignee_query = solo_assignee_query.filter(assignees__is_completed=False)
     return assigned_query, created_query, solo_assignee_query
 
 
 @login_required
 def all_tasks(request):
-    user = request.user
-    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
-    created_tasks = Task.objects.filter(creator=user, is_completed=False)
-    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
-        assignees__user=user).filter(assignees__is_completed=False)
-    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
-    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
-
-    solo_assignee_tasks = solo_assignee_tasks.filter(assignees__is_completed=False)
+    assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
     print(assigned_tasks)
     print(created_tasks)
     print(solo_assignee_tasks)
@@ -62,44 +56,43 @@ def all_tasks(request):
 
 
 def calendar_view(request):
-    assigned_tasks, created_tasks, assigned_tasks = get_tasks(request)
+    assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
 
+    solo_assignee_tasks_transform = transform_tasks(request, solo_assignee_tasks, True, True)
     assigned_tasks_transform = transform_tasks(request, assigned_tasks, True)
     created_tasks_transform = transform_tasks(request, created_tasks, False)
-    tasks = assigned_tasks_transform + created_tasks_transform
+    all_tasks_transform = solo_assignee_tasks_transform + assigned_tasks_transform + created_tasks_transform
     print("------------")
-    print(tasks)
+    print(all_tasks_transform)
 
-    tasks_json = json.dumps(tasks, cls=DjangoJSONEncoder)
+    tasks_json = json.dumps(all_tasks_transform, cls=DjangoJSONEncoder)
     print("------------")
     print(tasks_json)
 
     return render(request, "tasks/calendar.html", {'tasks_json': tasks_json})
 
 
-def transform_tasks(request, task_array, assigned):
+def transform_tasks(request, task_array, assigned, solo=False):
     tasks = []
+    folders_arr = []
+    tags_arr = []
     for task in task_array:
-        # if (assigned):
-        #     is_completed = False
-        #     user_folders = []
-        #
-        #     for assignment in task.assignees.all():
-        #         if assignment.user == request.user:
-        #             is_completed = assignment.is_completed
-        #         for folder in assignment.folders.all():
-        #             user_folders.append(folder.name)
-        #         break
-        # else:
-        #     is_completed = False
-        #     user_folders = []
+        if assigned:
+            for assignment in task.assignees.all():
+                if assignment.user == request.user:
+                    for folder in assignment.folders.all():
+                        folders_arr.append(folder.name)
+                    for tag in assignment.tags.all():
+                        tags_arr.append(tag.name)
+                    break
+
         tasks.append({
             'id': task.id,
-            # 'is_complete': is_completed,
+            'type': 'solo' if solo else ('assigned' if assigned else 'created'),
             'category': 'Виконання' if assigned else 'Моніторинг',
-            'folders': [] if assigned else [folder.name for folder in task.folders.all()],
+            'folders': folders_arr if assigned and not solo else [folder.name for folder in task.folders.all()],
             'name': task.title,
-            'tags': [tag.name for tag in task.tags.all()],
+            'tags': tags_arr if assigned and not solo else [tag.name for tag in task.tags.all()],
             'users': task.assignees.count(),
             'day': task.deadline.day,
             'month': task.deadline.month,
@@ -168,7 +161,7 @@ def delete_file(request, file_id):
     if request.method == 'POST':
         file = get_object_or_404(File, id=file_id)
         file.delete()
-        return JsonResponse({'message': 'Файл успішно видалено'}, status=204)
+        return JsonResponse({'message': 'Файл успішно видалено'}, status=200)
     else:
         return JsonResponse({'error': 'Метод запиту не підтримується'}, status=405)
 
@@ -353,7 +346,7 @@ def assign_edit_task(request, task_id):
     return render(request, "tasks/assign-edit-task.html", {'task': task, 'task_assignment': task_assignment})
 
 
-def get_users(request):
+def get_users(request, template_name):
     if 'term' in request.GET:
         term = request.GET.get('term')
         users = User.objects.filter(
@@ -361,7 +354,15 @@ def get_users(request):
         )
         users_data = list(users.values('email', 'username'))
         return JsonResponse(users_data, safe=False)
-    return render(request, "tasks/create-task.html")
+    return render(request, template_name)
+
+
+def users_for_create(request):
+    return get_users(request, "tasks/create-task.html")
+
+
+def users_for_edit(request):
+    return get_users(request, "tasks/edit-task.html")
 
 
 def task_info(request, task_id):
