@@ -29,6 +29,8 @@ class TaskAssignment(models.Model):
     is_completed = models.BooleanField(default=False)
     completion_time = models.DateTimeField(null=True, blank=True)
     files = models.ManyToManyField(File, related_name='files_assignments', blank=True)
+    tags = models.ManyToManyField(Tag, related_name='tags_assignments', blank=True)
+    folders = models.ManyToManyField(Folder, related_name='folders_assignments', blank=True)
 
     def __str__(self):
         return f"{self.user.username}"
@@ -38,7 +40,7 @@ class Task(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_tasks')
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, related_name='tags_tasks', blank=True)
     deadline = models.DateField()
     is_completed = models.BooleanField(default=False)
     assignees = models.ManyToManyField(TaskAssignment, related_name='assigned_tasks')

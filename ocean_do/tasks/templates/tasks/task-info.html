@@ -13,8 +13,22 @@
 
 <main id="task-info" data-task-id="{{ task.id }}">
     <div class="task-path">
-        <h1 class="title folder">Папка</h1>
+        {% for assignment in task.assignees.all %}
+        {% if assignment.user == request.user %}
+        {% for folder in assignment.folders.all %}
+        <p class="title folder">{{ folder.name }}</p>
+        <p class="title divider">/</p>
+        {% endfor %}
+        {% endif %}
+        {% endfor %}
+
+        {% if task.creator == request.user %}
+        {% for folder in task.folders.all %}
+        <h1 class="title folder">{{ folder.name }}</h1>
         <h1 class="title divider">/</h1>
+        {% empty %}
+        {% endfor %}
+        {% endif %}
         <h1 class="title task-name">{{ task.title }}</h1>
     </div>
 
@@ -42,17 +56,34 @@
                     </div>
                     <!--                    <i class='bx bx-dots-horizontal-rounded icon'></i>-->
                 </div>
-                {% if task.tags.all %}
+                {% for assignment in task.assignees.all %}
+                {% if assignment.user == request.user %}
+                {% if assignment.tags.all %}
                 <div class="info-block">
-
                     <p class="title">Теги:</p>
                     <div class="tags-values">
+
+                        {% for tag in assignment.tags.all %}
+                        <p class="tag">{{ tag.name }}</p>
+                        {% endfor %}
+
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+                {% if task.creator == request.user and task.tags.all%}
+                <div class="info-block">
+                    <p class="title">Теги:</p>
+                    <div class="tags-values">
+                        {% if task.creator == request.user %}
                         {% for tag in task.tags.all %}
                         <p class="tag">{{ tag.name }}</p>
                         {% endfor %}
+                        {% endif %}
                     </div>
-
                 </div>
+
                 {% endif %}
                 {% if task.description %}
                 <div class="info-block vertical-block">
