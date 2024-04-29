@@ -3,22 +3,21 @@ from datetime import datetime
 
 from accounts.models import User, Notification
 from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
-from django.core.serializers.json import DjangoJSONEncoder
+
 from .form import TaskForm, CommentForm
-from .models import Tag, Task, TaskAssignment, TaskChat, ChatComment, File, Folder
-from .utils import send_task
+from .models import Tag, Task, TaskAssignment, File, Folder
 
 
 def user_folders(request):
     try:
         tasks = Task.objects.filter(creator=request.user)
         user_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
-        print(user_folders)
         folders_data = [{'id': folder.id, 'name': folder.name} for folder in user_folders]
         print(folders_data)
         return JsonResponse(folders_data, safe=False)
@@ -34,7 +33,13 @@ def all_tasks(request):
     solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
-    return render(request, "tasks/all-tasks.html", {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
+
+    print(assigned_tasks)
+    print(created_tasks)
+    print(solo_assignee_tasks)
+
+    return render(request, "tasks/all-tasks.html", {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
 def calendar_view(request):
@@ -52,8 +57,15 @@ def completed_tasks(request):
     solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
+    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
+
+    print(assigned_tasks)
+    print(created_tasks)
+    print(solo_assignee_tasks)
+
     return render(request, "tasks/completed-tasks.html",
-                  {'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+                  {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks,
+                   'created_tasks': created_tasks})
 
 
 def folder_tasks(request, folder_id):
@@ -74,13 +86,11 @@ def folder_tasks(request, folder_id):
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     files = File.objects.filter(files_tasks=task)
-    print(files)
     for file in files:
         delete_file_from_s3(file.file)
         file.delete()
 
     assignees = task.assignees.all()
-    print(assignees)
     for assignee in assignees:
         files = assignee.files.all()
         for file in files:
@@ -134,7 +144,6 @@ def create_task(request):
             creator = request.user
             tags = request.POST.getlist('tags')  # Отримання списку тегів
             folders = request.POST.getlist('folders')  # Отримання списку папок
-            print(folders)
             task = form.save(commit=False)
             task.creator = creator
             task.save()  # Збереження завдання без тегів
@@ -247,7 +256,40 @@ def edit_task(request, task_id):
             return redirect('tasks:all_tasks')
     else:
         form = TaskForm(instance=task)
-    return render(request, "tasks/edit-task.html", {'form': form, 'task': task, 'folders': folders, 'files': files, 'tags': tags, 'assignees': assignees})
+    return render(request, "tasks/edit-task.html",
+                  {'form': form, 'task': task, 'folders': folders, 'files': files, 'tags': tags,
+                   'assignees': assignees})
+
+
+def assign_edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    task_assignment = get_object_or_404(TaskAssignment, user=request.user, assigned_tasks=task)
+
+    print(task_assignment)
+    if request.method == 'POST':
+
+        tags = request.POST.getlist('tags')  # Отримання списку тегів
+        folders = request.POST.getlist('folders')  # Отримання списку папок
+
+        print(tags)
+        print(folders)
+        # Додавання тегів до task assignment
+        if tags:
+            for tag_name in tags:
+                tag_name = tag_name.strip()
+                if tag_name:
+                    tag, _ = Tag.objects.get_or_create(name=tag_name)
+                    task_assignment.tags.add(tag)
+
+        # Додавання папок до task assignment
+        if folders:
+            for folder_name in folders:
+                folder_name = folder_name.strip()
+                if folder_name:
+                    folder, _ = Folder.objects.get_or_create(name=folder_name)
+                    task_assignment.folders.add(folder)
+        return redirect('tasks:all_tasks')
+    return render(request, "tasks/assign-edit-task.html", {'task': task})
 
 
 def get_users(request):
@@ -264,17 +306,12 @@ def get_users(request):
 def task_info(request, task_id):
     try:
         task = Task.objects.get(id=task_id)
-        task_chat, created = TaskChat.objects.get_or_create(task=task)
+        # task_chat, created = TaskChat.objects.get_or_create(task=task)
         task_assignment = get_object_or_404(TaskAssignment, user=request.user, assigned_tasks=task)
-        print(task_assignment)
 
         if request.method == 'POST' and request.FILES:
             files = request.FILES.getlist('files')
-            print(files)
             for file in files:
-                print(file)
-
-                print(task_assignment)
                 upload_assignment_file_to_s3(file, task.id, request.user.id, task_assignment.id)
                 task_assignment.is_completed = True
                 task_assignment.completion_time = datetime.now()
@@ -294,10 +331,10 @@ def task_info(request, task_id):
                     'created': comment.created.strftime("%d.%m.%Y %H:%M"),
                 })
 
-        if task_chat:
-            comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
-        else:
-            comments = None
+        # if task_chat:
+        #     comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+        # else:
+        comments = None
 
         form = CommentForm()
     except Task.DoesNotExist:
@@ -311,7 +348,6 @@ def creator_task_view(request, task_id):
     try:
         task = Task.objects.get(id=task_id)
         assignment = task.assignees.all()
-        print(assignment)
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
 
