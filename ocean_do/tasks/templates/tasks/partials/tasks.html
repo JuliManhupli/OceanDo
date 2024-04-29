@@ -24,9 +24,6 @@
             <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
                 <div class="status">
                     <p class="category">Виконання</p>
-                    {% for assignment in task.assignees.all %}
-                    {% if assignment.user == request.user %}
-
                     <a href="#" class="task-status-btn">
                         {% if assignment.is_completed %}
                         <i class='bx bxs-check-circle icon task-status done'></i>
@@ -34,18 +31,15 @@
                         <i class='bx bxs-circle icon task-status'></i>
                         {% endif %}
                     </a>
-                    {% endif %}
-                    {% endfor %}
-
                 </div>
                 <div class="folder">
                     <i class='bx bx-folder icon'></i>
 
                     {% for folder in task.folders.all %}
-                    <p class="folder-name">{{ folder.name }}</h1>
-                    <p class="folder-name">/</h1>
-                        {% empty %}
-                        {% endfor %}
+                    <p class="folder-name">{{ folder.name }}</p>
+                    <p class="folder-name">/</p>
+                    {% empty %}
+                    {% endfor %}
 
                 </div>
             </div>
@@ -58,31 +52,16 @@
                     <a href="#" class="delete-link" data-id="{{ task.id }}">
                         <li>Видалити</li>
                     </a>
-
-                    {% for assignment in task.assignees.all %}
-                    {% if assignment.user == request.user%}
-
-                    <a href="#" class="task-status-btn">
-                        {% if assignment.is_completed %}
-                        <li class="task-status-change">Позначити, як невиконане</li>
-                        {% else %}
-                        <li class="task-status-change">Позначити, як виконане</li>
-                        {% endif %}
-                    </a>
-                    {% endif %}
-                    {% endfor %}
                 </ul>
             </div>
         </div>
         <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
             <h2 class="name">{{ task.title }}</h2>
-            {% if task.creator == request.user %}
             <div class="tag-box">
                 {% for tag in task.tags.all %}
                 <p>{{ tag.name }}</p>
                 {% endfor %}
             </div>
-            {% endif %}
             <div class="limit-block">
                 <p class="limit-block-title">Термін виконання:</p>
                 <p class="time-limit">{{ task.deadline }}</p>
@@ -134,14 +113,6 @@
                     {% if assignment.user == request.user and task.creator != request.user%}
                     <a href="{% url 'tasks:assign_edit_task' task.id %}" class="edit-task-btn">
                         <li>Змінити теги і папки</li>
-                    </a>
-
-                    <a href="#" class="task-status-btn">
-                        {% if assignment.is_completed %}
-                        <li class="task-status-change">Позначити, як невиконане</li>
-                        {% else %}
-                        <li class="task-status-change">Позначити, як виконане</li>
-                        {% endif %}
                     </a>
                     {% endif %}
                     {% endfor %}

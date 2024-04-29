@@ -43,8 +43,9 @@
             </div>
 </main>
 <script>
-    const tasks = JSON.parse('{{ all_tasks_arr|escapejs }}');
-    console.log(tasks);
+    const tasksJson = JSON.parse('{{ tasks_json|escapejs }}');
+    console.log(tasksJson);
+
 </script>
 <!-- MAIN -->
 {% endblock %}

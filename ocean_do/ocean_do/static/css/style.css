@@ -1793,7 +1793,7 @@ main .calendar-container .left .calendar .month{
 
 main .calendar-container .left .calendar .month .icon{
     cursor: pointer;
-    font-size: 20px;
+    font-size: 26px;
 }
 
 main .calendar-container .left .calendar .weekdays{
@@ -2004,4 +2004,20 @@ main .calendar-container .right{
 main .calendar-container .right .calendar-tasks{
     margin-top: 0;
     grid-template-columns: repeat(auto-fit, minmax(240px, auto));
+}
+
+
+main .calendar-container .right .calendar-tasks .no-task{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+main .calendar-container .right .calendar-tasks .no-task h3{
+    font-size: 22px;
+    font-weight: 600;
+    padding: 20px 0;
 }
