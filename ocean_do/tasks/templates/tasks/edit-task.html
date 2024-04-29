@@ -156,12 +156,11 @@
         });
     }
 
-    // ADD NEW FOLDER
+    // ADD EXISTING FOLDERS
     const folderInputs = document.getElementById('folder-inputs');
     const existingFolders = {% if task.folders.all %}[{% for folder in task.folders.all %}"{{ folder.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% endif %};
     let folderCount = existingFolders.length > 0 ? existingFolders.length : 0;
 
-    // Додати існуючі папки
     if (existingFolders.length > 0) {
         existingFolders.forEach(folder => {
             folderCount++;

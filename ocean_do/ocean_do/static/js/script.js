@@ -496,6 +496,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to update task status color
     function updateTaskStatusColor(isCompleted) {
         if (isCompleted) {
+            console.log("isCompleted: " + isCompleted);
             userTaskStatus.style.background = 'var(--green)';
             userTaskStatus.style.color = 'white';
 
@@ -570,9 +571,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Check local storage for task status on page load
         const storedTaskStatus = localStorage.getItem('taskStatus');
+        console.log(storedTaskStatus)
         if (storedTaskStatus) {
+            localStorage.removeItem('taskStatus');
             const isCompleted = storedTaskStatus === 'completed';
             updateTaskStatusColor(isCompleted);
+
         }
     }
 });

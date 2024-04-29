@@ -116,7 +116,8 @@
             <div class="task-info-comment-section">
                 <div class="leave-comment">
                     <p class="title">Залишити коментар</p>
-                    <form hx-ext="ws" ws-connect="/ws/comments/public-chat/" ws-send _="on htmx:wsAfterSend reset() me">
+                    <form hx-ext="ws" >
+<!--                    <form hx-ext="ws" ws-connect="/ws/comments/public-chat/" ws-send _="on htmx:wsAfterSend reset() me">-->
                         {% csrf_token %}
                         {{ form.message }}
                         <div class="button-wrapper">
