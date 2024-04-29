@@ -27,7 +27,7 @@
                     {% for assignment in task.assignees.all %}
                     {% if assignment.user == request.user %}
 
-                    <a href="#">
+                    <a href="#" class="task-status-btn">
                         {% if assignment.is_completed %}
                         <i class='bx bxs-check-circle icon task-status done'></i>
                         {% else %}
@@ -54,6 +54,18 @@
                         <li>Видалити</li>
                     </a>
                     {% endif %}
+                    {% for assignment in task.assignees.all %}
+                    {% if assignment.user == request.user %}
+
+                    <a href="#" class="task-status-btn" >
+                        {% if assignment.is_completed %}
+                        <li class="task-status-change">Позначити, як невиконане</li>
+                        {% else %}
+                        <li class="task-status-change">Позначити, як виконане</li>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
                 </ul>
             </div>
         </div>
@@ -98,7 +110,7 @@
             <div class="task-settings">
                 <i class='bx bx-dots-horizontal-rounded icon'></i>
                 <ul class="task-settings-box">
-                    <a href="#" class="edit-task-btn">
+                    <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
                         <li>Змінити</li>
                     </a>
                     <a href="#" class="delete-link" data-id="{{ task.id }}">
