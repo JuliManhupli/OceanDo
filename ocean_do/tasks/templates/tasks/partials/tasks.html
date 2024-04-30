@@ -36,8 +36,7 @@
                     <i class='bx bx-folder icon'></i>
 
                     {% for folder in task.folders.all %}
-                    <p class="folder-name">{{ folder.name }}</p>
-                    <p class="folder-name">|</p>
+                        <p class="folder-name">{{ folder.name }} |</p>
                     {% empty %}
                     {% endfor %}
 
@@ -99,8 +98,7 @@
                     {% for assignment in task.assignees.all %}
                     {% if assignment.user == request.user %}
                     {% for folder in assignment.folders.all %}
-                    <p class="folder-name">{{ folder.name }}</p>
-                    <p class="folder-name">|</p>
+                        <p class="folder-name">{{ folder.name }} |</p>
                     {% endfor %}
                     {% endif %}
                     {% endfor %}
@@ -158,8 +156,7 @@
                 <div class="folder">
                     <i class='bx bx-folder icon'></i>
                     {% for folder in task.folders.all %}
-                    <p class="folder-name">{{ folder.name }}</p>
-                    <p class="divider">|</p>
+                        <p class="folder-name">{{ folder.name }} |</p>
                     {% empty %}
                     {% endfor %}
                 </div>
