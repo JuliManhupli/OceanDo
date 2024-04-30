@@ -43,7 +43,7 @@
                 </div>
                 <div class="info-block user-status-block">
                     <p class="title">Статус виконання:</p>
-                    <p class="user-task-status">
+                    <p class="user-task-status check-status">
                         {% if task.is_completed %}
                         Виконано
                         {% else %}
@@ -118,7 +118,7 @@
                 <div class="users-status-files">
                     <div class="user-status-block">
                         <p class="title">Статус виконання:</p>
-                        <p class="user-task-status" id="task-status-check">{% if assignment.is_completed %}Виконано
+                        <p class="user-task-status check-status" id="task-status-check">{% if assignment.is_completed %}Виконано
                             {% else %}У процесі
                             виконання{% endif %}</p>
                     </div>
