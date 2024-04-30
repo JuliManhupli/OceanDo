@@ -670,17 +670,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// CREATOR VIEW TASK STATUS
+// CREATOR VIEW TASK STATUS OF USERS AND THE TASK
 document.addEventListener("DOMContentLoaded", function() {
-    const taskStatus = document.getElementById("task-status-check");
-    if (taskStatus) {
-        if (taskStatus.textContent.trim() === "Виконано") {
-            taskStatus.style.backgroundColor = "var(--green)";
-            taskStatus.style.color = "white";
-        } else {
-            taskStatus.style.backgroundColor = "var(--yellow)";
-            taskStatus.style.color = "black";
-        }
+    const taskStatuses = document.querySelectorAll(".check-status");
+    if (taskStatuses) {
+        taskStatuses.forEach(taskStatus => {
+            if (taskStatus.textContent.trim() === "Виконано") {
+                taskStatus.style.backgroundColor = "var(--green)";
+                taskStatus.style.color = "white";
+            } else {
+                taskStatus.style.backgroundColor = "var(--yellow)";
+                taskStatus.style.color = "black";
+            }
+        })
+
     }
 });
 
