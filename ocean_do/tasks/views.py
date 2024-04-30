@@ -178,6 +178,34 @@ def update_task_status(request, task_id):
                 task_assignment.is_completed = is_completed
                 task_assignment.completion_time = datetime.now()
                 task_assignment.save()
+                assignees = task.assignees.all()
+                all_assignees_completed = all(assignment.is_completed for assignment in assignees)
+                print(all_assignees_completed)
+
+                if all_assignees_completed:
+                    task.is_completed = True
+                    task.save()
+                    # Створення нотифікації для кожного виконавця
+                    notification_message = f"Всі учасники виконали завдання \"{task.title}\""
+                    notification = Notification.objects.create(
+                        message=notification_message,
+                    )
+                    notification.users.set([task.creator])
+                    notification.save()
+                    # task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
+                    # print(task_url)
+                    # send_task(request, assignee.email, task.title, task_url)
+
+                else:
+                    task.is_completed = False
+                    task.save()
+                    if not is_completed:
+                        notification_message = f"Учасник {task_assignment.user.username} відмінив надсилання завдання \"{task.title}\""
+                        notification = Notification.objects.create(
+                            message=notification_message,
+                        )
+                        notification.users.set([task.creator])
+                        notification.save()
                 return JsonResponse({'message': 'Статус завдання успішно оновлено.'})
             else:
                 return JsonResponse({'error': 'Не вдалося знайти виконавця завдання.'},

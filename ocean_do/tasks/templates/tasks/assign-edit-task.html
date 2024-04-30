@@ -61,7 +61,10 @@
 <script>
     // ADD EXISTING FOLDERS
     const folderInputs = document.getElementById('folder-inputs');
-    const existingFolders = {% if task_assignment.folders.all %}[{% for folder in task_assignment.folders.all %}"{{ folder.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% endif %};
+    const existingFolders = {% if task_assignment.folders.all %}
+    [{% for folder in task_assignment.folders.all %}"{{ folder.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]
+    {% else %} []
+    {% endif %};
     let folderCount = existingFolders.length > 0 ? existingFolders.length : 0;
     console.log("existingFolders");
     console.log(existingFolders);
@@ -99,7 +102,10 @@
 
     // ADD EXISTING TAGS
     const tagInputs = document.getElementById('tag-inputs');
-    const existingTags = {% if task_assignment.tags.all %}[{% for tag in task_assignment.tags.all %}"{{ tag.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% endif %};
+    const existingTags = {% if task_assignment.tags.all %}
+    [{% for tag in task_assignment.tags.all %}"{{ tag.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]
+    {% else %} []
+    {% endif %};
     let tagCount = existingTags.length > 0 ? existingTags.length : 1;
     console.log("existingTags");
     console.log(existingTags);

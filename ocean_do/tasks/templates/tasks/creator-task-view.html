@@ -33,7 +33,7 @@
                                 <i class='bx bx-dots-horizontal-rounded icon'></i>
                                 <ul class="task-settings-box">
                                     {% if task.creator == request.user %}
-                                    <a href="#" class="edit-task-btn">
+                                    <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
                                         <li>Змінити</li>
                                     </a>
                                     <a href="#" class="delete-link" data-id="{{ task.id }}">

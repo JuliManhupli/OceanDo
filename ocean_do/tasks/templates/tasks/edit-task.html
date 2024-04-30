@@ -162,7 +162,6 @@
     [{% for folder in task.folders.all %}"{{ folder.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]
     {% else %} []
     {% endif %};
-    console.log(existingFolders);
     let folderCount = existingFolders.length > 0 ? existingFolders.length : 0;
 
     if (existingFolders.length > 0) {
@@ -234,10 +233,9 @@
         });
     }
 
-
+    var selectedItems = [];
     // SEARCH USERS AUTO-COMPLETE
     $(function () {
-        var selectedItems = [];
         const initialAssignees = {% if task.assignees.all %}[{% for assignee in task.assignees.all %}"{{ assignee.user.email }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
         const initialAssigneeNames = {% if task.assignees.all %}[{% for assignee in task.assignees.all %}"{{ assignee.user.username }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
 
@@ -301,7 +299,6 @@
                 selectedItems.splice(index, 1);
             }
             $(this).parent(".chosen-user").remove();
-                        console.log(selectedItems)
             updateHiddenInput();
         });
 
@@ -309,5 +306,15 @@
             $("#chosen-user-block").val(selectedItems.join(','));
         }
     });
+
+
+    const form = document.querySelector('.form');
+    form.addEventListener('submit', function (event) {
+        if (selectedItems.length === 0) {
+            event.preventDefault();
+            alert('Будь ласка, додайте виконавців перед відправленням форми.');
+        }
+    });
+
 </script>
 {% endblock %}

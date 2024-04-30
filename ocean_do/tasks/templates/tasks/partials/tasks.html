@@ -25,7 +25,7 @@
                 <div class="status">
                     <p class="category">Виконання</p>
                     <a href="#" class="task-status-btn">
-                        {% if assignment.is_completed %}
+                        {% if task.is_completed %}
                         <i class='bx bxs-check-circle icon task-status done'></i>
                         {% else %}
                         <i class='bx bxs-circle icon task-status'></i>
@@ -109,13 +109,9 @@
             <div class="task-settings">
                 <i class='bx bx-dots-horizontal-rounded icon'></i>
                 <ul class="task-settings-box">
-                    {% for assignment in task.assignees.all %}
-                    {% if assignment.user == request.user and task.creator != request.user%}
                     <a href="{% url 'tasks:assign_edit_task' task.id %}" class="edit-task-btn">
                         <li>Змінити теги і папки</li>
                     </a>
-                    {% endif %}
-                    {% endfor %}
                 </ul>
             </div>
         </div>
@@ -150,7 +146,14 @@
             <div onclick='location.href="/tasks/task-info-creator/{{ task.id }}";'>
                 <div class="status">
                     <p class="category">Моніторинг</p>
-                    <i class='bx bxs-circle icon task-status'></i>
+                    <a href="#" class="task-status-btn">
+                        {% if task.is_completed %}
+                        <i class='bx bxs-check-circle icon task-status done'></i>
+                        {% else %}
+                        <i class='bx bxs-circle icon task-status'></i>
+                        {% endif %}
+                    </a>
+
                 </div>
                 <div class="folder">
                     <i class='bx bx-folder icon'></i>
