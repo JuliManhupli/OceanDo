@@ -179,7 +179,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
+    document.addEventListener('click', function (e) {
+        tasksContainers.forEach(tasksContainer => {
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            const deleteLinks = tasksContainer.querySelectorAll('.delete-link');
 
+            deleteLinks.forEach(link => {
+                link.removeEventListener('click', onDeleteClick);
+            });
+
+            deleteLinks.forEach(link => {
+                link.addEventListener('click', onDeleteClick);
+            });
+        });
+    });
     // const allTaskHeads = document.querySelectorAll('.task-settings');
     // allTaskHeads.forEach(item => {
     //     const taskStatusBtn = item.querySelector('.task-status-btn');
@@ -212,6 +226,49 @@ document.addEventListener('DOMContentLoaded', function () {
     //     }
     // });
 });
+
+
+// DELETE TASK FROM CREATOR INFO
+document.addEventListener('DOMContentLoaded', function () {
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    const deleteLinks = document.querySelectorAll('.delete-link');
+    console.log("deleteLinks");
+    console.log(deleteLinks);
+    deleteLinks.forEach(link => {
+        link.removeEventListener('click', onDeleteClick);
+    });
+
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', onDeleteClick);
+    });
+});
+
+function onDeleteClick(event) {
+    event.preventDefault();
+    const confirmation = confirm('Ви впевнені, що хочете видалити це завдання?');
+    if (confirmation) {
+        const taskId = this.dataset.id;
+        axios.delete(`/tasks/${taskId}/delete/`)
+            .then(response => {
+                console.log(response);
+                if (response.status === 204) {
+                    const listItem = this.parentElement;
+                    listItem.remove();
+                    alert('Завдання успішно видалено');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Помилка під час виконання запиту:', error);
+                if (error.response.status === 403) {
+                    alert('Ви не маєте дозволу на видалення цього завдання');
+                } else {
+                    alert('Помилка під час видалення завдання');
+                }
+            });
+    }
+}
 
 // CREATE TASK TAGS
 document.addEventListener('DOMContentLoaded', function () {
@@ -286,39 +343,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// DELETE TASK
-document.addEventListener('DOMContentLoaded', function () {
-    axios.defaults.xsrfCookieName = 'csrftoken';
-    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-    const deleteLinks = document.querySelectorAll('.delete-link');
-    deleteLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            const confirmation = confirm('Ви впевнені, що хочете видалити це завдання?');
-            if (confirmation) {
-                const taskId = this.dataset.id;
-                axios.delete(`/tasks/${taskId}/delete/`)
-                    .then(response => {
-                        console.log(response);
-                        if (response.status === 204) {
-                            const listItem = this.parentElement;
-                            listItem.remove();
-                            alert('Завдання успішно видалено');
-                            location.reload();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Помилка під час виконання запиту:', error);
-                        if (error.response.status === 403) {
-                            alert('Ви не маєте дозволу на видалення цього завдання');
-                        } else {
-                            alert('Помилка під час видалення завдання');
-                        }
-                    });
-            }
-        });
-    });
-});
 
 // FILE NAME SHOW
 function displayFileName(inputId, spanId) {

@@ -35,26 +35,47 @@
     <div class="task-divider">
         <div class="task-info-page-container">
             <div class="task-info-container">
-                <div class="info-block user-status-block">
-                        <p class="title">Статус виконання:</p>
-                        {% for assignment in task.assignees.all %}
-                            {% if assignment.user == request.user %}
-                                <p class="user-task-status">
-                                    {% if assignment.is_completed %}
-                                    Виконано
-                                    {% else %}
-                                    У процесі виконання
-                                    {% endif %}
-                                </p>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
                 <div class="head">
                     <div class="category-block">
                         <p class="title">Категорія:</p>
                         <p class="block-value">Виконання</p>
                     </div>
                     <!--                    <i class='bx bx-dots-horizontal-rounded icon'></i>-->
+
+                    <div class="task-settings">
+                        <i class='bx bx-dots-horizontal-rounded icon'></i>
+                        <ul class="task-settings-box">
+                            {% if task.creator == request.user %}
+                            <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
+                                <li>Змінити</li>
+                            </a>
+                            <a href="#" class="delete-link" data-id="{{ task.id }}">
+                                <li>Видалити</li>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'tasks:assign_edit_task' task.id %}" class="edit-task-btn">
+                                <li>Змінити теги і папки</li>
+                            </a>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-block user-status-block">
+                    <p class="title">Статус виконання:</p>
+                    {% for assignment in task.assignees.all %}
+                    {% if assignment.user == request.user %}
+                    <p class="user-task-status">
+                        {% if assignment.is_completed %}
+                        Виконано
+                        {% else %}
+                        У процесі виконання
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                    {% endfor %}
+
+
                 </div>
                 {% for assignment in task.assignees.all %}
                 {% if assignment.user == request.user %}
@@ -209,4 +230,34 @@
     </div>
 </main>
 <!-- MAIN -->
+
+
+<script>
+    const allTaskItems = document.querySelectorAll('.task-settings');
+    console.log(allTaskItems);
+    allTaskItems.forEach(item => {
+        const menuIcon = item.querySelector('.icon');
+        const menuOption = item.querySelector('.task-settings-box');
+
+        menuIcon.addEventListener('click', function () {
+            menuOption.classList.toggle('show');
+        })
+    })
+
+
+    window.addEventListener('click', function (e) {
+        allTaskItems.forEach(item => {
+            const menuIcon = item.querySelector('.icon'),
+                menuOption = item.querySelector('.task-settings-box');
+
+            if (e.target !== menuIcon) {
+                if (e.target !== menuOption) {
+                    if (menuOption.classList.contains('show')) {
+                        menuOption.classList.remove('show');
+                    }
+                }
+            }
+        })
+    });
+</script>
 {% endblock %}

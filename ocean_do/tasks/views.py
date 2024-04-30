@@ -17,7 +17,9 @@ from .models import Tag, Task, TaskAssignment, File, Folder
 def user_folders(request):
     try:
         tasks = Task.objects.filter(creator=request.user, is_completed=False)
+        print(tasks)
         task_assignments = TaskAssignment.objects.filter(user=request.user, is_completed=False)
+        print(task_assignments)
         task_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
         task_assignments_folders = Folder.objects.filter(folders_assignments__in=task_assignments).distinct()
 
@@ -125,15 +127,19 @@ def folder_tasks(request, folder_id):
     folder = Folder.objects.get(id=folder_id)
 
     task_assignments = TaskAssignment.objects.filter(folders=folder, user=user, is_completed=False)
+
     assigned_tasks = Task.objects.filter(assignees__in=task_assignments)
     created_tasks = Task.objects.filter(creator=user, folders=folder, is_completed=False)
     solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
+    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
+
+    print("task_assignments ", task_assignments)
     print(created_tasks)
     print(folder)
     return render(request, "tasks/folder-tasks.html",
-                  {'folder': folder, 'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
+                  {'folder': folder, 'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
 def delete_task(request, task_id):
@@ -278,9 +284,9 @@ def create_task(request):
 
 def edit_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    folders = task.folders.all()
     files = task.files.all()
     tags = task.tags.all()
+    folders = task.folders.all()
     assignees = task.assignees.all()
 
     if request.method == 'POST':
@@ -307,28 +313,29 @@ def edit_task(request, task_id):
                     folder, _ = Folder.objects.get_or_create(name=folder_name)
                     task.folders.add(folder)
 
-            assignees = request.POST.getlist('assignees')[0].split(',')
-            task.assignees.clear()
+            new_assignees = request.POST.getlist('assignees')[0].split(',')
+            existing_assignees_emails = [assignee.user.email for assignee in assignees]
+            TaskAssignment.objects.filter(user__email__in=existing_assignees_emails).exclude(
+                user__email__in=new_assignees).delete()
 
-            for assignee_email in assignees:
-                if assignee_email:
-                    assignee = User.objects.get(email=assignee_email)
+            for assignee_email in new_assignees:
+                assignee = User.objects.get(email=assignee_email)
+                if assignee_email not in existing_assignees_emails:
                     task_assignment = TaskAssignment.objects.create(
                         user=assignee,
                         is_completed=False,
                         completion_time=None,
                     )
                     task.assignees.add(task_assignment)
-
-                    # Створення нотифікації для кожного виконавця
-                    notification_message = f"Завдання \"{task.title}\" було оновлено"
-                    notification = Notification.objects.create(
-                        message=notification_message,
-                    )
-                    notification.users.set([assignee])
-                    notification.save()
-                    # task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
-                    # send_task(request, assignee.email, task.title, task_url)
+                    task.is_completed = False
+                    task.save()
+                # Створення нотифікації для кожного нового виконавця
+                notification_message = f"Завдання \"{task.title}\" було оновлено"
+                notification = Notification.objects.create(
+                    message=notification_message,
+                )
+                notification.users.set([assignee])
+                notification.save()
 
             for file in request.FILES.getlist('files'):
                 upload_file_to_s3(file, task.id)
