@@ -11,210 +11,249 @@
 
 {% block content_area %}
 
-    <main>
-        <div class="task-path">
-            {% for folder in task.folders.all %}
-            <h1 class="title folder">{{ folder.name }}</h1>
-            <h1 class="title divider">/</h1>
-            {% empty %}
-            {% endfor %}
-            <h1 class="title task-name">{{ task.title }}</h1>
+<main>
+    <div class="task-path">
+        {% for folder in task.folders.all %}
+        <h1 class="title folder">{{ folder.name }}</h1>
+        <h1 class="title divider">/</h1>
+        {% empty %}
+        {% endfor %}
+        <h1 class="title task-name">{{ task.title }}</h1>
+    </div>
+
+    <div class="task-divider">
+        <div class="task-info-page-container creator-task-info">
+            <div class="task-info-container">
+                <div class="head">
+                    <div class="category-block">
+                        <p class="title">Категорія:</p>
+                        <p class="block-value">Моніторинг</p>
+                    </div>
+                    <div class="task-settings">
+                        <i class='bx bx-dots-horizontal-rounded icon'></i>
+                        <ul class="task-settings-box">
+                            <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
+                                <li>Змінити</li>
+                            </a>
+                            <a href="#" class="delete-link" data-id="{{ task.id }}">
+                                <li>Видалити</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-block user-status-block">
+                    <p class="title">Статус виконання:</p>
+                    <p class="user-task-status">
+                        {% if task.is_completed %}
+                        Виконано
+                        {% else %}
+                        У процесі виконання
+                        {% endif %}
+                    </p>
+
+                </div>
+                {% if task.tags.all %}
+                <div class="info-block">
+
+                    <p class="title">Теги:</p>
+                    <div class="tags-values">
+                        {% for tag in task.tags.all %}
+                        <p class="tag">{{ tag.name }}</p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+                {% endif %}
+                {% if task.description %}
+                <div class="info-block vertical-block">
+                    <p class="title">Опис:</p>
+                    <p class="description">{{ task.description }}</p>
+                </div>
+                {% endif %}
+                {% if task.files.all %}
+                <div class="info-block vertical-block">
+                    <p class="title">Файли:</p>
+                    <ul class="file-list">
+                        {% for file in task.files.all %}
+                        <div class="file-div">
+                            <li class="file-li">{{ file.title }}</li>
+                            <a href="{{ file.file.url }}"
+                               onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                            </li>
+                        </div>
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+                {% endif %}
+                <div class="info-block time-block">
+                    <p class="title">Термін виконання</p>
+                    <p class="time-value">{{ task.deadline }}</p>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="task-divider">
-                <div class="task-info-page-container creator-task-info">
-                    <div class="task-info-container">
-                        <div class="head">
-                            <div class="category-block">
-                                <p class="title">Категорія:</p>
-                                <p class="block-value">Моніторинг</p>
-                            </div>
-                            <div class="task-settings">
-                                <i class='bx bx-dots-horizontal-rounded icon'></i>
-                                <ul class="task-settings-box">
-                                    {% if task.creator == request.user %}
-                                    <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
-                                        <li>Змінити</li>
-                                    </a>
-                                    <a href="#" class="delete-link" data-id="{{ task.id }}">
-                                        <li>Видалити</li>
-                                    </a>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                        </div>
-                        {% if task.tags.all %}
-                        <div class="info-block">
+    <h1 class="title users-block">Учасники</h1>
 
-                            <p class="title">Теги:</p>
-                            <div class="tags-values">
-                                {% for tag in task.tags.all %}
-                                <p class="tag">{{ tag.name }}</p>
-                                {% endfor %}
-                            </div>
+    <div class="creator-user-view">
+        <div class="left-users">
+            <p class="title">Користувачі</p>
+            <ul class="users-ul">
+                {% for assignment in assignments %}
+                <li>
+                    <a class="user-div {% if forloop.first %}active{% endif %}">
+                        <p class="name">{{ assignment.user.username }}</p>
+                        <p class="email">{{ assignment.user.email }}</p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="users-data-block">
+            {% for assignment in assignments %}
 
-                        </div>
-                        {% endif %}
-                        {% if task.description %}
-                        <div class="info-block vertical-block">
-                            <p class="title">Опис:</p>
-                            <p class="description">{{ task.description }}</p>
-                        </div>
-                        {% endif %}
-                        {% if task.files.all %}
-                        <div class="info-block vertical-block">
-                            <p class="title">Файли:</p>
-                            <ul class="file-list">
-                                {% for file in task.files.all %}
-                                <div class="file-div">
-                                    <li class="file-li">{{ file.title }}</li>
+            <div class="user-info {% if forloop.first %}active{% endif %}">
+                <div class="users-status-files">
+                    <div class="user-status-block">
+                        <p class="title">Статус виконання:</p>
+                        <p class="user-task-status" id="task-status-check">{% if assignment.is_completed %}Виконано
+                            {% else %}У процесі
+                            виконання{% endif %}</p>
+                    </div>
+                    {% if assignment.files.all %}
+                    <div class="info-block vertical-block">
+                        <p class="title">Файли:</p>
+                        <ul class="file-list">
+                            {% for file in assignment.files.all %}
+                            <div class="file-div">
+                                <li class="file-li">{{ file.title }}</li>
+                                <div class="user-file-btns">
                                     <a href="{{ file.file.url }}"
                                        onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
-                                    </li>
                                 </div>
-                                {% endfor %}
-
-                            </ul>
-
-                        </div>
-                        {% endif %}
-                        <div class="info-block time-block">
-                            <p class="title">Термін виконання</p>
-                            <p class="time-value">{{ task.deadline }}</p>
-                        </div>
-                    </div>
-                </div>
-                    </div>
-
-        <h1 class="title users-block">Учасники</h1>
-
-        <div class="creator-user-view">
-            <div class="left-users">
-                <p class="title">Користувачі</p>
-                <ul class="users-ul">
-                    {% for assignment in assignments %}
-                    <li>
-                        <a class="user-div {% if forloop.first %}active{% endif %}">
-                            <p class="name">{{ assignment.user.username }}</p>
-                            <p class="email">{{ assignment.user.email }}</p>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="users-data-block">
-                {% for assignment in assignments %}
-
-                <div class="user-info {% if forloop.first %}active{% endif %}">
-                    <div class="users-status-files">
-                        <div class="user-status-block">
-                            <p class="title">Статус виконання:</p>
-                            <p class="user-task-status" id="task-status-check">{% if assignment.is_completed %}Виконано{% else %}У процесі
-                                виконання{% endif %}</p>
-                        </div>
-                        {% if assignment.files.all %}
-                        <div class="info-block vertical-block">
-                            <p class="title">Файли:</p>
-                            <ul class="file-list">
-                                {% for file in assignment.files.all %}
-                                <div class="file-div">
-                                    <li class="file-li">{{ file.title }}</li>
-                                        <div class="user-file-btns">
-                                            <a href="{{ file.file.url }}"
-                                           onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
-                                        </div>
-                                     </li>
-                                </div>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="task-info-comment-section">
-                        <div class="leave-comment">
-                            <p class="title">Залишити коментар</p>
-                            <textarea class="comment-text-to-send" name="" id=""
-                                      placeholder="Введіть текст..."></textarea>
-                        </div>
-                        <div class="comment-section">
-                            <p class="title">Приватні коментарі:</p>
-                            {% for comment in assignment.task.taskchat.chatcomment_set.all %}
-                            <div class="comment">
-                                <img src="{{ comment.user.profile.picture.url }}" alt="Avatar">
-                                <div class="comment-text-block">
-                                    <div class="head">
-                                        <p class="user-name">{{ comment.user.username }}</p>
-                                        <p class="sent-date">{{ comment.created|date:"d.m.Y H:i" }}</p>
-                                    </div>
-                                    <p class="comment-text">{{ comment.message }}</p>
-                                </div>
+                                </li>
                             </div>
                             {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="task-info-comment-section">
+                    <div class="leave-comment">
+                        <p class="title">Залишити коментар</p>
+                        <textarea class="comment-text-to-send" name="" id=""
+                                  placeholder="Введіть текст..."></textarea>
+                    </div>
+                    <div class="comment-section">
+                        <p class="title">Приватні коментарі:</p>
+                        {% for comment in assignment.task.taskchat.chatcomment_set.all %}
+                        <div class="comment">
+                            <img src="{{ comment.user.profile.picture.url }}" alt="Avatar">
+                            <div class="comment-text-block">
+                                <div class="head">
+                                    <p class="user-name">{{ comment.user.username }}</p>
+                                    <p class="sent-date">{{ comment.created|date:"d.m.Y H:i" }}</p>
+                                </div>
+                                <p class="comment-text">{{ comment.message }}</p>
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
-
-                {% endfor %}
-                <!--                <div class="user-info">-->
-                <!--                    <div class="users-status-files">-->
-                <!--                        <div class="user-status-block">-->
-                <!--                            <p class="title">Статус виконання</p>-->
-                <!--                            <p class="user-task-status">У процесі виконання</p>-->
-                <!--                        </div>-->
-                <!--                        <div class="info-block vertical-block">-->
-                <!--                            <p class="title">Файли 33333333333:</p>-->
-                <!--                            <ul class="file-list">-->
-                <!--                                <div class="file-div">-->
-                <!--                                    <li class="file-li"> Файл 1</li>-->
-                <!--                                    <a href="#">Завантажити</a>-->
-                <!--                                </div>-->
-                <!--                                <div class="file-div">-->
-                <!--                                    <li class="file-li"> Файл 2</li>-->
-                <!--                                    <a href="#">Завантажити</a>-->
-                <!--                                </div>-->
-                <!--                            </ul>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                    <div class="task-info-comment-section">-->
-                <!--                        <div class="leave-comment">-->
-                <!--                            <p class="title">Залишити коментар</p>-->
-                <!--                            <textarea class="comment-text-to-send" name="" id=""-->
-                <!--                                      placeholder="Введіть текст..."></textarea>-->
-                <!--                        </div>-->
-                <!--                        <div class="comment-section">-->
-                <!--                            <p class="title">Приватні коментарі:</p>-->
-                <!--                            <div class="comment">-->
-                <!--                                <img src="" alt="Avatar">-->
-                <!--                                <div class="comment-text-block">-->
-                <!--                                    <div class="head">-->
-                <!--                                        <p class="user-name">Ім'я</p>-->
-                <!--                                        <p class="sent-date">20.01.2024</p>-->
-                <!--                                    </div>-->
-                <!--                                    <p class="comment-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.-->
-                <!--                                        Phasellus quis ornare sem. Curabitur finibus nisl a tincidunt-->
-                <!--                                        finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean-->
-                <!--                                        porttitor nisl sit amet ligula faucibus port.</p>-->
-                <!--                                </div>-->
-                <!--                            </div>-->
-
-                <!--                            <div class="comment">-->
-                <!--                                <img src="" alt="Avatar">-->
-                <!--                                <div class="comment-text-block">-->
-                <!--                                    <div class="head">-->
-                <!--                                        <p class="user-name">Ім'я</p>-->
-                <!--                                        <p class="sent-date">20.01.2024</p>-->
-                <!--                                    </div>-->
-                <!--                                    <p class="comment-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.-->
-                <!--                                        Phasellus quis ornare sem. Curabitur finibus nisl a tincidunt-->
-                <!--                                        finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean-->
-                <!--                                        porttitor nisl sit amet ligula faucibus port.</p>-->
-                <!--                                </div>-->
-                <!--                            </div>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                </div>-->
             </div>
+
+            {% endfor %}
+            <!--                <div class="user-info">-->
+            <!--                    <div class="users-status-files">-->
+            <!--                        <div class="user-status-block">-->
+            <!--                            <p class="title">Статус виконання</p>-->
+            <!--                            <p class="user-task-status">У процесі виконання</p>-->
+            <!--                        </div>-->
+            <!--                        <div class="info-block vertical-block">-->
+            <!--                            <p class="title">Файли 33333333333:</p>-->
+            <!--                            <ul class="file-list">-->
+            <!--                                <div class="file-div">-->
+            <!--                                    <li class="file-li"> Файл 1</li>-->
+            <!--                                    <a href="#">Завантажити</a>-->
+            <!--                                </div>-->
+            <!--                                <div class="file-div">-->
+            <!--                                    <li class="file-li"> Файл 2</li>-->
+            <!--                                    <a href="#">Завантажити</a>-->
+            <!--                                </div>-->
+            <!--                            </ul>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                    <div class="task-info-comment-section">-->
+            <!--                        <div class="leave-comment">-->
+            <!--                            <p class="title">Залишити коментар</p>-->
+            <!--                            <textarea class="comment-text-to-send" name="" id=""-->
+            <!--                                      placeholder="Введіть текст..."></textarea>-->
+            <!--                        </div>-->
+            <!--                        <div class="comment-section">-->
+            <!--                            <p class="title">Приватні коментарі:</p>-->
+            <!--                            <div class="comment">-->
+            <!--                                <img src="" alt="Avatar">-->
+            <!--                                <div class="comment-text-block">-->
+            <!--                                    <div class="head">-->
+            <!--                                        <p class="user-name">Ім'я</p>-->
+            <!--                                        <p class="sent-date">20.01.2024</p>-->
+            <!--                                    </div>-->
+            <!--                                    <p class="comment-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.-->
+            <!--                                        Phasellus quis ornare sem. Curabitur finibus nisl a tincidunt-->
+            <!--                                        finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean-->
+            <!--                                        porttitor nisl sit amet ligula faucibus port.</p>-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+
+            <!--                            <div class="comment">-->
+            <!--                                <img src="" alt="Avatar">-->
+            <!--                                <div class="comment-text-block">-->
+            <!--                                    <div class="head">-->
+            <!--                                        <p class="user-name">Ім'я</p>-->
+            <!--                                        <p class="sent-date">20.01.2024</p>-->
+            <!--                                    </div>-->
+            <!--                                    <p class="comment-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit.-->
+            <!--                                        Phasellus quis ornare sem. Curabitur finibus nisl a tincidunt-->
+            <!--                                        finibus. Sed diam quam, cursus id hendrerit a, luctus et tortor. Aenean-->
+            <!--                                        porttitor nisl sit amet ligula faucibus port.</p>-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
         </div>
-    </main>
+    </div>
+</main>
 <!-- MAIN -->
+
+<script>
+    const allTaskItems = document.querySelectorAll('.task-settings');
+    console.log(allTaskItems);
+    allTaskItems.forEach(item => {
+        const menuIcon = item.querySelector('.icon');
+        const menuOption = item.querySelector('.task-settings-box');
+
+        menuIcon.addEventListener('click', function () {
+            menuOption.classList.toggle('show');
+        })
+    })
+
+
+    window.addEventListener('click', function (e) {
+        allTaskItems.forEach(item => {
+            const menuIcon = item.querySelector('.icon'),
+                menuOption = item.querySelector('.task-settings-box');
+
+            if (e.target !== menuIcon) {
+                if (e.target !== menuOption) {
+                    if (menuOption.classList.contains('show')) {
+                        menuOption.classList.remove('show');
+                    }
+                }
+            }
+        })
+    });
+</script>
 {% endblock %}
