@@ -88,8 +88,104 @@ OceanDo
 
 {% else %}
 <!-- Цей блок буде видимим тільки для неавторизованих користувачів -->
-<h1>Ви не авторизовані</h1>
-<p>Будь ласка, <a href="{% url 'accounts:login' %}">увійдіть</a> або <a href="{% url 'accounts:register' %}">зареєструйтесь</a>.
-</p>
+<body>
+    <div class="wrapper landing">
+        <div class="login-page landing-page">
+            <div class="landing-container">
+                <div class="greeting-block">
+                    <img src="{% static 'img/landing/add_tasks.svg' %}" alt="">
+                    <div class="greeting-info">
+                        <h1 class="product-name">TaskDo</h1>
+                        <p class="product-info first-info">Робота із завданнями.
+                        </p>
+                        <p class="product-info">
+                            Створюй, редагуй, переглядай.
+                        </p>
+                        <p class="product-info">
+                            Отримуй, виконуй, передавай, проводь моніторинг.
+                        </p>
+                        <div class="product-button-block">
+                            <a href="{% url 'accounts:login' %}" class="start-button">Розпочати</a>
+                        </div>
+                    </div>
+                </div>
+                <hr class="landing-divider">
+                <div class="detail-block">
+                    <div class="detail-element">
+                        <div class="image-container">
+                            <img src="{% static 'img/landing/completed_tasks.svg' %}" alt="">
+                        </div>
+                        <div class="detail-text">
+                            <h2 class="detail-title">
+                                Ієрархія передачі завдань
+                            </h2>
+                            <p class="detail-desc">
+                                Отримуйте завдання та створюйте нове на основі отриманого для інших виконавців.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-element">
+                        <div class="image-container">
+                            <img src="{% static 'img/landing/online_calendar.png' %}" alt="">
+                        </div>
+                        <div class="detail-text">
+                            <h2 class="detail-title">
+                                Календар
+                            </h2>
+                            <p class="detail-desc">
+                                Відслідковуйте терміни виконання ваших завдань, щоб не пропустити дедлайни.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-element">
+                        <div class="image-container">
+                            <img class="correction" src="{% static 'img/landing/my_files.dvg' %}" alt="">
+                        </div>
+                        <div class="detail-text">
+                            <h2 class="detail-title">
+                                Файли та папки
+                            </h2>
+                            <p class="detail-desc">
+                                Використовуйте папки задля зберігання ваших завдань, а також передавайте чи
+                                отримуйте файли у процесі виконання.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-element">
+                        <div class="image-container">
+                            <img src="{% static 'img/landing/progress-indicator.svg' %}" alt="">
+                        </div>
+                        <div class="detail-text">
+                            <h2 class="detail-title">
+                                Статистика
+                            </h2>
+                            <p class="detail-desc">
+                                Відслідковуйте статистику виконання своїх завдань, а також проводьте моніторинг
+                                виконання.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <hr class="landing-divider">
+                <div class="last-panel">
+                    <div class="ending-img">
+                        <img src="{% static 'img/landing/blooming.svg' %}" alt="">
+                    </div>
+                    <div class="closing-text">
+                        <h2 class="detail-title smaller-text">Все це та більше із</h2>
+                        <h1 class="product-name last-name">TaskDo</h1>
+                        <div class="product-button-block ending-btn-block">
+                            <a href="{% url 'accounts:login' %}" class="start-button ending-btn">Розпочати</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+<!--<h1>Ви не авторизовані</h1>-->
+<!--<p>Будь ласка, <a href="{% url 'accounts:login' %}">увійдіть</a> або <a href="{% url 'accounts:register' %}">зареєструйтесь</a>.-->
+<!--</p>-->
 {% endif %}
 {% endblock %}
