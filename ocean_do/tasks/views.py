@@ -17,16 +17,12 @@ from .models import Tag, Task, TaskAssignment, File, Folder
 def user_folders(request):
     try:
         tasks = Task.objects.filter(creator=request.user, is_completed=False)
-        print(tasks)
         task_assignments = TaskAssignment.objects.filter(user=request.user, is_completed=False)
-        print(task_assignments)
         task_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
         task_assignments_folders = Folder.objects.filter(folders_assignments__in=task_assignments).distinct()
 
         folders_data = [{'id': folder.id, 'name': folder.name} for folder in task_folders]
         folders_data.extend([{'id': folder.id, 'name': folder.name} for folder in task_assignments_folders])
-
-        print(folders_data)
         return JsonResponse(folders_data, safe=False)
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
@@ -48,10 +44,6 @@ def get_tasks(request):
 @login_required
 def all_tasks(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
-    print(assigned_tasks)
-    print(created_tasks)
-    print(solo_assignee_tasks)
-
     return render(request, "tasks/all-tasks.html",
                   {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks,
                    'created_tasks': created_tasks})
@@ -59,26 +51,36 @@ def all_tasks(request):
 
 def calendar_view(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
-
     solo_assignee_tasks_transform = transform_tasks(request, solo_assignee_tasks, True, True)
     assigned_tasks_transform = transform_tasks(request, assigned_tasks, True)
     created_tasks_transform = transform_tasks(request, created_tasks, False)
     all_tasks_transform = solo_assignee_tasks_transform + assigned_tasks_transform + created_tasks_transform
-    print("------------")
-    print(all_tasks_transform)
-
     tasks_json = json.dumps(all_tasks_transform, cls=DjangoJSONEncoder)
-    print("------------")
-    print(tasks_json)
-
     return render(request, "tasks/calendar.html", {'tasks_json': tasks_json})
 
 
 def transform_tasks(request, task_array, assigned, solo=False):
+    ukrainian_month_names = {
+        1: 'січня',
+        2: 'лютого',
+        3: 'березня',
+        4: 'квітня',
+        5: 'травня',
+        6: 'червня',
+        7: 'липня',
+        8: 'серпня',
+        9: 'вересня',
+        10: 'жовтня',
+        11: 'листопада',
+        12: 'грудня',
+    }
+
     tasks = []
-    folders_arr = []
-    tags_arr = []
+
     for task in task_array:
+        folders_arr = []
+        tags_arr = []
+
         if assigned:
             for assignment in task.assignees.all():
                 if assignment.user == request.user:
@@ -99,8 +101,10 @@ def transform_tasks(request, task_array, assigned, solo=False):
             'day': task.deadline.day,
             'month': task.deadline.month,
             'year': task.deadline.year,
-            'date': task.deadline.strftime('%d %B %Y'),
+            'date': task.deadline.strftime('%d ') + ukrainian_month_names.get(task.deadline.month,
+                                                                              '') + task.deadline.strftime(' %Y'),
         })
+
     return tasks
 
 
@@ -112,10 +116,6 @@ def completed_tasks(request):
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
-
-    print(assigned_tasks)
-    print(created_tasks)
-    print(solo_assignee_tasks)
 
     return render(request, "tasks/completed-tasks.html",
                   {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks,
