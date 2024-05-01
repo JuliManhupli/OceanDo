@@ -37,17 +37,48 @@ def get_tasks(request):
 
     created_query = created_query.exclude(id__in=solo_assignee_query)
     assigned_query = assigned_query.exclude(id__in=solo_assignee_query)
-    solo_assignee_query = solo_assignee_query.filter(assignees__is_completed=False)
+    # solo_assignee_query = solo_assignee_query.filter(assignees__is_completed=False)
     return assigned_query, created_query, solo_assignee_query
 
 
 @login_required
 def all_tasks(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
-    return render(request, "tasks/all-tasks.html",
-                  {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks,
-                   'created_tasks': created_tasks})
+    combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
+    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
+    return render(request, "tasks/all-tasks.html", {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})
 
+
+def completed_tasks(request):
+    user = request.user
+    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=True)
+    created_tasks = Task.objects.filter(creator=user, is_completed=True)
+    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
+        assignees__user=user)
+    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
+    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
+    combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
+    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
+    return render(request, "tasks/completed-tasks.html",
+                  {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})
+
+
+def folder_tasks(request, folder_id):
+    user = request.user
+    folder = Folder.objects.get(id=folder_id)
+
+    task_assignments = TaskAssignment.objects.filter(folders=folder, user=user, is_completed=False)
+
+    assigned_tasks = Task.objects.filter(assignees__in=task_assignments)
+    created_tasks = Task.objects.filter(creator=user, folders=folder, is_completed=False)
+    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
+        assignees__user=user)
+    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
+    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
+    combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
+    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
+    return render(request, "tasks/folder-tasks.html",
+                  {'folder': folder, 'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})
 
 def calendar_view(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
@@ -108,38 +139,6 @@ def transform_tasks(request, task_array, assigned, solo=False):
     return tasks
 
 
-def completed_tasks(request):
-    user = request.user
-    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=True)
-    created_tasks = Task.objects.filter(creator=user, is_completed=True)
-    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
-        assignees__user=user)
-    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
-    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
-
-    return render(request, "tasks/completed-tasks.html",
-                  {'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks,
-                   'created_tasks': created_tasks})
-
-
-def folder_tasks(request, folder_id):
-    user = request.user
-    folder = Folder.objects.get(id=folder_id)
-
-    task_assignments = TaskAssignment.objects.filter(folders=folder, user=user, is_completed=False)
-
-    assigned_tasks = Task.objects.filter(assignees__in=task_assignments)
-    created_tasks = Task.objects.filter(creator=user, folders=folder, is_completed=False)
-    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
-        assignees__user=user)
-    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
-    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
-
-    print("task_assignments ", task_assignments)
-    print(created_tasks)
-    print(folder)
-    return render(request, "tasks/folder-tasks.html",
-                  {'folder': folder, 'solo_assignee_tasks': solo_assignee_tasks, 'assigned_tasks': assigned_tasks, 'created_tasks': created_tasks})
 
 
 def delete_task(request, task_id):

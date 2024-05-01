@@ -14,105 +14,16 @@
     <h1 class="title">Важливі завдання</h1>
     <div class="important-tasks active">
 
-        {% for task in tasks %}
+{% for task, task_type in tasks_with_type %}
+    {% if task_type == 'assigned' %}
+    {% include 'tasks/task-type/assigned-task.html'%}
+    {% elif task_type == 'solo' %}
+    {% include 'tasks/task-type/solo-task.html'%}
+    {% else %}
+    {% include 'tasks/task-type/created-task.html'%}
+    {% endif %}
+{% endfor %}
 
-        <div class="task" data-task-id="{{ task.id }}">
-            <div class="head">
-                <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
-                    <div class="status">
-
-                        <p class="category">
-                        {% if task.creator == request.user %}
-                        Моніторинг{% else %}Виконання{% endif %}</p>
-                        {% if task.creator == request.user %}
-                        <a href="#" class="task-status-btn">
-                            {% if task.is_completed %}
-                            <i class='bx bxs-check-circle icon task-status done'></i>
-                            {% else %}
-                            <i class='bx bxs-circle icon task-status'></i>
-                            {% endif %}
-                        </a>
-                        {% else %}
-                        {% for assignment in task.assignees.all %}
-                        {% if assignment.user == request.user %}
-                        <a href="#" class="task-status-btn">
-                            {% if assignment.is_completed %}
-                            <i class='bx bxs-check-circle icon task-status done'></i>
-                            {% else %}
-                            <i class='bx bxs-circle icon task-status'></i>
-                            {% endif %}
-                        </a>
-                        {% endif %}
-                        {% endfor %}
-                        {% endif %}
-                    </div>
-                    <div class="folder">
-                        <i class='bx bx-folder icon'></i>
-                        {% if task.creator == request.user %}
-                        {% for folder in task.folders.all %}
-                        <p class="folder-name">{{ folder.name }} |</p>
-                        {% empty %}
-                        {% endfor %}
-                        {% else %}
-                        {% for assignment in task.assignees.all %}
-                        {% if assignment.user == request.user %}
-                        {% for folder in assignment.folders.all %}
-                        <p class="folder-name">{{ folder.name }} |</p>
-                        {% endfor %}
-                        {% endif %}
-                        {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="task-settings">
-                    <i class='bx bx-dots-horizontal-rounded icon'></i>
-                    <ul class="task-settings-box">
-                        {% if task.creator == request.user %}
-                        <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
-                            <li>Змінити</li>
-                        </a>
-                        <a href="#" class="delete-link" data-id="{{ task.id }}">
-                            <li>Видалити</li>
-                        </a>
-                        {% else %}
-                        <a href="{% url 'tasks:assign_edit_task' task.id %}" class="edit-task-btn">
-                            <li>Змінити теги і папки</li>
-                        </a>
-                        {% endif %}
-                        </p>
-                    </ul>
-                </div>
-            </div>
-            <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
-                <h2 class="name">{{ task.title }}</h2>
-                <div class="tag-box">
-                    {% if task.creator == request.user %}
-                    {% for tag in task.tags.all %}
-                    <p>{{ tag.name }}</p>
-                    {% empty %}
-                    {% endfor %}
-                    {% else %}
-                    {% for assignment in task.assignees.all %}
-                    {% if assignment.user == request.user %}
-                    {% for tag in assignment.tags.all %}
-                    <p>{{ tag.name }}</p>
-                    {% endfor %}
-                    {% endif %}
-                    {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="limit-block">
-                    <p class="limit-block-title">Термін виконання:</p>
-                    <p class="time-limit">{{ task.deadline }}</p>
-                </div>
-                <div class="participants">
-                    <i class='bx bxs-user icon'></i>
-                    <p class="user-number">{{ task.assignees.count }}</p>
-                </div>
-            </div>
-        </div>
-
-        {% endfor %}
 
     </div>
 </main>
