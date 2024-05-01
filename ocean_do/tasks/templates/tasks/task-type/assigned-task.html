@@ -1,0 +1,60 @@
+<div class="task" data-task-id="{{ task.id }}">
+    <div class="head">
+        <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+            <div class="status">
+                <p class="category">Виконання</p>
+                {% for assignment in task.assignees.all %}
+                {% if assignment.user == request.user %}
+
+                <a href="#" class="task-status-btn">
+                    {% if assignment.is_completed %}
+                    <i class='bx bxs-check-circle icon task-status done'></i>
+                    {% else %}
+                    <i class='bx bxs-circle icon task-status'></i>
+                    {% endif %}
+                </a>
+                {% endif %}
+                {% endfor %}
+
+            </div>
+            <div class="folder">
+                <i class='bx bx-folder icon'></i>
+                {% for assignment in task.assignees.all %}
+                {% if assignment.user == request.user %}
+                {% for folder in assignment.folders.all %}
+                <p class="folder-name">{{ folder.name }} |</p>
+                {% endfor %}
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="task-settings">
+            <i class='bx bx-dots-horizontal-rounded icon'></i>
+            <ul class="task-settings-box">
+                <a href="{% url 'tasks:assign_edit_task' task.id %}" class="edit-task-btn">
+                    <li>Змінити теги і папки</li>
+                </a>
+            </ul>
+        </div>
+    </div>
+    <div onclick='location.href="/tasks/task-info/{{ task.id }}";'>
+        <h2 class="name">{{ task.title }}</h2>
+        <div class="tag-box">
+            {% for assignment in task.assignees.all %}
+            {% if assignment.user == request.user %}
+            {% for tag in assignment.tags.all %}
+            <p>{{ tag.name }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="limit-block">
+            <p class="limit-block-title">Термін виконання:</p>
+            <p class="time-limit">{{ task.deadline }}</p>
+        </div>
+        <div class="participants">
+            <i class='bx bxs-user icon'></i>
+            <p class="user-number">{{ task.assignees.count }}</p>
+        </div>
+    </div>
+</div>

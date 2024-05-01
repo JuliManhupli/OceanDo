@@ -1,14 +1,22 @@
 from django.shortcuts import render
 
-from tasks.models import Task
+from tasks.views import get_tasks
 
 
 def main(request):
-    user = request.user
-    assigned_query = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
-    created_query = Task.objects.filter(creator=user, is_completed=False)
-    combined_query = assigned_query | created_query
-    combined_query = combined_query.distinct()
-    combined_query = combined_query.order_by('deadline')[:4]
-    return render(request, "ocean_do/index.html", {'tasks': combined_query})
+    if request.user.is_authenticated:
+        assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
+        combined_query = set(list(assigned_tasks) + list(created_tasks) + list(solo_assignee_tasks))
+        combined_query = sorted(combined_query, key=lambda x: x.deadline)[:4]
+        tasks_with_type = []
+        for task in combined_query:
+            if task in assigned_tasks:
+                tasks_with_type.append((task, 'assigned'))
+            elif task in solo_assignee_tasks:
+                tasks_with_type.append((task, 'solo'))
+            else:
+                tasks_with_type.append((task, 'created'))
 
+        return render(request, "ocean_do/index.html", {'tasks_with_type': tasks_with_type})
+    else:
+        return render(request, "ocean_do/index.html")
