@@ -1,0 +1,74 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Cтатистичні дані
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'users/partials/profile-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+
+<!-- MAIN -->
+<main>
+    <h1 class="title">Кількість завдань</h1>
+    <div class="statistics personal-statistics">
+        <div class="chart round-chart">
+            <canvas id="accountType"></canvas>
+        </div>
+        <div class="chart round-chart">
+            <canvas id="accountDone"></canvas>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    const accountType = document.getElementById('accountType');
+
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    new Chart(accountType, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Виконання',
+                'Моніторинг'
+            ],
+            datasets: [{
+                label: 'Кількість завдань',
+                data: [300, 50],
+                backgroundColor: [
+                    '#FDC969',
+                    '#263D9D'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+    const accountDone = document.getElementById('accountDone');
+    new Chart(accountDone, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Виконано',
+                'У процесі виконання'
+            ],
+            datasets: [{
+                label: 'Кількість завдань',
+                data: [ 50, 100],
+                backgroundColor: [
+                    '#5E967C',
+                    '#FDC969'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+</script>
+<!-- MAIN -->
+{% endblock %}

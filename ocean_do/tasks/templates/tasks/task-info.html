@@ -40,7 +40,6 @@
                         <p class="title">Категорія:</p>
                         <p class="block-value">Виконання</p>
                     </div>
-                    <!--                    <i class='bx bx-dots-horizontal-rounded icon'></i>-->
 
                     <div class="task-settings">
                         <i class='bx bx-dots-horizontal-rounded icon'></i>
@@ -185,9 +184,6 @@
                             </div>
                         </div>
                         <div id="file-inputs">
-                            <!--                <label for="file-upload" class="custom-file-upload">Завантажити</label>-->
-                            <!--                <input id="file-upload" type="file" name="files" onchange="displayFileName()" style="display: none;"/>-->
-                            <!--                <span id="file-name"></span>-->
                         </div>
                     </div>
                     <button class="complete-task" id="send-task-files">Відправити</button>
@@ -233,6 +229,9 @@
 
 
 <script>
+    const taskUserDeadline = "{{ task.deadline }}";
+    console.log(taskUserDeadline);
+
     const allTaskItems = document.querySelectorAll('.task-settings');
     console.log(allTaskItems);
     allTaskItems.forEach(item => {

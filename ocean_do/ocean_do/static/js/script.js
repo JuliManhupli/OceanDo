@@ -539,6 +539,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
+// FUNCTIONS FOR CHECKING DATE
+function translateMonth(month) {
+        const months = {
+            'січня': 'January',
+            'лютого': 'February',
+            'березня': 'March',
+            'квітня': 'April',
+            'травня': 'May',
+            'червня': 'June',
+            'липня': 'July',
+            'серпня': 'August',
+            'вересня': 'September',
+            'жовтня': 'October',
+            'листопада': 'November',
+            'грудня': 'December'
+        };
+        return months[month];
+    }
+function parseUkrainianDate(dateString) {
+        const [day, monthInUkrainian, year] = dateString.split(' ');
+        const translatedMonth = translateMonth(monthInUkrainian);
+        return new Date(`${translatedMonth} ${day}, ${year}`);
+}
+
 // USER TASK STATUS CHANGE
 document.addEventListener('DOMContentLoaded', function () {
     const completeTaskBtn = document.getElementById('update-status-btn'),
@@ -549,8 +574,22 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInputsContainer = document.getElementById('file-inputs'),
         allDeleteFileBtns = document.querySelectorAll('.files-container .file-div .user-file-btns .delete-file-btn');
 
+    const userDeadline = parseUkrainianDate(taskUserDeadline),
+    userTime = new Date(userDeadline.getFullYear(), userDeadline.getMonth(), userDeadline.getDate());
+
+    const todayDate = new Date(),
+    todayTime = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+    console.log("YES")
+    console.log(userTime);
+    console.log(todayTime);
+    const isOverdue = userTime < todayTime;
+    console.log(isOverdue);
+    if (isOverdue){
+        completeTaskBtn.classList.toggle('overdue');
+    }
+
     // Function to update task status color
-    function updateTaskStatusColor(isCompleted) {
+    function updateTaskStatusColor(isCompleted, overDue) {
         if (isCompleted) {
             userTaskStatus.style.background = 'var(--green)';
             userTaskStatus.style.color = 'white';
@@ -563,10 +602,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 button.style.opacity = '0.5';
                 button.style.pointerEvents = 'none';
             });
-
         } else {
-            userTaskStatus.style.background = 'var(--yellow)';
-            userTaskStatus.style.color = 'black';
+            if (overDue) {
+                userTaskStatus.style.background = 'var(--red)';
+                userTaskStatus.style.color = 'white';
+            } else {
+                userTaskStatus.style.background = 'var(--yellow)';
+                userTaskStatus.style.color = 'black';
+            }
 
             addTaskFilesBtn.style.opacity = '1';
             addTaskFilesBtn.style.pointerEvents = 'auto';
@@ -603,7 +646,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const taskId = document.getElementById('task-info').dataset.taskId;
             const isCompleted = !completeTaskBtn.classList.contains('completed');
-
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.post(`/tasks/${taskId}/update-status/`, {is_completed: isCompleted})
@@ -612,10 +654,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         completeTaskBtn.textContent = isCompleted ? 'Позначити як невиконане' : 'Позначити як виконане';
                         completeTaskBtn.classList.toggle('completed');
                         userTaskStatus.textContent = isCompleted ? 'Виконано' : 'У процесі виконання';
-                        updateTaskStatusColor(isCompleted);
+                        updateTaskStatusColor(isCompleted, isOverdue);
 
-                        // Store task status in local storage
-                        // localStorage.setItem('taskStatus_${taskId}', isCompleted ? 'completed' : 'inProgress');
                     } else {
                         // Оновлення статусу не вдалося
                         console.error('Помилка оновлення статусу завдання.');
@@ -624,15 +664,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 .catch(error => console.error(error));
         }
 
-        // Check local storage for task status on page load
-        // const storedTaskStatus = localStorage.getItem('taskStatus_${taskId}');
-        // const taskId = document.getElementById('task-info').dataset.taskId;
-        // console.log(taskId, storedTaskStatus);
         if (completeTaskBtn.classList.contains('completed')) {
-            // const taskId = document.getElementById('task-info').dataset.taskId;
-            // const isCompleted = storedTaskStatus === 'completed';
-            // console.log(taskId, storedTaskStatus, isCompleted);
-            updateTaskStatusColor(true);
+            updateTaskStatusColor(true, false);
+        } else if (completeTaskBtn.classList.contains('overdue')){
+            updateTaskStatusColor(false, true);
         }
     }
 });
@@ -673,17 +708,28 @@ document.addEventListener('DOMContentLoaded', function () {
 // CREATOR VIEW TASK STATUS OF USERS AND THE TASK
 document.addEventListener("DOMContentLoaded", function() {
     const taskStatuses = document.querySelectorAll(".check-status");
+
+    const taskDeadline = parseUkrainianDate(deadLineTime),
+    taskTime = new Date(taskDeadline.getFullYear(), taskDeadline.getMonth(), taskDeadline.getDate());
+    const today = new Date(),
+    todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
     if (taskStatuses) {
         taskStatuses.forEach(taskStatus => {
-            if (taskStatus.textContent.trim() === "Виконано") {
+            const isCompleted = taskStatus.textContent.trim() === "Виконано";
+            const isOverdue = taskTime < todayTime;
+
+            if (isCompleted) {
                 taskStatus.style.backgroundColor = "var(--green)";
+                taskStatus.style.color = "white";
+            } else if (isOverdue) {
+                taskStatus.style.backgroundColor = "var(--red)";
                 taskStatus.style.color = "white";
             } else {
                 taskStatus.style.backgroundColor = "var(--yellow)";
                 taskStatus.style.color = "black";
             }
-        })
-
+        });
     }
 });
 
@@ -926,6 +972,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateTasks(date) {
         let tasks = "";
+        const todayDate = new Date(),
+        todayTime = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
         tasksJson.forEach((task) => {
             //get tasks on active day
             if (
@@ -948,6 +996,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
 
+                const deadLine = parseUkrainianDate(task.date),
+                    deadLineTime = new Date(deadLine.getFullYear(), deadLine.getMonth(), deadLine.getDate());
+                const isOverdue = deadLineTime < todayTime;
+
                 tasks += `
                         <div class="task" data-task-id="${task.id}">
                             <div class="head">`
@@ -960,7 +1012,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 tasks += `
                                     <div class="status">
                                         <p class="category">${task.category}</p>
-                                        <i class='bx bxs-circle icon task-status'></i>
+                                        `
+
+                if (isOverdue){
+                    tasks += `
+                          <i class='bx bxs-x-circle icon task-status overdue'></i>
+                          `
+                } else {
+                   tasks += `
+                          <i class='bx bxs-circle icon task-status'></i>
+                          `
+                }
+
+                tasks += `
                                     </div>
                                     <div class="folder">
                                         <i class='bx bx-folder icon'></i>
