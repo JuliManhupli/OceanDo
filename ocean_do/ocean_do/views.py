@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.utils import timezone
 from tasks.views import get_tasks
 
 
@@ -16,7 +16,7 @@ def main(request):
                 tasks_with_type.append((task, 'solo'))
             else:
                 tasks_with_type.append((task, 'created'))
-
-        return render(request, "ocean_do/index.html", {'tasks_with_type': tasks_with_type})
+        current_time = timezone.now()
+        return render(request, "ocean_do/index.html", {'tasks_with_type': tasks_with_type, 'current_time': current_time})
     else:
         return render(request, "ocean_do/index.html")

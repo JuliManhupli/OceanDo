@@ -8,6 +8,7 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
 
 from .form import TaskForm, CommentForm
@@ -18,11 +19,12 @@ def user_folders(request):
     try:
         tasks = Task.objects.filter(creator=request.user, is_completed=False)
         task_assignments = TaskAssignment.objects.filter(user=request.user, is_completed=False)
-        task_folders = Folder.objects.filter(folders_tasks__in=tasks).distinct()
-        task_assignments_folders = Folder.objects.filter(folders_assignments__in=task_assignments).distinct()
+        task_folders = Folder.objects.filter(folders_tasks__in=tasks)
+        task_assignments_folders = Folder.objects.filter(folders_assignments__in=task_assignments)
 
-        folders_data = [{'id': folder.id, 'name': folder.name} for folder in task_folders]
-        folders_data.extend([{'id': folder.id, 'name': folder.name} for folder in task_assignments_folders])
+        all_folders = task_folders | task_assignments_folders
+        all_folders = all_folders.order_by('name').distinct()
+        folders_data = [{'id': folder.id, 'name': folder.name} for folder in all_folders]
         return JsonResponse(folders_data, safe=False)
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
@@ -46,7 +48,10 @@ def all_tasks(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
     tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
-    return render(request, "tasks/all-tasks.html", {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})
+    current_time = timezone.now()
+    print(current_time)
+    return render(request, "tasks/all-tasks.html",
+                  {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks, 'current_time': current_time})
 
 
 def completed_tasks(request):
@@ -77,8 +82,11 @@ def folder_tasks(request, folder_id):
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
     tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
+    current_time = timezone.now()
     return render(request, "tasks/folder-tasks.html",
-                  {'folder': folder, 'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})
+                  {'folder': folder, 'tasks_with_type': tasks_with_type,
+                   'created_tasks': created_tasks, 'current_time': current_time})
+
 
 def calendar_view(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
@@ -137,8 +145,6 @@ def transform_tasks(request, task_array, assigned, solo=False):
         })
 
     return tasks
-
-
 
 
 def delete_task(request, task_id):

@@ -26,7 +26,74 @@
 
 
     </div>
+    <h1 class="title users-block">Продуктивність</h1>
+    <div class="statistics">
+        <div class="chart">
+            <canvas id="productivity"></canvas>
+        </div>
+    </div>
 </main>
 
+
+<script>
+
+    const proChart = document.getElementById('productivity');
+    const todayDate = new Date();
+    const currentMonth = todayDate.getMonth();
+    const currentYear = todayDate.getFullYear();
+    const months = [];
+
+    for (let i = currentMonth; i >= currentMonth - 11; i--) {
+        let month = i;
+        let year = currentYear;
+        if (month < 0) {
+            month = 12 + month;
+            year -= 1;
+        }
+        months.push({ month, year });
+    }
+    months.reverse();
+
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    new Chart(proChart, {
+        type: 'bar',
+        data: {
+          labels: months.map(({ month, year }) => monthToString(month) + ' ' + year),
+          datasets: [{
+            label: 'Кількість виконаних завдань',
+            data: [2, 2, 2, 5, 2, 3, 7, 8, 4, 0, 6, 9],
+            borderWidth: 1,
+            backgroundColor: '#7187E4'
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+    function monthToString(month) {
+        const monthsArray = [
+        "Січень",
+        "Лютий",
+        "Березень",
+        "Квітень",
+        "Травень",
+        "Червень",
+        "Липень",
+        "Серпень",
+        "Вересень",
+        "Жовтень",
+        "Листопад",
+        "Грудень"
+    ];
+        return monthsArray[month];
+    }
+
+</script>
 
 {% endblock %}

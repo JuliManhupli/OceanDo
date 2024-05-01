@@ -967,6 +967,10 @@ main .task .head .status .task-status.done{
     background: var(--green);
 }
 
+main .task .head .status .task-status.overdue{
+    background: var(--red);
+}
+
 main .task .head .folder {
     display: flex;
     align-items: center;
@@ -1080,6 +1084,14 @@ main .task .participants .user-number{
 
 
 /* MAIN */
+
+main .chart{
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
 
 /* CONTENT */
 
@@ -1357,6 +1369,12 @@ main .profile-container .edit-form .edit-profile .edit-profile-btn{
     main .profile-container .edit-form .edit-profile .edit-profile-btn {
         padding: 16px 60px;
     }
+}
+/* ----------------------------------EDIT PROFILE PAGE---------------------------------- */
+
+.personal-statistics{
+    display: flex;
+    gap: 20px;
 }
 
 
@@ -2023,6 +2041,17 @@ main .creator-user-view .users-data-block .users-status-files .vertical-block .f
     border-radius: 5px;
 }
 
+.creator-statistics{
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    margin-top: 30px;
+    border-radius: 10px;
+}
+
+.round-chart{
+    width: 500px;
+}
 
 /* ----------------------------------CALENDAR PAGE---------------------------------- */
 

@@ -225,10 +225,45 @@
             <!--                </div>-->
         </div>
     </div>
+
+    <h1 class="title users-block">Статистика</h1>
+
+    <div class="statistics creator-statistics">
+        <div class="chart round-chart">
+            <canvas id="usersTaskStatus" width="500" height="500"></canvas>
+        </div>
+    </div>
 </main>
 <!-- MAIN -->
 
 <script>
+    const usersStatuses = document.getElementById('usersTaskStatus');
+
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    new Chart(usersStatuses, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Виконано',
+                'У процесі виконання',
+                'Невчасно виконано'
+            ],
+            datasets: [{
+                label: 'Кількість виконавців',
+                data: [300, 50, 100],
+                backgroundColor: [
+                    '#5E967C',
+                    '#FDC969',
+                    '#B5415C'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+    const deadLineTime = "{{ task.deadline }}";
+
     const allTaskItems = document.querySelectorAll('.task-settings');
     console.log(allTaskItems);
     allTaskItems.forEach(item => {
