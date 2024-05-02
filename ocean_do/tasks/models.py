@@ -1,5 +1,6 @@
+import shortuuid as shortuuid
 from accounts.models import User
-from django.db import models
+from django.db import models, IntegrityError
 
 
 class Tag(models.Model):
@@ -52,11 +53,26 @@ class Task(models.Model):
 
 
 class TaskChat(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=128, unique=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    members = models.ManyToManyField(User, related_name='task_chats', blank=True)
+    is_private = models.BooleanField(default=False)
 
     def __str__(self):
         return self.task.title
+
+    @classmethod
+    def create_or_get_private(cls, task, creator, assignee):
+        chat = cls.objects.filter(task=task, is_private=True, members=creator).filter(members=assignee).first()
+
+        if chat:
+            return chat, False
+        else:
+            chat = cls.objects.create(task=task, is_private=True)
+            chat.members.add(creator, assignee)
+            chat.name = shortuuid.uuid()
+            chat.save()
+            return chat, True
 
 
 class ChatComment(models.Model):

@@ -1,6 +1,6 @@
 {% load static %}
 
-<!--<div id="chat-comment" hx-swap-oob="beforeend">-->
+<div id="chat-comment" hx-swap-oob="beforeend">
     <div class="comment">
         {% if comment.user.photo %}
         <img class="profile-picture" src="{{ comment.user.photo.url }}" alt="Avatar">
@@ -15,4 +15,4 @@
             <p class="comment-text">{{ comment.message }}</p>
         </div>
     </div>
-<!--</div>-->
+</div>

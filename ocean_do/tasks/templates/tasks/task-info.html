@@ -11,7 +11,8 @@
 
 {% block content_area %}
 
-<main id="task-info" data-task-id="{{ task.id }}">
+<main id="task-info" data-task-id="{{ task.id }}" data-task-deadline="{{ task.deadline }}"
+      ws-connect="/ws/comments/{{ task_chat.name }}/">
     <div class="task-path">
         {% for assignment in task.assignees.all %}
         {% if assignment.user == request.user %}
@@ -40,6 +41,7 @@
                         <p class="title">Категорія:</p>
                         <p class="block-value">Виконання</p>
                     </div>
+                    <!--                    <i class='bx bx-dots-horizontal-rounded icon'></i>-->
 
                     <div class="task-settings">
                         <i class='bx bx-dots-horizontal-rounded icon'></i>
@@ -136,8 +138,8 @@
             <div class="task-info-comment-section">
                 <div class="leave-comment">
                     <p class="title">Залишити коментар</p>
-                    <form hx-ext="ws" >
-<!--                    <form hx-ext="ws" ws-connect="/ws/comments/public-chat/" ws-send _="on htmx:wsAfterSend reset() me">-->
+                    <form id="chat_message_form" hx-ext="ws" ws-send
+                          _="on htmx:wsAfterSend reset() me">
                         {% csrf_token %}
                         {{ form.message }}
                         <div class="button-wrapper">
@@ -146,26 +148,29 @@
                     </form>
                 </div>
 
-                <div class="comment-section">
+                <div class="comment-section" hx-get="/tasks/comments/{{ task_chat.name }}/" hx-target="#comments">
                     <p class="title">Приватні коментарі:</p>
-                    <ul id="comments">
-                        {% for comment in comments reversed %}
-                        <div class="comment">
-                            {% if comment.user.photo %}
-                            <img class="profile-picture" src="{{ comment.user.photo.url }}" alt="Avatar">
-                            {% else %}
-                            <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
-                            {% endif %}
-                            <div class="comment-text-block">
-                                <div class="head">
-                                    <p class="user-name">{{ comment.user.username }}</p>
-                                    <p class="sent-date">{{ comment.created|date:"d.m.Y H:i" }}</p>
+                    <div id="comments">
+                        <ul id='chat_messages'>
+                            {% for comment in comments reversed %}
+                            <div class="comment">
+                                {% if comment.user.photo %}
+                                <img class="profile-picture" src="{{ comment.user.photo.url }}" alt="Avatar">
+                                {% else %}
+                                <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}"
+                                     alt="No image">
+                                {% endif %}
+                                <div class="comment-text-block">
+                                    <div class="head">
+                                        <p class="user-name">{{ comment.user.username }}</p>
+                                        <p class="sent-date">{{ comment.created|date:"d.m.Y H:i" }}</p>
+                                    </div>
+                                    <p class="comment-text">{{ comment.message }}</p>
                                 </div>
-                                <p class="comment-text">{{ comment.message }}</p>
                             </div>
-                        </div>
-                        {% endfor %}
-                    </ul>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -191,19 +196,17 @@
             </div>
 
             <div class="task-done-container additional-container">
-                <!--                <button class="complete-task" id="update-status-btn">Позначити як виконане</button>-->
-
                 {% for assignment in task.assignees.all %}
-                    {% if assignment.user == request.user %}
-                        <button class="complete-task{% if assignment.is_completed %} completed{% endif %}"
-                                id="update-status-btn">
-                            {% if assignment.is_completed %}
-                            Позначити як невиконане
-                            {% else %}
-                            Позначити як виконане
-                            {% endif %}
-                        </button>
+                {% if assignment.user == request.user %}
+                <button class="complete-task{% if assignment.is_completed %} completed{% endif %}"
+                        id="update-status-btn">
+                    {% if assignment.is_completed %}
+                    Позначити як невиконане
+                    {% else %}
+                    Позначити як виконане
                     {% endif %}
+                </button>
+                {% endif %}
                 {% endfor %}
             </div>
 
@@ -214,7 +217,7 @@
                     <li class="file-li">{{ file.title }}</li>
                     <div class="user-file-btns">
                         <a href="{{ file.file.url }}"
-                       onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                           onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
                         <button class="delete-file-btn" data-file-id="{{ file.id }}">Видалити</button>
                     </div>
                 </div>
@@ -229,9 +232,44 @@
 
 
 <script>
+    // task deadline
     const taskUserDeadline = "{{ task.deadline }}";
     console.log(taskUserDeadline);
+    console.log("{{ task.deadline }}");
 
+    const allTaskItems = document.querySelectorAll('.task-settings');
+    console.log(allTaskItems);
+    allTaskItems.forEach(item => {
+        const menuIcon = item.querySelector('.icon');
+        const menuOption = item.querySelector('.task-settings-box');
+
+        menuIcon.addEventListener('click', function () {
+            menuOption.classList.toggle('show');
+        })
+    })
+
+
+    // task comments
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/comments/{{ task_chat.name }}/'
+    );
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        addCommentToPage(data.html);
+    };
+
+
+    function addCommentToPage(html) {
+        var commentsList = document.getElementById('chat_messages');
+        var newComment = document.createElement('div');
+        newComment.innerHTML = html;
+        commentsList.appendChild(newComment);
+    }
+
+
+    // task settings
     const allTaskItems = document.querySelectorAll('.task-settings');
     console.log(allTaskItems);
     allTaskItems.forEach(item => {

@@ -41,7 +41,7 @@ class CommentsConsumer(WebsocketConsumer):
             self.close()
             return
         self.chat_name = self.scope["url_route"]["kwargs"]["chat_name"]
-        # self.chat = get_object_or_404(TaskChat, name=self.chat_name)
+        self.chat = get_object_or_404(TaskChat, name=self.chat_name)
         self.group_name = f'comments_{self.chat_name}'
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
@@ -56,34 +56,28 @@ class CommentsConsumer(WebsocketConsumer):
                 self.channel_name
             )
 
-    # def receive(self, text_data):
-    #     text_data_json = json.loads(text_data)
-    #     message = text_data_json["message"]
-    #     comment = ChatComment.objects.create(
-    #         task_chat=self.chat,
-    #         user=self.user,
-    #         message=message
-    #     )
-    #
-    #     event = {
-    #         'type': "message_handler",
-    #         'comment_id': comment.id,
-    #     }
-    #     async_to_sync(self.channel_layer.group_send)(
-    #         self.group_name,
-    #         event
-    #     )
-    #
-    # def message_handler(self, event):
-    #     comment_id = event["comment_id"]
-    #     comment = ChatComment.objects.get(id=comment_id)
-    #     context = {
-    #         'comment': comment,
-    #         'user': self.user
-    #     }
-    #     html = render_to_string("tasks/partials/task-comment.html", context)
-    #
-    #     # Send the new comment HTML to the client
-    #     self.send(text_data=json.dumps({
-    #         'html': html
-    #     }))
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json["message"]
+
+        comment = ChatComment.objects.create(
+            task_chat=self.chat,
+            user=self.user,
+            message=message
+        )
+
+        event = {
+            'type': 'message_handler',
+            'comment_id': comment.id,
+        }
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name, event
+        )
+
+    def message_handler(self, event):
+        comment_id = event["comment_id"]
+        comment = ChatComment.objects.get(id=comment_id)
+        html = render_to_string("tasks/partials/task-comment.html", context={'comment': comment})
+        self.send(text_data=json.dumps({
+            'html': html
+        }))
