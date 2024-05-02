@@ -494,7 +494,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-
 // USERS IN TASK INFO
 document.addEventListener('DOMContentLoaded', function () {
     const allUsers = document.querySelector('main .creator-user-view .left-users .users-ul');

@@ -11,6 +11,7 @@ OceanDo
 {% block content %}
 {% if user.is_authenticated %}
 <body class="home-body" hx-ext="ws" ws-connect="/ws/notifications/">
+<!--<body class="home-body" >-->
 <!-- SIDEBAR -->
 <section id="sidebar">
     <div class="brand">
@@ -28,9 +29,7 @@ OceanDo
         <div class="lower-menu">
             <li><a href="{% url 'accounts:logout' %}" id="logout-btn"><i class='bx bx-exit icon'></i> Вийти</a></li>
         </div>
-        <!--            <li><a href="{% url 'tasks:all_tasks' %}"><i class='bx bx-task icon'></i> Завдання</a></li>-->
     </ul>
-    <!-- <div class="ads"></div> -->
 </section>
 <!-- SIDEBAR -->
 <!-- CONTENT -->
@@ -72,12 +71,6 @@ OceanDo
             </a>
         </div>
     </nav>
-    <!-- NAVBAR -->
-    <!--    {% if messages %}-->
-    <!--    {% for message in messages %}-->
-    <!--    <p>{{ message }}</p>-->
-    <!--    {% endfor %}-->
-    <!--    {% endif %}-->
     {% block content_area %}
     {% endblock %}
     <!-- MAIN -->

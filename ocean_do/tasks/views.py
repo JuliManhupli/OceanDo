@@ -12,7 +12,7 @@ from django.utils import timezone
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
 
 from .form import TaskForm, CommentForm
-from .models import Tag, Task, TaskAssignment, File, Folder
+from .models import Tag, Task, TaskAssignment, File, Folder, TaskChat, ChatComment
 
 
 def user_folders(request):
@@ -408,7 +408,7 @@ def users_for_edit(request):
 def task_info(request, task_id):
     try:
         task = Task.objects.get(id=task_id)
-        # task_chat, created = TaskChat.objects.get_or_create(task=task)
+        task_chat, created = TaskChat.create_or_get_private(task, task.creator, request.user)
         task_assignment = get_object_or_404(TaskAssignment, user=request.user, assigned_tasks=task)
 
         if request.method == 'POST' and request.FILES:
@@ -419,6 +419,7 @@ def task_info(request, task_id):
                 task_assignment.completion_time = datetime.now()
                 task_assignment.save()
             return redirect('tasks:task_info', task_id=task_id)
+
         if request.headers.get('HX-Request'):
             form = CommentForm(request.POST)
             if form.is_valid():
@@ -427,30 +428,43 @@ def task_info(request, task_id):
                 comment.task_chat = task_chat
                 comment.save()
 
-                return JsonResponse({
-                    'message': comment.message,
-                    'username': comment.user.username,
-                    'created': comment.created.strftime("%d.%m.%Y %H:%M"),
-                })
-
-        # if task_chat:
-        #     comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
-        # else:
-        comments = None
+                context = {'comment': comment}
+                return render(request, "tasks/partials/task-comment.html", context)
+        if task_chat:
+            comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+        else:
+            comments = None
 
         form = CommentForm()
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
 
     return render(request, "tasks/task-info.html",
-                  {'task': task, 'comments': comments, 'form': form, 'task_assignment': task_assignment})
+                  {'task': task, 'comments': comments, 'task_chat': task_chat, 'form': form,
+                   'task_assignment': task_assignment})
 
 
 def creator_task_view(request, task_id):
     try:
         task = Task.objects.get(id=task_id)
         assignment = task.assignees.all()
+        assignee_data = []
+        for assignee in assignment:
+            task_chat, created = TaskChat.create_or_get_private(task, task.creator, assignee.user)
+            if request.headers.get('HX-Request'):
+                form = CommentForm(request.POST)
+                if form.is_valid():
+                    comment = form.save(commit=False)
+                    comment.user = request.user
+                    comment.task_chat = task_chat
+                    comment.save()
+                    comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+            else:
+                comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+            assignee_data.append((assignee, comments, task_chat))
+        form = CommentForm()
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
+    return render(request, "tasks/creator-task-view.html",
+                  {'task': task, 'form': form, "assignments": assignment, 'assignee_data': assignee_data})
 
-    return render(request, "tasks/creator-task-view.html", {'task': task, 'assignments': assignment})
