@@ -17,58 +17,171 @@ Cтатистичні дані
     <h1 class="title">Кількість завдань</h1>
     <div class="statistics personal-statistics">
         <div class="chart round-chart">
-            <canvas id="accountType"></canvas>
+            <canvas id="statusAssigned"></canvas>
         </div>
         <div class="chart round-chart">
-            <canvas id="accountDone"></canvas>
+            <canvas id="statusCreated"></canvas>
+        </div>
+    </div>
+    <h1 class="title">Навантаження</h1>
+    <div class="statistics row-stats">
+        <div class="chart rect-chart">
+            <canvas id="productivity"></canvas>
         </div>
     </div>
 </main>
 
 
 <script>
-    const accountType = document.getElementById('accountType');
+
+    const allAssignedData = {{ all_assigned }};
+
+    const statusAssigned = document.getElementById('statusAssigned');
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    new Chart(statusAssigned, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'У процесі виконання',
+                'Виконано',
+                // 'Виконання після дедлайну'
+            ],
+            datasets: [{
+                label: 'Кількість призначених мені завдань',
+                data: {{ all_assigned }},
+                backgroundColor: [
+                    '#5E967C',
+                    '#FDC969',
+                    // '#B5415C'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+    const statusCreated = document.getElementById('statusCreated');
+    new Chart(statusCreated, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'У процесі виконання',
+                'Виконано',
+
+                // 'Виконання після дедлайну'
+            ],
+            datasets: [{
+                label: 'Кількість назначених мною завдань',
+                data: {{ all_created }},
+                backgroundColor: [
+                    '#5E967C',
+                    '#FDC969',
+                    // '#B5415C'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+
+    // FUTURE TASKS GRAPH
+    const myDeadlines = [
+        {% for task in deadlineTasks %}
+            "{{ task.deadline }}",
+        {% endfor %}
+    ];
+
+    console.log(myDeadlines);
+
+    const changeMonthName = {
+      'січня': 'Січень',
+      'лютого': 'Лютий',
+      'березня': 'Березень',
+      'квітня': 'Квітень',
+      'травня': 'Травень',
+      'червня': 'Червень',
+      'липня': 'Липень',
+      'серпня': 'Серпень',
+      'вересня': 'Вересень',
+      'жовтня': 'Жовтень',
+      'листопада': 'Листопад',
+      'грудня': 'Грудень'
+    };
+
+    // get month and year
+    const monthYearArray = myDeadlines.map(dateString => {
+      const [_, month, year] = dateString.split(' ');
+      return `${changeMonthName[month]} ${year}`;
+    });
+
+    console.log(monthYearArray);
+
+    const proChart = document.getElementById('productivity');
+    const todayDate = new Date();
+    const currentMonth = todayDate.getMonth();
+    const currentYear = todayDate.getFullYear();
+    const months = [];
+
+    // get labels
+    for (let i = currentMonth; i <= currentMonth + 11; i++) {
+        let month = i % 12; // Ensure month stays within 0-11 range
+        let year = currentYear;
+        if (month < currentMonth) {
+            year += 1; // Increment the year
+        }
+    months.push({ month, year });
+}
+
+    const monthLabels = months.map(({ month, year }) => monthToString(month) + ' ' + year);
+    console.log(monthLabels);
+
+    const dataForChart = monthLabels.map(label => {
+      const count = monthYearArray.filter(month => month === label).length;
+      return count > 0 ? count : 0;
+    });
+
+    console.log(dataForChart);
 
     Chart.defaults.font.size = 16;
     Chart.defaults.font.family = "Cascadia Code";
-    new Chart(accountType, {
-        type: 'doughnut',
+    new Chart(proChart, {
+        type: 'bar',
         data: {
-            labels: [
-                'Виконання',
-                'Моніторинг'
-            ],
-            datasets: [{
-                label: 'Кількість завдань',
-                data: [300, 50],
-                backgroundColor: [
-                    '#FDC969',
-                    '#263D9D'
-                ],
-                hoverOffset: 4
-            }]
+          labels: monthLabels,
+          datasets: [{
+            label: 'Кількість дедлайнів',
+            data: dataForChart,
+            borderWidth: 1,
+            backgroundColor: '#7187E4'
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
         }
-    });
+      });
 
-    const accountDone = document.getElementById('accountDone');
-    new Chart(accountDone, {
-        type: 'doughnut',
-        data: {
-            labels: [
-                'Виконано',
-                'У процесі виконання'
-            ],
-            datasets: [{
-                label: 'Кількість завдань',
-                data: [ 50, 100],
-                backgroundColor: [
-                    '#5E967C',
-                    '#FDC969'
-                ],
-                hoverOffset: 4
-            }]
-        }
-    });
+    function monthToString(month) {
+        const monthsArray = [
+        "Січень",
+        "Лютий",
+        "Березень",
+        "Квітень",
+        "Травень",
+        "Червень",
+        "Липень",
+        "Серпень",
+        "Вересень",
+        "Жовтень",
+        "Листопад",
+        "Грудень"
+    ];
+        return monthsArray[month];
+    }
+
 </script>
 <!-- MAIN -->
 {% endblock %}

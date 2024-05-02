@@ -49,12 +49,11 @@ def all_tasks(request):
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
     tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
     current_time = timezone.now()
-    print(current_time)
     return render(request, "tasks/all-tasks.html",
                   {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks, 'current_time': current_time})
 
 
-def completed_tasks(request):
+def get_completed_tasks(request):
     user = request.user
     assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=True)
     created_tasks = Task.objects.filter(creator=user, is_completed=True)
@@ -63,6 +62,11 @@ def completed_tasks(request):
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
+    return combined_query, solo_assignee_tasks, created_tasks
+
+
+def completed_tasks(request):
+    combined_query, solo_assignee_tasks, created_tasks = get_completed_tasks(request)
     tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
     return render(request, "tasks/completed-tasks.html",
                   {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})

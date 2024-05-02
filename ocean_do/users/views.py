@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 from ocean_do.aws import upload_avatar_to_s3, delete_avatar_from_s3
 
 from .forms import UserUpdateForm
-
+from tasks.views import get_tasks, get_completed_tasks
 
 def profile_view(request):
     return render(request, "users/profile.html")
@@ -44,25 +44,14 @@ def edit_profile_view(request):
 
 
 def personal_stats_view(request):
-    user = request.user
-    assigned_tasks = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
-    created_tasks = Task.objects.filter(creator=user, is_completed=False)
-    solo_assignee_tasks = created_tasks.annotate(assignees_count=Count('assignees')).filter(assignees_count=1).filter(
-        assignees__user=user).filter(assignees__is_completed=False)
-
-    created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
-    assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
-    combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
-    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
-    count_by_type = {'solo': 0, 'assigned': 0, 'created': 0}
-    for task, task_type in tasks_with_type:
-        if task_type in count_by_type:
-            count_by_type[task_type] += 1
-        else:
-            count_by_type[task_type] = 1
-
+    assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
+    completed_tasks, _, created_complete = get_completed_tasks(request)
+    all_assigned = [len(assigned_tasks) + len(solo_assignee_tasks), + len(completed_tasks)]
+    all_created = [len(created_tasks), len(created_complete)]
+    deadlineTasks = set(list(assigned_tasks) + list(solo_assignee_tasks) + list(completed_tasks)
+                        + list(created_tasks) + list(created_complete))
     return render(request, "users/personal-stats.html",
-                  {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})
+                  {'all_assigned': all_assigned, 'all_created': all_created, 'deadlineTasks': deadlineTasks})
 
 
 @require_http_methods(["DELETE"])

@@ -27,15 +27,53 @@
 
     </div>
     <h1 class="title users-block">Продуктивність</h1>
-    <div class="statistics">
-        <div class="chart">
+    <div class="statistics row-stats">
+        <div class="chart rect-chart">
             <canvas id="productivity"></canvas>
+        </div>
+        <div class="chart additional-chart round-chart ">
+            <canvas id="accountType"></canvas>
         </div>
     </div>
 </main>
 
 
 <script>
+    // PRODUCTIVITY GRAPH1
+    const myCompletionDates = [
+        {% for task in completed_tasks %}
+            {% for assignment in task.assignees.all %}
+                {% if assignment.user == request.user %}
+                    "{{ assignment.completion_time }}",
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    ];
+
+    console.log(myCompletionDates);
+
+    const changeMonthName = {
+      'січня': 'Січень',
+      'лютого': 'Лютий',
+      'березня': 'Березень',
+      'квітня': 'Квітень',
+      'травня': 'Травень',
+      'червня': 'Червень',
+      'липня': 'Липень',
+      'серпня': 'Серпень',
+      'вересня': 'Вересень',
+      'жовтня': 'Жовтень',
+      'листопада': 'Листопад',
+      'грудня': 'Грудень'
+    };
+
+    // get month and year
+    const monthYearArray = myCompletionDates.map(dateString => {
+      const [_, month, year] = dateString.split(' ');
+      return `${changeMonthName[month]} ${year}`;
+    });
+
+    console.log(monthYearArray);
 
     const proChart = document.getElementById('productivity');
     const todayDate = new Date();
@@ -43,6 +81,7 @@
     const currentYear = todayDate.getFullYear();
     const months = [];
 
+    // get labels
     for (let i = currentMonth; i >= currentMonth - 11; i--) {
         let month = i;
         let year = currentYear;
@@ -54,15 +93,26 @@
     }
     months.reverse();
 
+    const monthLabels = months.map(({ month, year }) => monthToString(month) + ' ' + year);
+    console.log(monthLabels);
+
+    const dataForChart = monthLabels.map(label => {
+      const count = monthYearArray.filter(month => month === label).length;
+      return count > 0 ? count : 0;
+    });
+
+    console.log(dataForChart);
+
     Chart.defaults.font.size = 16;
     Chart.defaults.font.family = "Cascadia Code";
     new Chart(proChart, {
         type: 'bar',
         data: {
-          labels: months.map(({ month, year }) => monthToString(month) + ' ' + year),
+          labels: monthLabels,
           datasets: [{
-            label: 'Кількість виконаних завдань',
-            data: [2, 2, 2, 5, 2, 3, 7, 8, 4, 0, 6, 9],
+            label: 'Кількість виконаних призначених на мене завдань',
+            // data: [2, 2, 2, 5, 2, 3, 7, 8, 4, 0, 6, 9],
+            data: dataForChart,
             borderWidth: 1,
             backgroundColor: '#7187E4'
           }]
@@ -93,6 +143,28 @@
     ];
         return monthsArray[month];
     }
+
+
+    // TYPE RATIO CHART
+    const accountType = document.getElementById('accountType');
+    new Chart(accountType, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Завдань типу Виконання',
+                'Завдань типу Моніторинг'
+            ],
+            datasets: [{
+                label: 'Кількість завдань',
+                data: {{ ratio }},
+                backgroundColor: [
+                    '#FDC969',
+                    '#263D9D'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
 
 </script>
 
