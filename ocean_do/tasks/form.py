@@ -32,6 +32,28 @@ class TaskForm(forms.ModelForm):
             self.add_error('deadline', 'Це поле є обов\'язковим.')
 
 
+class TaskEditForm(forms.ModelForm):
+    tags = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'tag-input'}))
+
+    class Meta:
+        model = Task
+        fields = ['title', 'description', 'deadline', 'tags']
+        widgets = {
+            'deadline': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        title = cleaned_data.get('title')
+        deadline = cleaned_data.get('deadline')
+
+        # Перевірка обов'язкових полів
+        if not title:
+            self.add_error('title', 'Це поле є обов\'язковим.')
+        if not deadline:
+            self.add_error('deadline', 'Це поле є обов\'язковим.')
+
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = ChatComment

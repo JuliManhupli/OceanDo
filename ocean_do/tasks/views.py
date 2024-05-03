@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
 
-from .form import TaskForm, CommentForm
+from .form import TaskForm, CommentForm, TaskEditForm
 from .models import Tag, Task, TaskAssignment, File, Folder, TaskChat, ChatComment
 
 
@@ -299,7 +299,7 @@ def edit_task(request, task_id):
     assignees = task.assignees.all()
 
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = TaskEditForm(request.POST, instance=task)
 
         if form.is_valid():
             tags = request.POST.getlist('tags')
@@ -352,17 +352,78 @@ def edit_task(request, task_id):
             task.save()
             return redirect('tasks:all_tasks')
     else:
-        form = TaskForm(instance=task)
+        form = TaskEditForm(instance=task)
     return render(request, "tasks/edit-task.html",
                   {'form': form, 'task': task, 'folders': folders, 'files': files, 'tags': tags,
                    'assignees': assignees})
+
+
+def derivative_tasks(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    files = task.files.all()
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+
+        if form.is_valid():
+            creator = request.user
+            tags = request.POST.getlist('tags')  # Отримання списку тегів
+            folders = request.POST.getlist('folders')  # Отримання списку папок
+            task = form.save(commit=False)
+            task.creator = creator
+            task.save()  # Збереження завдання без тегів
+
+            # Додавання тегів до завдання
+            if tags:
+                for tag_name in tags:
+                    tag_name = tag_name.strip()
+                    if tag_name:
+                        tag, _ = Tag.objects.get_or_create(name=tag_name)
+                        task.tags.add(tag)
+
+            # Додавання папок до завдання
+            if folders:
+                for folder_name in folders:
+                    folder_name = folder_name.strip()
+                    if folder_name:
+                        folder, _ = Folder.objects.get_or_create(name=folder_name)
+                        task.folders.add(folder)
+
+            # Збереження виконавців у TaskAssignment
+            assignees = request.POST.getlist('assignees')[0].split(',')
+            for assignee_email in assignees:
+                assignee = User.objects.get(email=assignee_email)
+                task_assignment = TaskAssignment.objects.create(
+                    user=assignee,
+                    is_completed=False,
+                    completion_time=None,
+                )
+                task.assignees.add(task_assignment)
+
+                # Створення нотифікації для кожного виконавця
+                notification_message = f"Вам призначено завдання \"{task.title}\""
+                notification = Notification.objects.create(
+                    message=notification_message,
+                )
+                notification.users.set([assignee])
+                notification.save()
+                task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
+                print(task_url)
+                # send_task(request, assignee.email, task.title, task_url)
+
+            # Завантаження файлів
+            for file in request.FILES.getlist('files'):
+                upload_file_to_s3(file, task.id)
+            return redirect('tasks:all_tasks')
+    else:
+        form = TaskForm(instance=task)
+    return render(request, "tasks/derivative-tasks.html",
+                  {'form': form, 'task': task, 'files': files})
 
 
 def assign_edit_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     task_assignment = get_object_or_404(TaskAssignment, user=request.user, assigned_tasks=task)
 
-    print(task_assignment)
     if request.method == 'POST':
 
         tags = request.POST.getlist('tags')  # Отримання списку тегів
@@ -471,4 +532,3 @@ def creator_task_view(request, task_id):
         return redirect('tasks:all_tasks')
     return render(request, "tasks/creator-task-view.html",
                   {'task': task, 'form': form, "assignments": assignment, 'assignee_data': assignee_data})
-

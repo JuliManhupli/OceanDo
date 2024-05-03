@@ -95,8 +95,8 @@
                 <div class="users-search">
                     <div class="form-group">
                         <i class='bx bx-search icon'></i>
-                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
-                        <input type="hidden" name="assignees" id="chosen-user-block" value="{{ selectedItems|join:',' }}">
+                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців..." required>
+                        <input type="hidden" name="assignees" id="chosen-user-block">
                     </div>
 
                     <div class="chosen-user">
@@ -215,34 +215,11 @@
         });
     }
 
-    var selectedItems = [];
-
-    // SEARCH USERS AUTO-COMPLETE
-    $(function () {
-        const initialAssignees = {% if task.assignees.all %}[{% for assignee in task.assignees.all %}"{{ assignee.user.email }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
-        const initialAssigneeNames = {% if task.assignees.all %}[{% for assignee in task.assignees.all %}"{{ assignee.user.username }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
-
-        if (initialAssignees.length > 0) {
-            selectedItems = initialAssignees;
-            updateHiddenInput();
-
-            // Додайте HTML-код для кожного обраного виконавця
-            initialAssignees.forEach((email, index) => {
-                const userInfo = {
-                    username: initialAssigneeNames[index],
-                    email: email
-                };
-                var newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
-                var newUserInfo = $("<div class='chosen-user-info'>");
-                newUserInfo.append("<p class='chosen-user-name'>" + userInfo.username + "</p>");
-                newUserInfo.append("<p class='chosen-user-email'>" + userInfo.email + "</p>");
-                newChosenUser.append(newUserInfo);
-                newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
-            });
-        }
-
-        $("#users-search-bar").autocomplete({
-            source: "{% url 'tasks:users_for_edit' %}",
+        // SEARCH USERS AUTO-COMPLETE
+    $( function() {
+        const selectedItems = [];
+        $( "#users-search-bar" ).autocomplete({
+            source: "{% url 'tasks:users_for_create' %}",
             minLength: 3,
             focus: function (event, ui) {
                 $("#users-search-bar").val(ui.item.username);
@@ -267,11 +244,11 @@
                 }
             }
         })
-            .autocomplete("instance")._renderItem = function (ul, item) {
-            return $("<li>")
-                .append("<div class='autosearch-name' style='font-weight: 600;'>" + item.username + "</div>"
-                    + "<div class='autosearch-email'>" + item.email + "</div>")
-                .appendTo(ul);
+        .autocomplete( "instance" )._renderItem = function( ul, item ) {
+          return $( "<li>" )
+            .append( "<div class='autosearch-name' style='font-weight: 600;'>" + item.username + "</div>"
+                + "<div class='autosearch-email'>" + item.email + "</div>" )
+            .appendTo( ul );
         };
 
         //delete user
@@ -282,22 +259,11 @@
                 selectedItems.splice(index, 1);
             }
             $(this).parent(".chosen-user").remove();
-            updateHiddenInput();
         });
 
         function updateHiddenInput() {
-            $("#chosen-user-block").val(selectedItems.join(','));
+            $("#chosen-user-block").val(selectedItems.join(',')); // Concatenate emails with a delimiter
         }
     });
-
-
-    const form = document.querySelector('.form');
-    form.addEventListener('submit', function (event) {
-        if (selectedItems.length === 0) {
-            event.preventDefault();
-            alert('Будь ласка, додайте виконавців перед відправленням форми.');
-        }
-    });
-
 </script>
 {% endblock %}

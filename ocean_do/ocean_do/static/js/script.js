@@ -573,6 +573,12 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInputsContainer = document.getElementById('file-inputs'),
         allDeleteFileBtns = document.querySelectorAll('.files-container .file-div .user-file-btns .delete-file-btn');
 
+
+    if (!completeTaskBtn || !userTaskStatus || !completeTaskFormBtn || !sendTaskFilesBtn || !addTaskFilesBtn
+        || !fileInputsContainer || !allDeleteFileBtns) {
+        return;
+    }
+
     const userDeadline = parseUkrainianDate(taskUserDeadline),
     userTime = new Date(userDeadline.getFullYear(), userDeadline.getMonth(), userDeadline.getDate());
 
@@ -765,6 +771,10 @@ document.addEventListener('DOMContentLoaded', function () {
         next = document.querySelector('.next'),
         todayBtn = document.querySelector('.today-btn'),
         tasksContainer = document.querySelector('.calendar-tasks');
+
+    if (!date || !daysContainer || !prev || !next || !todayBtn || !tasksContainer) {
+        return;
+    }
 
     let today = new Date();
     let activeDay;
