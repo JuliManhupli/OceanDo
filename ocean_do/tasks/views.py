@@ -191,7 +191,11 @@ def update_task_status(request, task_id):
             task_assignment = task.assignees.filter(user=request.user).first()
             if task_assignment:
                 task_assignment.is_completed = is_completed
-                task_assignment.completion_time = datetime.now()
+                if is_completed:
+                    task_assignment.completion_time = datetime.now()
+                else:
+                    task_assignment.completion_time = None
+                # task_assignment.completion_time = datetime.now()
                 task_assignment.save()
                 assignees = task.assignees.all()
                 all_assignees_completed = all(assignment.is_completed for assignment in assignees)
@@ -232,70 +236,92 @@ def update_task_status(request, task_id):
     return JsonResponse({'error': 'Метод запиту не підтримується.'}, status=405)
 
 
+def save_tags_folders_files(task, tags, folders, files):
+    # Save tags
+    for tag_name in tags:
+        tag_name = tag_name.strip()
+        if tag_name:
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            task.tags.add(tag)
+
+    # Save folders
+    for folder_name in folders:
+        folder_name = folder_name.strip()
+        if folder_name:
+            folder, _ = Folder.objects.get_or_create(name=folder_name)
+            task.folders.add(folder)
+
+    # Save files
+    for file in files:
+        upload_file_to_s3(file, task.id)
+
+
+def save_task(request, form, old_files=None):
+    creator = request.user
+    tags = request.POST.getlist('tags')
+    folders = request.POST.getlist('folders')
+
+    files = request.FILES.getlist('files')
+    print(old_files)
+    print(files)
+
+    task = form.save(commit=False)
+    task.creator = creator
+    task.save()
+    if old_files:
+        for old_file in old_files:
+            task.files.add(old_file)
+    print(task.files)
+
+    save_tags_folders_files(task, tags, folders, files)
+
+    assignees = request.POST.getlist('assignees')[0].split(',')
+    for assignee_email in assignees:
+        assignee = User.objects.get(email=assignee_email)
+        task_assignment = TaskAssignment.objects.create(
+            user=assignee,
+            is_completed=False,
+            completion_time=None,
+        )
+        task.assignees.add(task_assignment)
+
+        notification_message = f"Вам призначено завдання \"{task.title}\""
+        notification = Notification.objects.create(
+            message=notification_message,
+        )
+        notification.users.set([assignee])
+        notification.save()
+
+    return task
+
+
 def create_task(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
-
         if form.is_valid():
-            creator = request.user
-            tags = request.POST.getlist('tags')  # Отримання списку тегів
-            folders = request.POST.getlist('folders')  # Отримання списку папок
-            task = form.save(commit=False)
-            task.creator = creator
-            task.save()  # Збереження завдання без тегів
-
-            # Додавання тегів до завдання
-            if tags:
-                for tag_name in tags:
-                    tag_name = tag_name.strip()
-                    if tag_name:
-                        tag, _ = Tag.objects.get_or_create(name=tag_name)
-                        task.tags.add(tag)
-
-            # Додавання папок до завдання
-            if folders:
-                for folder_name in folders:
-                    folder_name = folder_name.strip()
-                    if folder_name:
-                        folder, _ = Folder.objects.get_or_create(name=folder_name)
-                        task.folders.add(folder)
-
-            # Збереження виконавців у TaskAssignment
-            assignees = request.POST.getlist('assignees')[0].split(',')
-            for assignee_email in assignees:
-                assignee = User.objects.get(email=assignee_email)
-                task_assignment = TaskAssignment.objects.create(
-                    user=assignee,
-                    is_completed=False,
-                    completion_time=None,
-                )
-                task.assignees.add(task_assignment)
-
-                # Створення нотифікації для кожного виконавця
-                notification_message = f"Вам призначено завдання \"{task.title}\""
-                notification = Notification.objects.create(
-                    message=notification_message,
-                )
-                notification.users.set([assignee])
-                notification.save()
-                task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
-                print(task_url)
-                # send_task(request, assignee.email, task.title, task_url)
-
-            # Завантаження файлів
-            for file in request.FILES.getlist('files'):
-                upload_file_to_s3(file, task.id)
+            save_task(request, form)
             return redirect('tasks:all_tasks')
     else:
         form = TaskForm()
     return render(request, "tasks/create-task.html", {'form': form})
 
 
-def edit_task(request, task_id):
+def derivative_task(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     files = task.files.all()
-    tags = task.tags.all()
-    folders = task.folders.all()
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            save_task(request, form, files)
+            return redirect('tasks:all_tasks')
+    else:
+        form = TaskForm(instance=task)
+    return render(request, "tasks/create-task.html", {'form': form, 'task': task, 'files': files})
+
+
+def edit_task(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    old_files = task.files.all()
     assignees = task.assignees.all()
 
     if request.method == 'POST':
@@ -304,23 +330,12 @@ def edit_task(request, task_id):
         if form.is_valid():
             tags = request.POST.getlist('tags')
             folders = request.POST.getlist('folders')
+            files = request.FILES.getlist('files')
             task = form.save(commit=False)
-
             task.tags.clear()
             task.folders.clear()
 
-            # Додавання тегів до завдання
-            for tag_name in tags:
-                tag_name = tag_name.strip()
-                if tag_name:
-                    tag, _ = Tag.objects.get_or_create(name=tag_name)
-                    task.tags.add(tag)
-
-            for folder_name in folders:
-                folder_name = folder_name.strip()
-                if folder_name:
-                    folder, _ = Folder.objects.get_or_create(name=folder_name)
-                    task.folders.add(folder)
+            save_tags_folders_files(task, tags, folders, old_files)
 
             new_assignees = request.POST.getlist('assignees')[0].split(',')
             existing_assignees_emails = [assignee.user.email for assignee in assignees]
@@ -346,78 +361,14 @@ def edit_task(request, task_id):
                 notification.users.set([assignee])
                 notification.save()
 
-            for file in request.FILES.getlist('files'):
-                upload_file_to_s3(file, task.id)
+            task.is_completed = False
 
             task.save()
             return redirect('tasks:all_tasks')
     else:
         form = TaskEditForm(instance=task)
     return render(request, "tasks/edit-task.html",
-                  {'form': form, 'task': task, 'folders': folders, 'files': files, 'tags': tags,
-                   'assignees': assignees})
-
-
-def derivative_tasks(request, task_id):
-    task = get_object_or_404(Task, id=task_id)
-    files = task.files.all()
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-
-        if form.is_valid():
-            creator = request.user
-            tags = request.POST.getlist('tags')  # Отримання списку тегів
-            folders = request.POST.getlist('folders')  # Отримання списку папок
-            task = form.save(commit=False)
-            task.creator = creator
-            task.save()  # Збереження завдання без тегів
-
-            # Додавання тегів до завдання
-            if tags:
-                for tag_name in tags:
-                    tag_name = tag_name.strip()
-                    if tag_name:
-                        tag, _ = Tag.objects.get_or_create(name=tag_name)
-                        task.tags.add(tag)
-
-            # Додавання папок до завдання
-            if folders:
-                for folder_name in folders:
-                    folder_name = folder_name.strip()
-                    if folder_name:
-                        folder, _ = Folder.objects.get_or_create(name=folder_name)
-                        task.folders.add(folder)
-
-            # Збереження виконавців у TaskAssignment
-            assignees = request.POST.getlist('assignees')[0].split(',')
-            for assignee_email in assignees:
-                assignee = User.objects.get(email=assignee_email)
-                task_assignment = TaskAssignment.objects.create(
-                    user=assignee,
-                    is_completed=False,
-                    completion_time=None,
-                )
-                task.assignees.add(task_assignment)
-
-                # Створення нотифікації для кожного виконавця
-                notification_message = f"Вам призначено завдання \"{task.title}\""
-                notification = Notification.objects.create(
-                    message=notification_message,
-                )
-                notification.users.set([assignee])
-                notification.save()
-                task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
-                print(task_url)
-                # send_task(request, assignee.email, task.title, task_url)
-
-            # Завантаження файлів
-            for file in request.FILES.getlist('files'):
-                upload_file_to_s3(file, task.id)
-            return redirect('tasks:all_tasks')
-    else:
-        form = TaskForm(instance=task)
-    return render(request, "tasks/derivative-tasks.html",
-                  {'form': form, 'task': task, 'files': files})
+                  {'form': form, 'task': task, 'files': old_files})
 
 
 def assign_edit_task(request, task_id):

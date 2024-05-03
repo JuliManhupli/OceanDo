@@ -1,7 +1,11 @@
 {% extends 'ocean_do/pages_base.html' %}
 {% load static %}
 {% block title %}
-Завдання
+{% if task %}
+Похідне завдання
+{% else %}
+Нове завдання
+{% endif %}
 {% endblock %}
 
 
@@ -16,7 +20,7 @@
     <div class="task-popup">
         <form method="post" class="form" enctype="multipart/form-data">
             {% csrf_token %}
-            <h2>Нове завдання</h2>
+            <h2>{% if task %}Похідне завдання{% else %}Нове завдання{% endif %}</h2>
 
             <div class="form-element">
                 <div class="important-area">
@@ -40,9 +44,16 @@
                     </div>
                 </div>
                 <div id="file-inputs">
-<!--                <label for="file-upload" class="custom-file-upload">Завантажити</label>-->
-<!--                <input id="file-upload" type="file" name="files" onchange="displayFileName()" style="display: none;"/>-->
-<!--                <span id="file-name"></span>-->
+                    {% if files %}
+                    {% for file in files %}
+                    <div class="file-wrapper">
+                        <div class="file-divider">
+                            <span>{{ file.title }}</span>
+                            <button class="remove-file-btn" data-file-id="{{ file.id }}">Видалити</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
             <div class="form-element">
@@ -75,7 +86,11 @@
                     <p class="title">Термін виконання </p>
                     <p class="star">*</p>
                 </div>
+                {% if task %}
+                <input type="date" id="deadline" name="deadline" value="{{ task.deadline|date:'Y-m-d' }}" required>
+                {% else %}
                 {{ form.deadline }}
+                {% endif %}
                 {% if form.deadline.errors %}
                 <span>{{ form.deadline.errors }}</span>
                 {% endif %}
@@ -106,6 +121,29 @@
 <!-- MAIN -->
 
 <script>
+
+    const deleteFileButtons = document.querySelectorAll('.remove-file-btn');
+    if (deleteFileButtons) {
+        deleteFileButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const fileId = button.dataset.fileId;
+                const confirmation = confirm('Ви впевнені, що хочете видалити цей файл?');
+                if (confirmation) {
+                    axios.defaults.xsrfCookieName = 'csrftoken';
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                    axios.post(`/tasks/files/delete/${fileId}/`)
+                        .then(response => {
+                            if (response.status === 200) {
+                                button.closest('.file-wrapper').remove();
+                                location.reload();
+                            }
+                        })
+                        .catch(error => console.error(error));
+                }
+            });
+        });
+    }
+
     // SEARCH USERS AUTO-COMPLETE
     $( function() {
         const selectedItems = [];
