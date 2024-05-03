@@ -1098,11 +1098,11 @@ main .chart{
 }
 
 main .rect-chart {
-    width: 800px;
+    width: 65%;
 }
 
 main .additional-chart {
-    width: 400px;
+    width: 34%;
 }
 
 
@@ -2062,10 +2062,6 @@ main .creator-user-view .users-data-block .users-status-files .vertical-block .f
     border-radius: 10px;
 }
 
-.round-chart{
-    width: 500px;
-}
-
 /* ----------------------------------CALENDAR PAGE---------------------------------- */
 
 main .calendar-container{
@@ -2345,4 +2341,19 @@ main .calendar-container .right .calendar-tasks .no-task h3{
     font-size: 22px;
     font-weight: 600;
     padding: 20px 0;
+}
+
+/* ----------------------------------STATS PAGE---------------------------------- */
+
+.round-chart{
+    width: 40%;
+}
+
+.long-chart{
+    width: 90%;
+}
+
+#statusAssigned, #statusCreated{
+    display: flex;
+    width: 100%;
 }

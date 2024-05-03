@@ -14,7 +14,7 @@ Cтатистичні дані
 
 <!-- MAIN -->
 <main>
-    <h1 class="title">Кількість завдань</h1>
+    <h1 class="title">Статус завдань із "Призначених" / Статус завдань із "Моніторингу" </h1>
     <div class="statistics personal-statistics">
         <div class="chart round-chart">
             <canvas id="statusAssigned"></canvas>
@@ -23,10 +23,10 @@ Cтатистичні дані
             <canvas id="statusCreated"></canvas>
         </div>
     </div>
-    <h1 class="title">Навантаження</h1>
+    <h1 class="title users-block">Навантаження</h1>
     <div class="statistics row-stats">
-        <div class="chart rect-chart">
-            <canvas id="productivity"></canvas>
+        <div class="chart long-chart">
+            <canvas id="userLoad"></canvas>
         </div>
     </div>
 </main>
@@ -34,7 +34,42 @@ Cтатистичні дані
 
 <script>
 
-    const allAssignedData = {{ all_assigned }};
+    const monthNames = {
+        'січня': 0, 'лютого': 1, 'березня': 2, 'квітня': 3, 'травня': 4, 'червня': 5,
+        'липня': 6, 'серпня': 7, 'вересня': 8, 'жовтня': 9, 'листопада': 10, 'грудня': 11
+    };
+
+    const dateToday = new Date();
+    const dateTodaYCorrect = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate());
+    console.log(dateTodaYCorrect);
+
+    const assignedDeadlines = [
+        {% for task in all_assigned_incomplete %}
+            "{{ task.deadline }}",
+        {% endfor %}
+    ];
+
+    console.log(assignedDeadlines);
+
+    const parsedDeadlines = assignedDeadlines.map(deadline => {
+        const [day, monthStr, year] = deadline.split(' ');
+        const month = monthNames[monthStr];
+        return new Date(year, month, day);
+    });
+
+    console.log(parsedDeadlines);
+    let isInCompleteAssigned = 0,
+        isOverDueAssigned = 0;
+
+    parsedDeadlines.forEach(deadline => {
+        if (deadline.getTime() < dateTodaYCorrect.getTime()) {
+            isOverDueAssigned++;
+        } else {
+            isInCompleteAssigned++;
+        }
+    });
+
+    console.log(isInCompleteAssigned, isOverDueAssigned);
 
     const statusAssigned = document.getElementById('statusAssigned');
     Chart.defaults.font.size = 16;
@@ -45,20 +80,50 @@ Cтатистичні дані
             labels: [
                 'У процесі виконання',
                 'Виконано',
-                // 'Виконання після дедлайну'
+                'Виконання після дедлайну'
             ],
             datasets: [{
                 label: 'Кількість призначених мені завдань',
-                data: {{ all_assigned }},
+                // data: {{ all_assigned }},
+                data: [isInCompleteAssigned, {{all_assigned_complete}}, isOverDueAssigned],
                 backgroundColor: [
-                    '#5E967C',
                     '#FDC969',
-                    // '#B5415C'
+                    '#5E967C',
+                    '#B5415C'
                 ],
                 hoverOffset: 4
             }]
         }
     });
+
+
+    const createdDeadlines = [
+        {% for task in all_created_incomplete %}
+            "{{ task.deadline }}",
+        {% endfor %}
+    ];
+
+    console.log(createdDeadlines);
+
+    const parsedCreatedDeadlines = createdDeadlines.map(deadline => {
+        const [day, monthStr, year] = deadline.split(' ');
+        const month = monthNames[monthStr];
+        return new Date(year, month, day);
+    });
+
+    console.log(parsedCreatedDeadlines);
+    let isInCompleteCreated = 0,
+        isOverDueCreated = 0;
+
+    parsedCreatedDeadlines.forEach(deadline => {
+        if (deadline.getTime() < dateTodaYCorrect.getTime()) {
+            isOverDueCreated++;
+        } else {
+            isInCompleteCreated++;
+        }
+    });
+
+    console.log(isInCompleteCreated, isOverDueCreated);
 
     const statusCreated = document.getElementById('statusCreated');
     new Chart(statusCreated, {
@@ -67,16 +132,16 @@ Cтатистичні дані
             labels: [
                 'У процесі виконання',
                 'Виконано',
-
-                // 'Виконання після дедлайну'
+                'Виконання після дедлайну'
             ],
             datasets: [{
                 label: 'Кількість назначених мною завдань',
-                data: {{ all_created }},
+                // data: {{ all_created }},
+                data: [isInCompleteCreated, {{all_created_complete}}, isOverDueCreated],
                 backgroundColor: [
-                    '#5E967C',
                     '#FDC969',
-                    // '#B5415C'
+                    '#5E967C',
+                    '#B5415C'
                 ],
                 hoverOffset: 4
             }]
@@ -91,7 +156,6 @@ Cтатистичні дані
         {% endfor %}
     ];
 
-    console.log(myDeadlines);
 
     const changeMonthName = {
       'січня': 'Січень',
@@ -114,9 +178,7 @@ Cтатистичні дані
       return `${changeMonthName[month]} ${year}`;
     });
 
-    console.log(monthYearArray);
-
-    const proChart = document.getElementById('productivity');
+    const userLoad = document.getElementById('userLoad');
     const todayDate = new Date();
     const currentMonth = todayDate.getMonth();
     const currentYear = todayDate.getFullYear();
@@ -133,18 +195,15 @@ Cтатистичні дані
 }
 
     const monthLabels = months.map(({ month, year }) => monthToString(month) + ' ' + year);
-    console.log(monthLabels);
 
     const dataForChart = monthLabels.map(label => {
       const count = monthYearArray.filter(month => month === label).length;
       return count > 0 ? count : 0;
     });
 
-    console.log(dataForChart);
-
     Chart.defaults.font.size = 16;
     Chart.defaults.font.family = "Cascadia Code";
-    new Chart(proChart, {
+    new Chart(userLoad, {
         type: 'bar',
         data: {
           labels: monthLabels,
