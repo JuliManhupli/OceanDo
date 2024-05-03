@@ -10,6 +10,7 @@ from ocean_do.aws import upload_avatar_to_s3, delete_avatar_from_s3
 from .forms import UserUpdateForm
 from tasks.views import get_tasks, get_completed_tasks
 
+
 def profile_view(request):
     return render(request, "users/profile.html")
 
@@ -46,12 +47,13 @@ def edit_profile_view(request):
 def personal_stats_view(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
     completed_tasks, _, created_complete = get_completed_tasks(request)
-    all_assigned = [len(assigned_tasks) + len(solo_assignee_tasks), + len(completed_tasks)]
-    all_created = [len(created_tasks), len(created_complete)]
+    all_assigned_incomplete = set(list(assigned_tasks) + list(solo_assignee_tasks))
     deadlineTasks = set(list(assigned_tasks) + list(solo_assignee_tasks) + list(completed_tasks)
                         + list(created_tasks) + list(created_complete))
     return render(request, "users/personal-stats.html",
-                  {'all_assigned': all_assigned, 'all_created': all_created, 'deadlineTasks': deadlineTasks})
+                  {'all_assigned_incomplete': all_assigned_incomplete, 'all_assigned_complete': len(completed_tasks),
+                   'all_created_incomplete': created_tasks, 'all_created_complete': len(created_complete),
+                   'deadlineTasks': deadlineTasks})
 
 
 @require_http_methods(["DELETE"])

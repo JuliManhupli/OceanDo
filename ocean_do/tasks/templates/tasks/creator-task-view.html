@@ -188,7 +188,7 @@
         </div>
     </div>
 
-     <h1 class="title users-block">Статистика</h1>
+     <h1 class="title users-block">Статистика виконавців</h1>
 
     <div class="statistics creator-statistics">
         <div class="chart round-chart">
@@ -199,6 +199,40 @@
 <!-- MAIN -->
 
 <script>
+
+    const monthNames = {
+        'січня': 0, 'лютого': 1, 'березня': 2, 'квітня': 3, 'травня': 4, 'червня': 5,
+        'липня': 6, 'серпня': 7, 'вересня': 8, 'жовтня': 9, 'листопада': 10, 'грудня': 11
+    };
+
+    const todayTime = new Date();
+    const dateNow = new Date(todayTime.getFullYear(), todayTime.getMonth(), todayTime.getDate());
+    console.log(dateNow);
+
+    let taskComplete = 0, taskIncomplete = 0, taskOverDue = 0;
+
+    {% for assignment, _, _ in assignee_data %}
+            {% if assignment.is_completed %}
+                taskComplete++;
+            {% else %}
+                taskIncomplete++;
+            {% endif %}
+    {% endfor %}
+
+    console.log(taskComplete);
+    console.log(taskIncomplete);
+    console.log("{{task.deadline}}");
+
+    const [dayNow, monthStr, yearNow] = "{{task.deadline}}".split(' ');
+    const month = monthNames[monthStr];
+    const mapDeadline = new Date(yearNow, month, dayNow);
+
+    if (mapDeadline.getTime() < dateNow.getTime()) {
+        taskOverDue = taskIncomplete;
+        taskComplete = 0;
+    }
+
+
     // task statistics
     const usersStatuses = document.getElementById('usersTaskStatus');
 
@@ -214,7 +248,7 @@
             ],
             datasets: [{
                 label: 'Кількість виконавців',
-                data: [300, 50, 100],
+                data: [taskComplete, taskIncomplete, taskOverDue],
                 backgroundColor: [
                     '#5E967C',
                     '#FDC969',
