@@ -57,6 +57,9 @@
                             <a href="{% url 'tasks:assign_edit_task' task.id %}" class="edit-task-btn">
                                 <li>Змінити теги і папки</li>
                             </a>
+                            <a href="{% url 'tasks:derivative_tasks' task.id %}" class="edit-task-btn">
+                                <li>Створити похідне завдання</li>
+                            </a>
                             {% endif %}
                         </ul>
                     </div>
@@ -248,6 +251,21 @@
         })
     })
 
+    // task settings
+    window.addEventListener('click', function (e) {
+        allTaskItems.forEach(item => {
+            const menuIcon = item.querySelector('.icon'),
+                menuOption = item.querySelector('.task-settings-box');
+
+            if (e.target !== menuIcon) {
+                if (e.target !== menuOption) {
+                    if (menuOption.classList.contains('show')) {
+                        menuOption.classList.remove('show');
+                    }
+                }
+            }
+        })
+    });
 
     // task comments
     const chatSocket = new WebSocket(
@@ -268,31 +286,5 @@
         commentsList.appendChild(newComment);
     }
 
-
-    // task settings
-    allTaskItems.forEach(item => {
-        const menuIcon = item.querySelector('.icon');
-        const menuOption = item.querySelector('.task-settings-box');
-
-        menuIcon.addEventListener('click', function () {
-            menuOption.classList.toggle('show');
-        })
-    })
-
-
-    window.addEventListener('click', function (e) {
-        allTaskItems.forEach(item => {
-            const menuIcon = item.querySelector('.icon'),
-                menuOption = item.querySelector('.task-settings-box');
-
-            if (e.target !== menuIcon) {
-                if (e.target !== menuOption) {
-                    if (menuOption.classList.contains('show')) {
-                        menuOption.classList.remove('show');
-                    }
-                }
-            }
-        })
-    });
 </script>
 {% endblock %}

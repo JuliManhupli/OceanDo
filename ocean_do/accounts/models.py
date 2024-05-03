@@ -30,15 +30,6 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
-    # def tokens(self):
-    #     refresh = RefreshToken.for_user(self)
-    #
-    #     return {
-    #         'refresh': str(refresh),
-    #         'access': str(refresh.access_token),
-    #     }
-    #
-
 
 class Notification(models.Model):
     users = models.ManyToManyField(User, related_name='notifications_users')
