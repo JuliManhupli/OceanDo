@@ -46,7 +46,7 @@ def edit_profile_view(request):
 
 def personal_stats_view(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
-    completed_tasks, _, created_complete = get_completed_tasks(request)
+    completed_tasks, _, created_complete, _ = get_completed_tasks(request)
     all_assigned_incomplete = set(list(assigned_tasks) + list(solo_assignee_tasks))
     deadlineTasks = set(list(assigned_tasks) + list(solo_assignee_tasks) + list(completed_tasks)
                         + list(created_tasks) + list(created_complete))
