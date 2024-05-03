@@ -11,6 +11,7 @@ from . import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.main, name='main'),
+    path('all-data/', views.get_all_data, name='all-data'),
     path('auth/', include('accounts.urls')),
     path('tasks/', include('tasks.urls')),
     path('users/', include('users.urls')),

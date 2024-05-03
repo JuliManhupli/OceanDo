@@ -62,11 +62,11 @@ def get_completed_tasks(request):
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
-    return combined_query, solo_assignee_tasks, created_tasks
+    return combined_query, solo_assignee_tasks, created_tasks, assigned_tasks
 
 
 def completed_tasks(request):
-    combined_query, solo_assignee_tasks, created_tasks = get_completed_tasks(request)
+    combined_query, solo_assignee_tasks, created_tasks, _ = get_completed_tasks(request)
     tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
     return render(request, "tasks/completed-tasks.html",
                   {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})

@@ -37,10 +37,11 @@ OceanDo
     <!-- NAVBAR -->
     <nav>
         <i class='bx bx-menu toggle-sidebar'></i>
-        <form action="#">
+        <form action="#" class="form-data-search">
             <div class="form-group">
                 <i class='bx bx-search icon'></i>
-                <input type="text" placeholder="Пошук...">
+                <input type="text" id="all-data-search-bar" placeholder="Пошук...">
+                <input type="hidden" name="all-data-search" id="chosen-data-block">
             </div>
         </form>
 
@@ -71,6 +72,37 @@ OceanDo
             </a>
         </div>
     </nav>
+
+    <script>
+        console.log("{% url 'all-data' %}");
+
+        $( function() {
+            $( "#all-data-search-bar" ).autocomplete({
+                source: "{% url 'all-data' %}",
+                minLength: 3,
+                focus: function (event, ui) {
+                    $("#all-data-search-bar").val(ui.item.title);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#all-data-search-bar").val(ui.item.title);
+                    $("#chosen-data-block").val(ui.item.id);
+                        return false;
+                }
+            })
+            .autocomplete( "instance" )._renderItem = function( ul, item ) {
+              return $( "<li>" )
+                .append( "<div class='autosearch-title' style='font-weight: 600;'>" + item.title + "</div>"
+                    + "<div class='autosearch-description'>" + item.category + "</div>" +
+                    + "<div class='autosearch-tag'>" + item.tags + "</div>" +
+                    + "<div class='autosearch-folder'>" + item.folders + "</div>")
+                .appendTo( ul );
+            };
+
+        });
+
+    </script>
+
     {% block content_area %}
     {% endblock %}
     <!-- MAIN -->
