@@ -5,19 +5,37 @@
 
 <div class="task-panel">
     <div class="sorting">Сортування</div>
-    <div class="filter">Фільтри</div>
-    <form action="#">
-        <div class="form-group">
-            <i class='bx bx-search icon'></i>
-            <input type="text" placeholder="Пошук...">
-        </div>
-    </form>
+    <div class="filter">Фільтри
+<!--        <a href="#"> Фільтри <i class='bx bx-chevron-right icon-right'></i></a>-->
+<!--        <ul class="filters-dropdown" id="drop-down-filters">-->
+<!--            <li><a href="#"> Теги <i class='bx bx-chevron-right icon-right'></i></a>-->
+<!--                <ul>-->
+<!--                    <li>1</li>-->
+<!--                    <li>2</li>-->
+<!--                    <li>3</li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--            <li><a href="#"> Папки <i class='bx bx-chevron-right icon-right'></i></a>-->
+<!--                <ul>-->
+<!--                    <li>1</li>-->
+<!--                    <li>2</li>-->
+<!--                    <li>3</li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--        </ul>-->
+    </div>
+<!--    <form action="#">-->
+<!--        <div class="form-group">-->
+<!--            <i class='bx bx-search icon'></i>-->
+<!--            <input type="text" placeholder="Пошук...">-->
+<!--        </div>-->
+<!--    </form>-->
     <a href="{% url 'tasks:create_task' %}" class="plus-task">
         <i class='bx bx-plus-circle icon create-task-btn'></i>
     </a>
 </div>
 
-<div class="important-tasks active">
+<div class="important-tasks active" id="tasks-container">
     {% for task, task_type in tasks_with_type %}
     {% if task_type == 'assigned' %}
     {% include 'tasks/task-type/assigned-task.html'%}
@@ -26,7 +44,7 @@
     {% endif %}
     {% endfor %}
 </div>
-<div class="important-tasks">
+<div class="important-tasks" id="created-tasks-container">
     {% for task in created_tasks %}
     {% include 'tasks/task-type/created-task.html' %}
     {% endfor %}

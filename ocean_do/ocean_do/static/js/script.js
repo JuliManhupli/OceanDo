@@ -97,6 +97,42 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+
+//FILTERS
+// $(document).ready(function () {
+//         // Function to handle filter clicks
+//         function filterTasks(tags, folders, containerId) {
+//             $.ajax({
+//                 type: 'GET',
+//                 url: '/tasks/all',
+//                 data: {
+//                     'tags': tags,
+//                     'folders': folders
+//                 },
+//                 success: function (data) {
+//                     $('#' + containerId).html(data);
+//                 }
+//             });
+//         }
+//
+//         // Click event for tag filtering
+//         $('ul#drop-down-filters ul li').click(function () {
+//             var tags = $(this).text(); // Assuming text of li is tag name
+//             filterTasks(tags, null, 'tasks-container');
+//             filterTasks(tags, null, 'created-tasks-container');
+//             return false;
+//         });
+//
+//         // Click event for folder filtering
+//         $('ul#drop-down-filters ul ul li').click(function () {
+//             var folders = $(this).text(); // Assuming text of li is folder name
+//             filterTasks(null, folders, 'tasks-container');
+//             filterTasks(null, folders, 'created-tasks-container');
+//             return false;
+//         });
+//     });
+
+
 // TASK TAB
 document.addEventListener('DOMContentLoaded', function () {
     const tabs = document.querySelector('main .task-title'),
@@ -105,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (tabs) {
         tabs.querySelectorAll('.title').forEach((button, index) => {
             button.addEventListener('click', function () {
-                // e.preventDefault();
 
                 if (!this.classList.contains('active')) {
                     tabs.querySelectorAll('.title').forEach(btn => {
