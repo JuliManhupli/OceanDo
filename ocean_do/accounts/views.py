@@ -3,7 +3,7 @@ from datetime import datetime
 import pyotp
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
@@ -152,3 +152,11 @@ def change_password_view(request):
 def logout_view(request):
     logout(request)
     return redirect('accounts:login')
+
+
+def mark_notifications_as_read(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        request.user.notifications_users.filter(is_read=False).update(is_read=True)
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False})
