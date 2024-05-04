@@ -80,24 +80,35 @@ OceanDo
         $( function() {
             $( "#all-data-search-bar" ).autocomplete({
                 source: "{% url 'all-data' %}",
-                minLength: 3,
+                minLength: 1,
                 focus: function (event, ui) {
                     $("#all-data-search-bar").val(ui.item.title);
                     return false;
                 },
                 select: function (event, ui) {
                     $("#all-data-search-bar").val(ui.item.title);
-                    $("#chosen-data-block").val(ui.item.id);
-                        return false;
+                    window.location.href = ui.item.link;
+                    return false;
                 }
             })
             .autocomplete( "instance" )._renderItem = function( ul, item ) {
-              return $( "<li>" )
-                .append( "<div class='autosearch-title' style='font-weight: 600;'>" + item.title + "</div>"
-                    + "<div class='autosearch-description'>" + item.category + "</div>" +
-                    + "<div class='autosearch-tag'>" + item.tags + "</div>" +
-                    + "<div class='autosearch-folder'>" + item.folders + "</div>")
-                .appendTo( ul );
+                var listItem = $("<li style='max-height: 200px;'>");
+                if(item.type === "folder") {
+                    listItem.append(
+                        "<a href=\"" + item.link + "\" style='display: flex; flex-direction: column'>" +
+                        "<div class='autosearch-title' style='font-weight: 600;'> Папка: </div>" +
+                        "<div class='autosearch-title'>" + item.title + "</div>" +
+                        "</a>"
+                    );
+                } else if(item.type === "task") {
+                    listItem.append( "<a href=\"" + item.link + "\" style='display: flex; flex-direction: column'>" +
+                    "<div class='autosearch-title' style='font-weight: 600;'> Завдання: [" + item.task_type + "]</div>"
+                        + "<div class='autosearch-title'>" + item.title + "</div>"
+                    + "<div class='autosearch-tag'> Теги: " + item.tags + "</div>"
+                    + "<div class='autosearch-folder'> Папки: " + item.folders + "</div>"
+                    + "</a>");
+                }
+                return listItem.appendTo( ul );
             };
 
         });

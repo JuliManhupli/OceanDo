@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.http import JsonResponse
 from django.db.models import Q, Count
-from tasks.views import get_tasks, get_completed_tasks
+from tasks.views import get_tasks, get_completed_tasks, get_folders
 from tasks.models import Task
 import traceback
 
@@ -39,22 +39,42 @@ def get_all_data(request):
             term = request.GET.get('term')
             assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
             _, solo_assigned_complete, created_complete, assigned_complete = get_completed_tasks(request)
+            all_folders = get_folders(request)
 
             all_type_data = []
             added_task_ids = set()
+            folders_ids = set()
+
+            for folder in all_folders.filter(
+                    Q(name__istartswith=term)
+            ):
+                if folder.id not in folders_ids:
+                    folder_data = {
+                        'id': folder.id,
+                        'title': folder.name,
+                        'type': "folder",
+                        'link': f'/tasks/folders/{folder.id}/'
+                    }
+                    all_type_data.append(folder_data)
+                    folders_ids.add(folder.id)
+
+            print("0")
+            print(all_type_data)
+
             for task in assigned_tasks.filter(
                     Q(title__istartswith=term) |
-                    Q(description__istartswith=term) |
                     Q(tags__name__istartswith=term) |
                     Q(folders__name__istartswith=term)
             ):
-                if task.id not in added_task_ids:  # Check if task has not been added already
+                if task.id not in added_task_ids:
                     task_data = {
                         'id': task.id,
                         'title': task.title,
-                        'category': "Виконання",
+                        'type': "task",
+                        'task_type': "Виконання",
                         'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()]
+                        'folders': [folder.name for folder in task.folders.all()],
+                        'link': f'/tasks/task-info/{task.id}/'
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
@@ -65,17 +85,18 @@ def get_all_data(request):
 
             for task in created_tasks.filter(
                     Q(title__istartswith=term) |
-                    Q(description__istartswith=term) |
                     Q(tags__name__istartswith=term) |
                     Q(folders__name__istartswith=term)
             ):
-                if task.id not in added_task_ids:  # Check if task has not been added already
+                if task.id not in added_task_ids:
                     task_data = {
                         'id': task.id,
                         'title': task.title,
-                        'category': "Моніторинг",
+                        'type': "task",
+                        'task_type': "Моніторинг",
                         'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()]
+                        'folders': [folder.name for folder in task.folders.all()],
+                        'link': f'/tasks/task-info-creator/{task.id}/'
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
@@ -85,17 +106,18 @@ def get_all_data(request):
 
             for task in solo_assignee_tasks.filter(
                     Q(title__istartswith=term) |
-                    Q(description__istartswith=term) |
                     Q(tags__name__istartswith=term) |
                     Q(folders__name__istartswith=term)
             ):
-                if task.id not in added_task_ids:  # Check if task has not been added already
+                if task.id not in added_task_ids:
                     task_data = {
                         'id': task.id,
                         'title': task.title,
-                        'category': "Виконання",
+                        'type': "task",
+                        'task_type': "Виконання",
                         'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()]
+                        'folders': [folder.name for folder in task.folders.all()],
+                        'link': f'/tasks/task-info/{task.id}/'
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
@@ -105,17 +127,18 @@ def get_all_data(request):
 
             for task in solo_assigned_complete.filter(
                     Q(title__istartswith=term) |
-                    Q(description__istartswith=term) |
                     Q(tags__name__istartswith=term) |
                     Q(folders__name__istartswith=term)
             ):
-                if task.id not in added_task_ids:  # Check if task has not been added already
+                if task.id not in added_task_ids:
                     task_data = {
                         'id': task.id,
                         'title': task.title,
-                        'category': "Виконання",
+                        'type': "task",
+                        'task_type': "Виконання",
                         'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()]
+                        'folders': [folder.name for folder in task.folders.all()],
+                        'link': f'/tasks/task-info/{task.id}/'
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
@@ -125,17 +148,18 @@ def get_all_data(request):
 
             for task in created_complete.filter(
                     Q(title__istartswith=term) |
-                    Q(description__istartswith=term) |
                     Q(tags__name__istartswith=term) |
                     Q(folders__name__istartswith=term)
             ):
-                if task.id not in added_task_ids:  # Check if task has not been added already
+                if task.id not in added_task_ids:
                     task_data = {
                         'id': task.id,
                         'title': task.title,
-                        'category': "Моніторинг",
+                        'type': "task",
+                        'task_type': "Моніторинг",
                         'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()]
+                        'folders': [folder.name for folder in task.folders.all()],
+                        'link': f'/tasks/task-info-creator/{task.id}/'
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
@@ -145,17 +169,18 @@ def get_all_data(request):
 
             for task in assigned_complete.filter(
                     Q(title__istartswith=term) |
-                    Q(description__istartswith=term) |
                     Q(tags__name__istartswith=term) |
                     Q(folders__name__istartswith=term)
             ):
-                if task.id not in added_task_ids:  # Check if task has not been added already
+                if task.id not in added_task_ids:
                     task_data = {
                         'id': task.id,
                         'title': task.title,
-                        'category': task.description,
+                        'type': "task",
+                        'task_type': "Виконання",
                         'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()]
+                        'folders': [folder.name for folder in task.folders.all()],
+                        'link': f'/tasks/task-info/{task.id}/'
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
@@ -166,5 +191,5 @@ def get_all_data(request):
             return JsonResponse(all_type_data, safe=False)
         return render(request, "ocean_do/index.html")
     except Exception as e:
-        traceback.print_exc()  # Print the stack trace to the console for debugging
+        traceback.print_exc()
         return JsonResponse({'error': str(e)}, status=500)

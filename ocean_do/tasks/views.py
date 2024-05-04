@@ -21,22 +21,26 @@ def send_notification(message, assignee):
     notification.users.set([assignee])
     notification.save()
 
+def get_folders(request):
+    tasks = Task.objects.filter(creator=request.user, is_completed=False)
+    task_assignments = TaskAssignment.objects.filter(user=request.user, is_completed=False)
+    task_folders = Folder.objects.filter(folders_tasks__in=tasks)
+    task_assignments_folders = Folder.objects.filter(folders_assignments__in=task_assignments)
+
+    all_folders = task_folders | task_assignments_folders
+    return all_folders.order_by('name').distinct()
+
+
 def user_folders(request):
     try:
-        tasks = Task.objects.filter(creator=request.user, is_completed=False)
-        task_assignments = TaskAssignment.objects.filter(user=request.user, is_completed=False)
-        task_folders = Folder.objects.filter(folders_tasks__in=tasks)
-        task_assignments_folders = Folder.objects.filter(folders_assignments__in=task_assignments)
-
-        all_folders = task_folders | task_assignments_folders
-        all_folders = all_folders.order_by('name').distinct()
+        all_folders = get_folders(request)
         folders_data = [{'id': folder.id, 'name': folder.name} for folder in all_folders]
         return JsonResponse(folders_data, safe=False)
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
 
 
-def get_tasks(request):
+def get_tasks(request, tags=None, folders=None):
     user = request.user
     assigned_query = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
     created_query = Task.objects.filter(creator=user, is_completed=False)
@@ -46,6 +50,15 @@ def get_tasks(request):
     created_query = created_query.exclude(id__in=solo_assignee_query)
     assigned_query = assigned_query.exclude(id__in=solo_assignee_query)
     # solo_assignee_query = solo_assignee_query.filter(assignees__is_completed=False)
+    # if tags:
+    #     assigned_query = assigned_query.filter(tags__in=tags)
+    #     created_query = created_query.filter(tags__in=tags)
+    #     solo_assignee_query = solo_assignee_query.filter(tags__in=tags)
+    #
+    # if folders:
+    #     assigned_query = assigned_query.filter(folder__in=folders)
+    #     created_query = created_query.filter(folder__in=folders)
+    #     solo_assignee_query = solo_assignee_query.filter(folder__in=folders)
     return assigned_query, created_query, solo_assignee_query
 
 
