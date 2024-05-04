@@ -7,13 +7,19 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
 from django.utils import timezone
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
 
 from .form import TaskForm, CommentForm, TaskEditForm
 from .models import Tag, Task, TaskAssignment, File, Folder, TaskChat, ChatComment
 
+def send_notification(message, assignee):
+    # notification_message = f"Завдання \"{task.title}\" було оновлено"
+    notification = Notification.objects.create(
+        message=message,
+    )
+    notification.users.set([assignee])
+    notification.save()
 
 def user_folders(request):
     try:
@@ -205,12 +211,7 @@ def update_task_status(request, task_id):
                     task.is_completed = True
                     task.save()
                     # Створення нотифікації для кожного виконавця
-                    notification_message = f"Всі учасники виконали завдання \"{task.title}\""
-                    notification = Notification.objects.create(
-                        message=notification_message,
-                    )
-                    notification.users.set([task.creator])
-                    notification.save()
+                    send_notification(f"Всі учасники виконали завдання \"{task.title}\"", task.creator)
                     # task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
                     # print(task_url)
                     # send_task(request, assignee.email, task.title, task_url)
@@ -219,12 +220,7 @@ def update_task_status(request, task_id):
                     task.is_completed = False
                     task.save()
                     if not is_completed:
-                        notification_message = f"Учасник {task_assignment.user.username} відмінив надсилання завдання \"{task.title}\""
-                        notification = Notification.objects.create(
-                            message=notification_message,
-                        )
-                        notification.users.set([task.creator])
-                        notification.save()
+                        send_notification(f"Учасник {task_assignment.user.username} відмінив надсилання завдання \"{task.title}\"", task.creator)
                 return JsonResponse({'message': 'Статус завдання успішно оновлено.'})
             else:
                 return JsonResponse({'error': 'Не вдалося знайти виконавця завдання.'},
@@ -284,13 +280,7 @@ def save_task(request, form, old_files=None):
             completion_time=None,
         )
         task.assignees.add(task_assignment)
-
-        notification_message = f"Вам призначено завдання \"{task.title}\""
-        notification = Notification.objects.create(
-            message=notification_message,
-        )
-        notification.users.set([assignee])
-        notification.save()
+        send_notification(f"Вам призначено завдання \"{task.title}\"", assignee)
 
     return task
 
@@ -353,13 +343,8 @@ def edit_task(request, task_id):
                     task.assignees.add(task_assignment)
                     task.is_completed = False
                     task.save()
-                # Створення нотифікації для кожного нового виконавця
-                notification_message = f"Завдання \"{task.title}\" було оновлено"
-                notification = Notification.objects.create(
-                    message=notification_message,
-                )
-                notification.users.set([assignee])
-                notification.save()
+
+                send_notification(f"Завдання \"{task.title}\" було оновлено", assignee)
 
             task.is_completed = False
 
@@ -426,6 +411,8 @@ def task_info(request, task_id):
         task = Task.objects.get(id=task_id)
         task_chat, created = TaskChat.create_or_get_private(task, task.creator, request.user)
         task_assignment = get_object_or_404(TaskAssignment, user=request.user, assigned_tasks=task)
+        comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+        form = CommentForm()
 
         if request.method == 'POST' and request.FILES:
             files = request.FILES.getlist('files')
@@ -436,22 +423,21 @@ def task_info(request, task_id):
                 task_assignment.save()
             return redirect('tasks:task_info', task_id=task_id)
 
-        if request.headers.get('HX-Request'):
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                comment = form.save(commit=False)
-                comment.user = request.user
-                comment.task_chat = task_chat
-                comment.save()
+        # if request.headers.get('HX-Request'):
+        #     form = CommentForm(request.POST)
+        #     if form.is_valid():
+        #         comment = form.save(commit=False)
+        #         comment.user = request.user
+        #         comment.task_chat = task_chat
+        #         comment.save()
+        #
+        #         context = {'comment': comment}
+        #         return render(request, "tasks/partials/task-comment.html", context)
+        # if task_chat:
 
-                context = {'comment': comment}
-                return render(request, "tasks/partials/task-comment.html", context)
-        if task_chat:
-            comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
-        else:
-            comments = None
+        # else:
+        #     comments = None
 
-        form = CommentForm()
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
 
@@ -467,16 +453,22 @@ def creator_task_view(request, task_id):
         assignee_data = []
         for assignee in assignment:
             task_chat, created = TaskChat.create_or_get_private(task, task.creator, assignee.user)
-            if request.headers.get('HX-Request'):
-                form = CommentForm(request.POST)
-                if form.is_valid():
-                    comment = form.save(commit=False)
-                    comment.user = request.user
-                    comment.task_chat = task_chat
-                    comment.save()
-                    comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
-            else:
-                comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+            # print("0")
+            # if request.headers.get('HX-Request'):
+            #     print("1")
+            #     form = CommentForm(request.POST)
+            #     if form.is_valid():
+            #         print("2")
+            #         comment = form.save(commit=False)
+            #         comment.user = request.user
+            #         comment.task_chat = task_chat
+            #         comment.save()
+            #         print("!!!!!!!!!!!!!")
+            #         send_notification(f"{task.creator} залишив коментар до завдання \"{task.title}\"", assignee.user)
+            #         comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
+            #
+            # else:
+            comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
             assignee_data.append((assignee, comments, task_chat))
         form = CommentForm()
     except Task.DoesNotExist:

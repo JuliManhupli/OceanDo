@@ -123,22 +123,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // TASK MENU
 document.addEventListener('DOMContentLoaded', function () {
-    // OLD
-    // const allTaskItems = document.querySelectorAll('.task-settings');
-    // console.log(allTaskItems);
-    // allTaskItems.forEach(item => {
-    //     const menuIcon = item.querySelector('.icon');
-    //     const menuOption = item.querySelector('.task-settings-box');
-    //
-    //     menuIcon.addEventListener('click', function () {
-    //         menuOption.classList.toggle('show');
-    //     })
-    // })
-
     const tasksContainers = document.querySelectorAll('.important-tasks');
     tasksContainers.forEach(tasksContainer => {
         tasksContainer.addEventListener('click', function(event) {
-            console.log('Clicked!', event.target);
             if (event.target.closest('.task-settings .icon')) {
                 const menuOption = event.target.closest('.task-settings').querySelector('.task-settings-box');
                 if (menuOption) {
@@ -148,21 +135,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // OLD
-    // window.addEventListener('click', function (e) {
-    //     allTaskItems.forEach(item => {
-    //         const menuIcon = item.querySelector('.icon'),
-    //             menuOption = item.querySelector('.task-settings-box');
-    //
-    //         if (e.target !== menuIcon) {
-    //             if (e.target !== menuOption) {
-    //                 if (menuOption.classList.contains('show')) {
-    //                     menuOption.classList.remove('show');
-    //                 }
-    //             }
-    //         }
-    //     })
-    // });
 
     document.addEventListener('click', function (e) {
         tasksContainers.forEach(tasksContainer => {
@@ -194,37 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
-    // const allTaskHeads = document.querySelectorAll('.task-settings');
-    // allTaskHeads.forEach(item => {
-    //     const taskStatusBtn = item.querySelector('.task-status-btn');
-    //     if (taskStatusBtn) {
-    //         taskStatusBtn.addEventListener('click', function () {
-    //             const taskId = item.closest('.task').dataset.taskId;
-    //             const taskStatus = item.querySelector('.task-status');
-    //             console.log(taskStatus);
-    //             const isCompleted = taskStatus.classList.contains('done');
-    //             axios.defaults.xsrfCookieName = 'csrftoken';
-    //             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-    //             axios.post(`/tasks/${taskId}/update-status/`, {is_completed: !isCompleted})
-    //                 .then(response => {
-    //                     if (response.status === 200) {
-    //                         taskStatus.classList.toggle('done');
-    //                         taskStatus.classList.toggle('bxs-circle');
-    //                         taskStatus.classList.toggle('bxs-check-circle');
-    //                         const taskStatusChange = item.querySelector('.task-status-change');
-    //                         if (taskStatusChange.textContent === 'Позначити, як виконане') {
-    //                             taskStatusChange.textContent = 'Позначити, як невиконане';
-    //                         } else {
-    //                             taskStatusChange.textContent = 'Позначити, як виконане';
-    //                         }
-    //                     } else {
-    //                         throw new Error('Помилка оновлення статусу завдання.');
-    //                     }
-    //                 })
-    //                 .catch(error => console.error(error));
-    //         });
-    //     }
-    // });
+
 });
 
 
@@ -233,8 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
     axios.defaults.xsrfCookieName = 'csrftoken';
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
     const deleteLinks = document.querySelectorAll('.delete-link');
-    console.log("deleteLinks");
-    console.log(deleteLinks);
     deleteLinks.forEach(link => {
         link.removeEventListener('click', onDeleteClick);
     });
@@ -251,7 +191,6 @@ function onDeleteClick(event) {
         const taskId = this.dataset.id;
         axios.delete(`/tasks/${taskId}/delete/`)
             .then(response => {
-                console.log(response);
                 if (response.status === 204) {
                     const listItem = this.parentElement;
                     listItem.remove();
@@ -405,7 +344,6 @@ function deleteAvatar() {
     if (confirmation) {
         axios.delete("/users/delete-avatar/")
             .then(response => {
-                console.log(response);
                 if (response.status === 204) {
                     window.location.reload();
                     alert("Фото профілю було успішно видалено.");
@@ -424,8 +362,6 @@ const notificationSocket = new WebSocket("ws://" + window.location.host + "/ws/n
 
 notificationSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
-    console.log(data);
-    console.log("data" + data);
     document.getElementById('notification-dropdown').innerHTML = `<li>${data.message}</li>` + document.getElementById('notification-dropdown').innerHTML;
 
     // Update notification count in local storage
@@ -433,7 +369,6 @@ notificationSocket.onmessage = function (e) {
     localStorage.setItem('notificationCount', numberOfNotifications + 1);
     updateNotificationCount();
 
-    console.log("numberOfNotifications: " + numberOfNotifications);
 };
 
 notificationSocket.onclose = function () {
@@ -441,15 +376,19 @@ notificationSocket.onclose = function () {
 };
 
 // Function to clear notification count from local storage
-function clearNotificationCount() {
-    localStorage.removeItem('notificationCount');
-    updateNotificationCount(); // Update the displayed count
-}
+// function clearNotificationCount() {
+//     localStorage.removeItem('notificationCount');
+//     // updateNotificationCount(); // Update the displayed count
+// }
 
 // Function to update the notification count
 function updateNotificationCount() {
-    let numberSpan = document.getElementById('notification-number');
+    const numberSpan = document.getElementById('notification-number');
+    const unreadNotificationCount = parseInt(numberSpan.getAttribute('data-unread'));
+
     let numberOfNotifications = parseInt(localStorage.getItem('notificationCount')) || 0;
+    numberOfNotifications += unreadNotificationCount;
+
     if (numberOfNotifications === 0) {
         numberSpan.style.display = 'none';
     } else {
@@ -458,21 +397,41 @@ function updateNotificationCount() {
     }
 }
 
+
+function markNotificationsAsRead() {
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    axios.post('/auth/mark-notifications-as-read/', {})
+        .then(response => {
+            if (response.status === 200) {
+                localStorage.setItem('notificationCount', 0);
+                updateNotificationCount();
+            } else {
+                console.error('Failed to mark notifications as read.');
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notifications as read:', error);
+        });
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
+    localStorage.removeItem('notificationCount');
     updateNotificationCount();
 
     const notifBlock = document.querySelectorAll('.notification-block');
     notifBlock.forEach(item => {
         const bellIcon = item.querySelector('.icon');
         const allNotifs = item.querySelector('.dropdown-menu');
+        const numberSpan = document.getElementById('notification-number');
 
         bellIcon.addEventListener('click', function () {
             allNotifs.classList.toggle('show');
-
+            markNotificationsAsRead();
             // Clear notification count when bell icon is clicked
-            localStorage.setItem('notificationCount', 0);
-            // updateNotificationCount();
-            clearNotificationCount();
+            numberSpan.setAttribute('data-unread', '0');
         })
     })
 
@@ -490,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('logout-btn').addEventListener('click', function () {
-        clearNotificationCount();
+        localStorage.removeItem('notificationCount');
     });
 });
 
@@ -584,11 +543,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const todayDate = new Date(),
     todayTime = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
-    console.log("YES")
-    console.log(userTime);
-    console.log(todayTime);
     const isOverdue = userTime < todayTime;
-    console.log(isOverdue);
     if (isOverdue){
         completeTaskBtn.classList.toggle('overdue');
     }

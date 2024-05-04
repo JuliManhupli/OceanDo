@@ -5,6 +5,7 @@ from channels.generic.websocket import WebsocketConsumer
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from tasks.models import TaskChat, ChatComment
+from tasks.views import send_notification
 
 
 class NotificationConsumer(WebsocketConsumer):
@@ -32,6 +33,7 @@ class NotificationConsumer(WebsocketConsumer):
         message = event["message"]
         print("Sending notification:", message)
         self.send(text_data=json.dumps({"message": message}))
+
 
 
 class CommentsConsumer(WebsocketConsumer):
@@ -65,6 +67,10 @@ class CommentsConsumer(WebsocketConsumer):
             user=self.user,
             message=message
         )
+
+        for member in self.chat.members.all():
+            if member != self.user:
+                send_notification(f"{self.user.username} залишив коментар до завдання \"{self.chat.task.title}\"", member)
 
         event = {
             'type': 'message_handler',

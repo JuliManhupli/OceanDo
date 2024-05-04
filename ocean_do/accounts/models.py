@@ -35,7 +35,7 @@ class Notification(models.Model):
     users = models.ManyToManyField(User, related_name='notifications_users')
     message = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
-    is_send = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.message}"
