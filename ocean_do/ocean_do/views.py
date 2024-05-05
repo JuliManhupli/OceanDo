@@ -36,6 +36,7 @@ def main(request):
 def get_all_data(request):
     try:
         if 'term' in request.GET:
+            user = request.user
             term = request.GET.get('term')
             assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
             _, solo_assigned_complete, created_complete, assigned_complete = get_completed_tasks(request)
@@ -46,7 +47,7 @@ def get_all_data(request):
             folders_ids = set()
 
             for folder in all_folders.filter(
-                    Q(name__istartswith=term)
+                    Q(name__icontains=term)
             ):
                 if folder.id not in folders_ids:
                     folder_data = {
@@ -62,9 +63,9 @@ def get_all_data(request):
             print(all_type_data)
 
             for task in assigned_tasks.filter(
-                    Q(title__istartswith=term) |
-                    Q(tags__name__istartswith=term) |
-                    Q(folders__name__istartswith=term)
+                    Q(title__icontains=term) |
+                    Q(assignees__user=user, assignees__tags__name__icontains=term) |
+                    Q(assignees__folders__name__icontains=term)
             ):
                 if task.id not in added_task_ids:
                     task_data = {
@@ -84,9 +85,9 @@ def get_all_data(request):
 
 
             for task in created_tasks.filter(
-                    Q(title__istartswith=term) |
-                    Q(tags__name__istartswith=term) |
-                    Q(folders__name__istartswith=term)
+                    Q(title__icontains=term) |
+                    Q(tags__name__icontains=term) |
+                    Q(folders__name__icontains=term)
             ):
                 if task.id not in added_task_ids:
                     task_data = {
@@ -105,9 +106,9 @@ def get_all_data(request):
             print(all_type_data)
 
             for task in solo_assignee_tasks.filter(
-                    Q(title__istartswith=term) |
-                    Q(tags__name__istartswith=term) |
-                    Q(folders__name__istartswith=term)
+                    Q(title__icontains=term) |
+                    Q(tags__name__icontains=term) |
+                    Q(folders__name__icontains=term)
             ):
                 if task.id not in added_task_ids:
                     task_data = {
@@ -126,9 +127,9 @@ def get_all_data(request):
             print(all_type_data)
 
             for task in solo_assigned_complete.filter(
-                    Q(title__istartswith=term) |
-                    Q(tags__name__istartswith=term) |
-                    Q(folders__name__istartswith=term)
+                    Q(title__icontains=term) |
+                    Q(tags__name__icontains=term) |
+                    Q(folders__name__icontains=term)
             ):
                 if task.id not in added_task_ids:
                     task_data = {
@@ -147,9 +148,9 @@ def get_all_data(request):
             print(all_type_data)
 
             for task in created_complete.filter(
-                    Q(title__istartswith=term) |
-                    Q(tags__name__istartswith=term) |
-                    Q(folders__name__istartswith=term)
+                    Q(title__icontains=term) |
+                    Q(tags__name__icontains=term) |
+                    Q(folders__name__icontains=term)
             ):
                 if task.id not in added_task_ids:
                     task_data = {
@@ -168,9 +169,9 @@ def get_all_data(request):
             print(all_type_data)
 
             for task in assigned_complete.filter(
-                    Q(title__istartswith=term) |
-                    Q(tags__name__istartswith=term) |
-                    Q(folders__name__istartswith=term)
+                    Q(title__icontains=term) |
+                    Q(assignees__user=user, assignees__tags__name__icontains=term) |
+                    Q(assignees__folders__name__icontains=term)
             ):
                 if task.id not in added_task_ids:
                     task_data = {

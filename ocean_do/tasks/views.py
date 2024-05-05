@@ -13,6 +13,7 @@ from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete
 from .form import TaskForm, CommentForm, TaskEditForm
 from .models import Tag, Task, TaskAssignment, File, Folder, TaskChat, ChatComment
 
+
 def send_notification(message, assignee):
     # notification_message = f"Завдання \"{task.title}\" було оновлено"
     notification = Notification.objects.create(
@@ -20,6 +21,7 @@ def send_notification(message, assignee):
     )
     notification.users.set([assignee])
     notification.save()
+
 
 def get_folders(request):
     tasks = Task.objects.filter(creator=request.user, is_completed=False)
@@ -40,7 +42,7 @@ def user_folders(request):
         return redirect('tasks:all_tasks')
 
 
-def get_tasks(request, tags=None, folders=None):
+def get_tasks(request):
     user = request.user
     assigned_query = Task.objects.filter(assignees__user=user, assignees__is_completed=False)
     created_query = Task.objects.filter(creator=user, is_completed=False)
@@ -49,27 +51,70 @@ def get_tasks(request, tags=None, folders=None):
 
     created_query = created_query.exclude(id__in=solo_assignee_query)
     assigned_query = assigned_query.exclude(id__in=solo_assignee_query)
-    # solo_assignee_query = solo_assignee_query.filter(assignees__is_completed=False)
-    # if tags:
-    #     assigned_query = assigned_query.filter(tags__in=tags)
-    #     created_query = created_query.filter(tags__in=tags)
-    #     solo_assignee_query = solo_assignee_query.filter(tags__in=tags)
-    #
-    # if folders:
-    #     assigned_query = assigned_query.filter(folder__in=folders)
-    #     created_query = created_query.filter(folder__in=folders)
-    #     solo_assignee_query = solo_assignee_query.filter(folder__in=folders)
+
+    if request.method == "POST":
+        print("HERE")
+        search_tag = request.POST.get('tag-filter')
+        search_folder = request.POST.get('folder-filter')
+        print(search_tag, search_folder)
+        if search_tag:
+            created_query = created_query.filter(tags__name=search_tag)
+            assigned_query = assigned_query.filter(assignees__user=user, assignees__tags__name=search_tag)
+            solo_assignee_query = solo_assignee_query.filter(tags__name=search_tag)
+            print(created_query, assigned_query, solo_assignee_query)
+
+        if search_folder:
+            created_query = created_query.filter(folders__name=search_folder)
+            assigned_query = assigned_query.filter(assignees__user=user, assignees__folders__name=search_folder)
+            solo_assignee_query = solo_assignee_query.filter(folders__name=search_folder)
+            print(created_query, assigned_query, solo_assignee_query)
+
     return assigned_query, created_query, solo_assignee_query
+
+
+def get_tags(request):
+    user = request.user
+    user_tasks = Task.objects.filter(creator=user)
+    user_task_assignments = TaskAssignment.objects.filter(user=user)
+    task_tags = Tag.objects.filter(tags_tasks__in=user_tasks)
+    task_assignment_tags = Tag.objects.filter(tags_assignments__in=user_task_assignments)
+    all_tags = task_tags | task_assignment_tags
+    return all_tags.order_by('name').distinct()
+
+
+def get_sorting(request, created_tasks, combined_query):
+    if request.method == "POST":
+        print("HERE ALSO")
+        sort_order = request.POST.get('sorting')
+        sort_key = None
+        if sort_order == 'title':
+            sort_key = lambda x: x.title
+        elif sort_order == 'deadline':
+            sort_key = lambda x: x.deadline
+
+        if sort_key:
+            created_tasks = sorted(created_tasks, key=sort_key)
+            combined_query = sorted(combined_query, key=sort_key)
+            print(created_tasks, combined_query)
+
+    return created_tasks, combined_query
 
 
 @login_required
 def all_tasks(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
-    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
+    created_tasks_sorted, combined_query_sorted = get_sorting(request, created_tasks, combined_query)
+
+    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in
+                       combined_query_sorted]
     current_time = timezone.now()
+    all_user_folders = get_folders(request)
+    all_user_tags = get_tags(request)
     return render(request, "tasks/all-tasks.html",
-                  {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks, 'current_time': current_time})
+                  {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks_sorted,
+                   'current_time': current_time,
+                   'all_user_folders': all_user_folders, 'all_user_tags': all_user_tags})
 
 
 def get_completed_tasks(request):
@@ -80,15 +125,36 @@ def get_completed_tasks(request):
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
+
+    if request.method == "POST":
+        search_tag = request.POST.get('tag-filter')
+        search_folder = request.POST.get('folder-filter')
+
+        if search_tag:
+            created_tasks = created_tasks.filter(tags__name=search_tag)
+            assigned_tasks = assigned_tasks.filter(assignees__user=user, assignees__tags__name=search_tag)
+            solo_assignee_tasks = solo_assignee_tasks.filter(tags__name=search_tag)
+
+        if search_folder:
+            created_tasks = created_tasks.filter(folders__name=search_folder)
+            assigned_tasks = assigned_tasks.filter(assignees__user=user, assignees__folders__name=search_folder)
+            solo_assignee_tasks = solo_assignee_tasks.filter(folders__name=search_folder)
+
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
+
     return combined_query, solo_assignee_tasks, created_tasks, assigned_tasks
 
 
 def completed_tasks(request):
     combined_query, solo_assignee_tasks, created_tasks, _ = get_completed_tasks(request)
-    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
+    created_tasks_sorted, combined_query_sorted = get_sorting(request, created_tasks, combined_query)
+    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in
+                       combined_query_sorted]
+    all_user_folders = get_folders(request)
+    all_user_tags = get_tags(request)
     return render(request, "tasks/completed-tasks.html",
-                  {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks})
+                  {'tasks_with_type': tasks_with_type, 'created_tasks': created_tasks_sorted,
+                   'all_user_folders': all_user_folders, 'all_user_tags': all_user_tags})
 
 
 def folder_tasks(request, folder_id):
@@ -103,12 +169,35 @@ def folder_tasks(request, folder_id):
         assignees__user=user)
     created_tasks = created_tasks.exclude(id__in=solo_assignee_tasks)
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
+
+    if request.method == "POST":
+        print("HERE")
+        search_tag = request.POST.get('tag-filter')
+        search_folder = request.POST.get('folder-filter')
+        print(search_tag, search_folder)
+        if search_tag:
+            created_tasks = created_tasks.filter(tags__name=search_tag)
+            assigned_tasks = assigned_tasks.filter(assignees__user=user, assignees__tags__name=search_tag)
+            solo_assignee_tasks = solo_assignee_tasks.filter(tags__name=search_tag)
+            print(created_tasks, assigned_tasks, solo_assignee_tasks)
+
+        if search_folder:
+            created_tasks = created_tasks.filter(folders__name=search_folder)
+            assigned_tasks = assigned_tasks.filter(assignees__user=user, assignees__folders__name=search_folder)
+            solo_assignee_tasks = solo_assignee_tasks.filter(folders__name=search_folder)
+            print(created_tasks, assigned_tasks, solo_assignee_tasks)
+
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
-    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in combined_query]
+    created_tasks_sorted, combined_query_sorted = get_sorting(request, created_tasks, combined_query)
+    tasks_with_type = [(task, 'solo') if task in solo_assignee_tasks else (task, 'assigned') for task in
+                       combined_query_sorted]
     current_time = timezone.now()
+    all_user_folders = get_folders(request)
+    all_user_tags = get_tags(request)
     return render(request, "tasks/folder-tasks.html",
                   {'folder': folder, 'tasks_with_type': tasks_with_type,
-                   'created_tasks': created_tasks, 'current_time': current_time})
+                   'created_tasks': created_tasks_sorted, 'current_time': current_time,
+                   'all_user_folders': all_user_folders, 'all_user_tags': all_user_tags})
 
 
 def calendar_view(request):
@@ -233,7 +322,9 @@ def update_task_status(request, task_id):
                     task.is_completed = False
                     task.save()
                     if not is_completed:
-                        send_notification(f"Учасник {task_assignment.user.username} відмінив надсилання завдання \"{task.title}\"", task.creator)
+                        send_notification(
+                            f"Учасник {task_assignment.user.username} відмінив надсилання завдання \"{task.title}\"",
+                            task.creator)
                 return JsonResponse({'message': 'Статус завдання успішно оновлено.'})
             else:
                 return JsonResponse({'error': 'Не вдалося знайти виконавця завдання.'},
@@ -402,7 +493,7 @@ def get_users(request, template_name):
     if 'term' in request.GET:
         term = request.GET.get('term')
         users = User.objects.filter(
-            Q(email__istartswith=term) | Q(username__istartswith=term)
+            Q(email__icontains=term) | Q(username__icontains=term)
         )
         users_data = list(users.values('email', 'username'))
         return JsonResponse(users_data, safe=False)

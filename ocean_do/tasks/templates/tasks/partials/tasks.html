@@ -4,8 +4,29 @@
 </div>
 
 <div class="task-panel">
-    <div class="sorting">Сортування</div>
-    <div class="filter">Фільтри
+    <form class="filter" method="POST">
+            {% csrf_token %}
+            <select name="sorting">
+                <option selected disabled=true>--Вибрати порядок--</option>
+                <option value="deadline">Найважливіші</option>
+                <option value="title">Від А до Я</option>
+            </select>
+            <select name="tag-filter">
+                <option selected disabled=true>--Вибрати тег--</option>
+                {% for tag in all_user_tags %}
+                <option>{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+            <select name="folder-filter">
+                <option selected disabled=true>--Вибрати папку--</option>
+                {% for folder in all_user_folders %}
+                <option>{{ folder.name }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Відобразити">
+    </form>
+<!--    <div class="sorting">Сортування</div>-->
+<!--    <div class="filter">Фільтри-->
 <!--        <a href="#"> Фільтри <i class='bx bx-chevron-right icon-right'></i></a>-->
 <!--        <ul class="filters-dropdown" id="drop-down-filters">-->
 <!--            <li><a href="#"> Теги <i class='bx bx-chevron-right icon-right'></i></a>-->
@@ -23,7 +44,7 @@
 <!--                </ul>-->
 <!--            </li>-->
 <!--        </ul>-->
-    </div>
+<!--    </div>-->
 <!--    <form action="#">-->
 <!--        <div class="form-group">-->
 <!--            <i class='bx bx-search icon'></i>-->
