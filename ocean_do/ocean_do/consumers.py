@@ -35,15 +35,22 @@ class NotificationConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({"message": message}))
 
 
-
 class CommentsConsumer(WebsocketConsumer):
     def connect(self):
         self.user = self.scope["user"]
         if not self.user.is_authenticated:
             self.close()
             return
-        self.chat_name = self.scope["url_route"]["kwargs"]["chat_name"]
-        self.chat = get_object_or_404(TaskChat, name=self.chat_name)
+        self.chat_name = self.scope["url_route"]["kwargs"].get("chat_name")
+        print("Chat name:", self.chat_name)
+        if not self.chat_name:
+            self.close()
+            return
+        try:
+            self.chat = TaskChat.objects.get(name=self.chat_name)
+        except TaskChat.DoesNotExist:
+            self.close()
+            return
         self.group_name = f'comments_{self.chat_name}'
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
@@ -52,11 +59,12 @@ class CommentsConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
-        if self.user.is_authenticated:
-            async_to_sync(self.channel_layer.group_discard)(
-                self.group_name,
-                self.channel_name
-            )
+        if hasattr(self, 'group_name'):
+            if self.user.is_authenticated:
+                async_to_sync(self.channel_layer.group_discard)(
+                    self.group_name,
+                    self.channel_name
+                )
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -70,7 +78,8 @@ class CommentsConsumer(WebsocketConsumer):
 
         for member in self.chat.members.all():
             if member != self.user:
-                send_notification(f"{self.user.username} залишив коментар до завдання \"{self.chat.task.title}\"", member)
+                send_notification(f"{self.user.username} залишив коментар до завдання \"{self.chat.task.title}\"",
+                                  member)
 
         event = {
             'type': 'message_handler',

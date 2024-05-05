@@ -20,7 +20,7 @@ def send_otp(request, email, purpose='verification'):
     print(f"Your one time password if {otp} is valid until {valid_date}")
 
     # відправка на пошту
-    subject = "Підтвердження електронної пошти OceanDo"
+    subject = "Підтвердження електронної пошти TaskDo"
     html_message = render_to_string('accounts/email_template.html', {'user': user, 'otp_code': otp, 'purpose': purpose})
     plain_message = strip_tags(html_message)
     from_email = settings.EMAIL_HOST_USER

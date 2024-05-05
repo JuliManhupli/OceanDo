@@ -228,8 +228,9 @@
     const mapDeadline = new Date(yearNow, month, dayNow);
 
     if (mapDeadline.getTime() < dateNow.getTime()) {
+
         taskOverDue = taskIncomplete;
-        taskComplete = 0;
+        taskIncomplete = 0;
     }
 
 

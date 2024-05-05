@@ -1,9 +1,7 @@
 from accounts.models import User
-from tasks.models import Task
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.db.models import Count
 from django.views.decorators.http import require_http_methods
 from ocean_do.aws import upload_avatar_to_s3, delete_avatar_from_s3
 
