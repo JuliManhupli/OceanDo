@@ -1163,17 +1163,26 @@ main .task-panel {
     }
 }
 
-main .task-panel .sorting,
 main .task-panel .filter {
-    max-width: 210px;
-    width: 100%;
-    background: var(--yellow);
-    padding: 10px;
+    display: flex;
+    gap: 10px;
+    margin-right: auto;
+}
+
+main .task-panel .filter select,
+main .task-panel .filter select option{
+    font-size: 16px;
+    font-family: "Exo 2";
+    padding: 5px;
     border-radius: 5px;
 }
 
-main .task-panel .filter {
-    margin-right: auto;
+main .task-panel .filter input{
+    background: var(--yellow);
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-left: 10px;
 }
 
 main .task-panel .form-group {
@@ -1206,6 +1215,7 @@ main .task-panel .form-group .icon {
 @media screen and (max-width: 768px) {
     main .task-panel .filter{
         margin-right: unset;
+        flex-direction: column;
     }
 }
 
