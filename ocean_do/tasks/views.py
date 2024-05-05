@@ -212,22 +212,22 @@ def update_task_status(request, task_id):
                 task_assignment.is_completed = is_completed
                 if is_completed:
                     task_assignment.completion_time = datetime.now()
+                    send_notification(
+                        f"Учасник {task_assignment.user.username} виконав завдання \"{task.title}\"",
+                        task.creator)
                 else:
                     task_assignment.completion_time = None
                 # task_assignment.completion_time = datetime.now()
                 task_assignment.save()
                 assignees = task.assignees.all()
                 all_assignees_completed = all(assignment.is_completed for assignment in assignees)
-                print(all_assignees_completed)
 
                 if all_assignees_completed:
                     task.is_completed = True
                     task.save()
                     # Створення нотифікації для кожного виконавця
                     send_notification(f"Всі учасники виконали завдання \"{task.title}\"", task.creator)
-                    # task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
-                    # print(task_url)
-                    # send_task(request, assignee.email, task.title, task_url)
+
 
                 else:
                     task.is_completed = False
@@ -262,7 +262,8 @@ def save_tags_folders_files(task, tags, folders, files):
 
     # Save files
     for file in files:
-        upload_file_to_s3(file, task.id)
+        if file:
+            upload_file_to_s3(file, task.id)
 
 
 def save_task(request, form, old_files=None):
@@ -271,16 +272,12 @@ def save_task(request, form, old_files=None):
     folders = request.POST.getlist('folders')
 
     files = request.FILES.getlist('files')
-    print(old_files)
-    print(files)
-
     task = form.save(commit=False)
     task.creator = creator
     task.save()
     if old_files:
         for old_file in old_files:
             task.files.add(old_file)
-    print(task.files)
 
     save_tags_folders_files(task, tags, folders, files)
 
@@ -294,7 +291,8 @@ def save_task(request, form, old_files=None):
         )
         task.assignees.add(task_assignment)
         send_notification(f"Вам призначено завдання \"{task.title}\"", assignee)
-
+        # task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
+        # send_task(request, assignee.email, task.title, task_url)
     return task
 
 
@@ -338,7 +336,7 @@ def edit_task(request, task_id):
             task.tags.clear()
             task.folders.clear()
 
-            save_tags_folders_files(task, tags, folders, old_files)
+            save_tags_folders_files(task, tags, folders, files)
 
             new_assignees = request.POST.getlist('assignees')[0].split(',')
             existing_assignees_emails = [assignee.user.email for assignee in assignees]
@@ -436,21 +434,6 @@ def task_info(request, task_id):
                 task_assignment.save()
             return redirect('tasks:task_info', task_id=task_id)
 
-        # if request.headers.get('HX-Request'):
-        #     form = CommentForm(request.POST)
-        #     if form.is_valid():
-        #         comment = form.save(commit=False)
-        #         comment.user = request.user
-        #         comment.task_chat = task_chat
-        #         comment.save()
-        #
-        #         context = {'comment': comment}
-        #         return render(request, "tasks/partials/task-comment.html", context)
-        # if task_chat:
-
-        # else:
-        #     comments = None
-
     except Task.DoesNotExist:
         return redirect('tasks:all_tasks')
 
@@ -466,21 +449,6 @@ def creator_task_view(request, task_id):
         assignee_data = []
         for assignee in assignment:
             task_chat, created = TaskChat.create_or_get_private(task, task.creator, assignee.user)
-            # print("0")
-            # if request.headers.get('HX-Request'):
-            #     print("1")
-            #     form = CommentForm(request.POST)
-            #     if form.is_valid():
-            #         print("2")
-            #         comment = form.save(commit=False)
-            #         comment.user = request.user
-            #         comment.task_chat = task_chat
-            #         comment.save()
-            #         print("!!!!!!!!!!!!!")
-            #         send_notification(f"{task.creator} залишив коментар до завдання \"{task.title}\"", assignee.user)
-            #         comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
-            #
-            # else:
             comments = ChatComment.objects.filter(task_chat=task_chat).order_by('-created')
             assignee_data.append((assignee, comments, task_chat))
         form = CommentForm()

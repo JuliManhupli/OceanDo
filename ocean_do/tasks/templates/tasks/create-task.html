@@ -18,7 +18,7 @@
 <!-- MAIN -->
 <main>
     <div class="task-popup">
-        <form method="post" class="form" enctype="multipart/form-data">
+        <form id="form" method="post" class="form" enctype="multipart/form-data">
             {% csrf_token %}
             <h2>{% if task %}Похідне завдання{% else %}Нове завдання{% endif %}</h2>
 
@@ -105,7 +105,7 @@
                 <div class="users-search">
                     <div class="form-group">
                         <i class='bx bx-search icon'></i>
-                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців..." required>
+                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
                         <input type="hidden" name="assignees" id="chosen-user-block">
                     </div>
                     {% if form.assignees.errors %}
@@ -193,6 +193,17 @@
         function updateHiddenInput() {
             $("#chosen-user-block").val(selectedItems.join(',')); // Concatenate emails with a delimiter
         }
+
+
+        const form = document.getElementById('form');
+        form.addEventListener('submit', function (event) {
+            if (selectedItems.length === 0) {
+                event.preventDefault();
+                alert('Будь ласка, додайте виконавців перед відправленням форми.');
+            }
+        });
     });
+
+
 </script>
 {% endblock %}
