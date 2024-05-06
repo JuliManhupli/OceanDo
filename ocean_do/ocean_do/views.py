@@ -73,8 +73,14 @@ def get_all_data(request):
                         'title': task.title,
                         'type': "task",
                         'task_type': "Виконання",
-                        'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()],
+                        'tags': [tag.name
+                                 for assignment in task.assignees.all()
+                                 if assignment.user == request.user
+                                 for tag in assignment.tags.all()],
+                        'folders': [folder.name
+                                    for assignment in task.assignees.all()
+                                    if assignment.user == request.user
+                                    for folder in assignment.folders.all()],
                         'link': f'/tasks/task-info/{task.id}/'
                     }
                     all_type_data.append(task_data)
@@ -179,8 +185,14 @@ def get_all_data(request):
                         'title': task.title,
                         'type': "task",
                         'task_type': "Виконання",
-                        'tags': [tag.name for tag in task.tags.all()],
-                        'folders': [folder.name for folder in task.folders.all()],
+                        'tags': [tag.name
+                                 for assignment in task.assignees.all()
+                                 if assignment.user == request.user
+                                 for tag in assignment.tags.all()],
+                        'folders': [folder.name
+                                    for assignment in task.assignees.all()
+                                    if assignment.user == request.user
+                                    for folder in assignment.folders.all()],
                         'link': f'/tasks/task-info/{task.id}/'
                     }
                     all_type_data.append(task_data)

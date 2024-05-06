@@ -14,13 +14,47 @@ Cтатистичні дані
 
 <!-- MAIN -->
 <main>
-    <h1 class="title">Статус завдань із "Призначених" / Статус завдань із "Моніторингу" </h1>
+    <h1 class="title">Статус завдань із "Виконання" / Статус завдань із "Моніторингу" </h1>
     <div class="statistics personal-statistics">
-        <div class="chart round-chart">
+        <div class="chart personal-round">
             <canvas id="statusAssigned"></canvas>
+            <div class="percentage">
+                <div class="block">
+                    <i class='bx bxs-circle icon task-status'></i>
+                    <p class="in-progress-percent-assigned">У процесі виконання - </p>
+                    <span id="in-progress-assigned"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-check-circle icon done'></i>
+                    <p class="done-percent-assigned">Виконано - </p>
+                    <span id="done-assigned"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-x-circle icon overdue'></i>
+                    <p class="overdue-percent-assigned">Невчасно виконано - </p>
+                    <span id="overdue-assigned"></span>
+                </div>
+            </div>
         </div>
-        <div class="chart round-chart">
+        <div class="chart personal-round">
             <canvas id="statusCreated"></canvas>
+            <div class="percentage">
+                <div class="block">
+                    <i class='bx bxs-circle icon task-status'></i>
+                    <p class="in-progress-percent-created">У процесі виконання - </p>
+                    <span id="in-progress-created"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-check-circle icon done'></i>
+                    <p class="done-percent-created">Виконано - </p>
+                    <span id="done-created"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-x-circle icon overdue'></i>
+                    <p class="overdue-percent-created">Невчасно виконано - </p>
+                    <span id="overdue-created"></span>
+                </div>
+            </div>
         </div>
     </div>
     <h1 class="title users-block">Навантаження</h1>
@@ -59,7 +93,8 @@ Cтатистичні дані
 
     console.log(parsedDeadlines);
     let isInCompleteAssigned = 0,
-        isOverDueAssigned = 0;
+        isOverDueAssigned = 0,
+        isCompleteAssigned = {{all_assigned_complete}};
 
     parsedDeadlines.forEach(deadline => {
         if (deadline.getTime() < dateTodaYCorrect.getTime()) {
@@ -71,6 +106,22 @@ Cтатистичні дані
 
     console.log(isInCompleteAssigned, isOverDueAssigned);
 
+    let allAssigned = isInCompleteAssigned + isOverDueAssigned + isCompleteAssigned;
+
+    let percentageIsInCompleteAssigned = 0;
+    let percentageIsOverDueAssigned = 0;
+    let percentageIsCompleteAssigned = 0;
+
+    if (allAssigned !== 0) {
+        percentageIsInCompleteAssigned = (isInCompleteAssigned / allAssigned) * 100;
+        percentageIsOverDueAssigned = (isOverDueAssigned / allAssigned) * 100;
+        percentageIsCompleteAssigned = (isCompleteAssigned / allAssigned) * 100;
+    }
+
+    document.getElementById("in-progress-assigned").textContent = percentageIsInCompleteAssigned.toFixed(2) + "%";
+    document.getElementById("overdue-assigned").textContent = percentageIsOverDueAssigned.toFixed(2) + "%";
+    document.getElementById("done-assigned").textContent = percentageIsCompleteAssigned.toFixed(2) + "%";
+
     const statusAssigned = document.getElementById('statusAssigned');
     Chart.defaults.font.size = 16;
     Chart.defaults.font.family = "Cascadia Code";
@@ -80,12 +131,12 @@ Cтатистичні дані
             labels: [
                 'У процесі виконання',
                 'Виконано',
-                'Виконання після дедлайну'
+                'Невчасно виконано'
             ],
             datasets: [{
                 label: 'Кількість призначених мені завдань',
                 // data: {{ all_assigned }},
-                data: [isInCompleteAssigned, {{all_assigned_complete}}, isOverDueAssigned],
+                data: [isInCompleteAssigned, isCompleteAssigned, isOverDueAssigned],
                 backgroundColor: [
                     '#FDC969',
                     '#5E967C',
@@ -113,7 +164,8 @@ Cтатистичні дані
 
     console.log(parsedCreatedDeadlines);
     let isInCompleteCreated = 0,
-        isOverDueCreated = 0;
+        isOverDueCreated = 0,
+        isCompleteCreated = {{all_created_complete}};
 
     parsedCreatedDeadlines.forEach(deadline => {
         if (deadline.getTime() < dateTodaYCorrect.getTime()) {
@@ -125,6 +177,22 @@ Cтатистичні дані
 
     console.log(isInCompleteCreated, isOverDueCreated);
 
+    let allCreated = isInCompleteCreated + isOverDueCreated + isCompleteCreated;
+
+    let percentageIsInCompleteCreated = 0;
+    let percentageIsOverDueCreated = 0;
+    let percentageIsCompleteCreated = 0;
+
+    if (allAssigned !== 0) {
+        percentageIsInCompleteCreated = (isInCompleteCreated / allCreated) * 100;
+        percentageIsOverDueCreated = (isOverDueCreated / allCreated) * 100;
+        percentageIsCompleteCreated = (isCompleteCreated / allCreated) * 100;
+    }
+
+    document.getElementById("in-progress-created").textContent = percentageIsInCompleteCreated.toFixed(2) + "%";
+    document.getElementById("overdue-created").textContent = percentageIsOverDueCreated.toFixed(2) + "%";
+    document.getElementById("done-created").textContent = percentageIsCompleteCreated.toFixed(2) + "%";
+
     const statusCreated = document.getElementById('statusCreated');
     new Chart(statusCreated, {
         type: 'doughnut',
@@ -132,12 +200,12 @@ Cтатистичні дані
             labels: [
                 'У процесі виконання',
                 'Виконано',
-                'Виконання після дедлайну'
+                'Невчасно виконано'
             ],
             datasets: [{
                 label: 'Кількість назначених мною завдань',
                 // data: {{ all_created }},
-                data: [isInCompleteCreated, {{all_created_complete}}, isOverDueCreated],
+                data: [isInCompleteCreated, isCompleteCreated, isOverDueCreated],
                 backgroundColor: [
                     '#FDC969',
                     '#5E967C',

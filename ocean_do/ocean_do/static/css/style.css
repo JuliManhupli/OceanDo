@@ -1393,12 +1393,6 @@ main .profile-container .edit-form .edit-profile .edit-profile-btn{
         padding: 16px 60px;
     }
 }
-/* ----------------------------------EDIT PROFILE PAGE---------------------------------- */
-
-.personal-statistics{
-    display: flex;
-    gap: 20px;
-}
 
 
 /* ----------------------------------CREATE TASK PAGE---------------------------------- */
@@ -2363,7 +2357,52 @@ main .calendar-container .right .calendar-tasks .no-task h3{
     width: 90%;
 }
 
-#statusAssigned, #statusCreated{
+.personal-statistics{
+    /*width: 100%;*/
     display: flex;
-    width: 100%;
+    gap: 20px;
+}
+
+.personal-round{
+    /*display: flex;*/
+    width: 40%;
+}
+
+.personal-statistics .percentage{
+    background: white;
+    margin-top: 30px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.personal-statistics .percentage .block{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.personal-statistics .percentage .block .icon{
+    font-size: 32px;
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.personal-statistics .percentage .block .icon.task-status{
+    background: var(--yellow);
+}
+
+.personal-statistics .percentage .block .icon.done{
+    background: var(--green);
+}
+
+.personal-statistics .percentage .block .icon.overdue{
+    background: var(--red);
+}
+
+.personal-statistics .percentage .block span{
+    font-size: 20px;
+    font-weight: 600;
 }
