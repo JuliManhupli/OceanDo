@@ -798,9 +798,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 //if task is on this day - add task class
                 if (task) {
-                    days += `<div class="day today task-present">${i}</div>`; //active
+                    days += `<div class="day today task-present">${i}</div>`;
                 } else {
-                    days += `<div class="day today">${i}</div>`; //active
+                    days += `<div class="day today">${i}</div>`;
                 }
             } else {
                 // updateTasks(i);

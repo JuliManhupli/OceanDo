@@ -12,20 +12,25 @@
 <!-- MAIN -->
 <main>
     <h1 class="title">Важливі завдання</h1>
+    {% if tasks_with_type|length == 0 %}
+      <div class="no-task">
+          <h3>Завдань нема</h3>
+      </div>
+    {% else %}
     <div class="important-tasks active">
 
 {% for task, task_type in tasks_with_type %}
-    {% if task_type == 'assigned' %}
-    {% include 'tasks/task-type/assigned-task.html'%}
-    {% elif task_type == 'solo' %}
-    {% include 'tasks/task-type/solo-task.html'%}
-    {% else %}
-    {% include 'tasks/task-type/created-task.html'%}
-    {% endif %}
+        {% if task_type == 'assigned' %}
+        {% include 'tasks/task-type/assigned-task.html'%}
+        {% elif task_type == 'solo' %}
+        {% include 'tasks/task-type/solo-task.html'%}
+        {% else %}
+        {% include 'tasks/task-type/created-task.html'%}
+        {% endif %}
 {% endfor %}
 
-
     </div>
+    {% endif %}
     <h1 class="title users-block">Продуктивність</h1>
     <div class="statistics row-stats">
         <div class="chart rect-chart">
