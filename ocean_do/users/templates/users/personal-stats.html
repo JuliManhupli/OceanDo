@@ -112,7 +112,7 @@ Cтатистичні дані
     let percentageIsOverDueAssigned = 0;
     let percentageIsCompleteAssigned = 0;
 
-    if (allAssigned !== 0) {
+    if (parsedDeadlines.length !== 0) {
         percentageIsInCompleteAssigned = (isInCompleteAssigned / allAssigned) * 100;
         percentageIsOverDueAssigned = (isOverDueAssigned / allAssigned) * 100;
         percentageIsCompleteAssigned = (isCompleteAssigned / allAssigned) * 100;
@@ -183,7 +183,7 @@ Cтатистичні дані
     let percentageIsOverDueCreated = 0;
     let percentageIsCompleteCreated = 0;
 
-    if (allAssigned !== 0) {
+    if (parsedCreatedDeadlines.length !== 0) {
         percentageIsInCompleteCreated = (isInCompleteCreated / allCreated) * 100;
         percentageIsOverDueCreated = (isOverDueCreated / allCreated) * 100;
         percentageIsCompleteCreated = (isCompleteCreated / allCreated) * 100;
