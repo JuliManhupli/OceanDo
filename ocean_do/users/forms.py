@@ -5,6 +5,7 @@ from django.forms import Form, FileField, CharField, TextInput
 class UserUpdateForm(Form):
     file = FileField(required=False)
     username = CharField(required=False, widget=TextInput(attrs={"class": "data-input"}))
+    role = CharField(max_length=100, required=False, widget=TextInput(attrs={"class": "data-input"}))
 
     def clean_file(self):
         file = self.cleaned_data.get('file')

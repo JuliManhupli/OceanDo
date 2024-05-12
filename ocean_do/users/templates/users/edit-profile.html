@@ -44,6 +44,12 @@
                     <p class="data-name edit-title">Ім'я користувача</p>
                     {{ form.username }}
                 </div>
+
+                <div class="form-area role-area">
+                    <p class="data-name edit-title">Роль</p>
+                    {{ form.role }}
+                </div>
+
                 {% if form.errors and form.non_field_errors %}
                 <p>{{ form.non_field_errors }}</p>
                 {% endif %}

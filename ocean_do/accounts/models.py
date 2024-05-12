@@ -8,6 +8,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(max_length=100, unique=True)
     username = models.CharField(max_length=100, unique=False)
     photo = models.FileField(upload_to='avatars/', blank=True, null=True)
+    role = models.CharField(max_length=100, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     is_admin = models.BooleanField(default=False)
