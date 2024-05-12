@@ -22,6 +22,7 @@ def edit_profile_view(request):
 
             avatar_file = form.cleaned_data.get('file')
             username = form.cleaned_data.get('username')
+            role = form.cleaned_data.get('role')
 
             if avatar_file:
                 avatar_url = upload_avatar_to_s3(user_email, avatar_file)
@@ -31,6 +32,9 @@ def edit_profile_view(request):
             if username:
                 user.username = username
 
+            if role:
+                user.role = role
+
             user.save()
 
             messages.success(request, 'Ваш профіль було успішно оновлено.')
@@ -38,7 +42,13 @@ def edit_profile_view(request):
         else:
             messages.error(request, 'Форма недійсна. Будь ласка, перевірте дані.')
     else:
-        form = UserUpdateForm()
+        user = request.user
+        initial_data = {
+            'username': user.username,
+            'role': user.role,
+        }
+        form = UserUpdateForm(initial=initial_data)
+
     return render(request, 'users/edit-profile.html', {'form': form})
 
 

@@ -7,11 +7,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete_file_from_s3
 
 from .form import TaskForm, CommentForm, TaskEditForm
 from .models import Tag, Task, TaskAssignment, File, Folder, TaskChat, ChatComment
+from .utils import send_task
 
 
 def send_notification(message, assignee):
@@ -382,8 +384,8 @@ def save_task(request, form, old_files=None):
         )
         task.assignees.add(task_assignment)
         send_notification(f"Вам призначено завдання \"{task.title}\"", assignee)
-        # task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
-        # send_task(request, assignee.email, task.title, task_url)
+        task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
+        send_task(request, assignee.email, task.title, task_url)
     return task
 
 
@@ -445,8 +447,11 @@ def edit_task(request, task_id):
                     task.assignees.add(task_assignment)
                     task.is_completed = False
                     task.save()
-
-                send_notification(f"Завдання \"{task.title}\" було оновлено", assignee)
+                    send_notification(f"Вам призначено завдання \"{task.title}\"", assignee)
+                    task_url = request.build_absolute_uri(reverse('tasks:task_info', kwargs={'task_id': task.id}))
+                    send_task(request, assignee.email, task.title, task_url)
+                else:
+                    send_notification(f"Завдання \"{task.title}\" було оновлено", assignee)
 
             task.is_completed = False
 

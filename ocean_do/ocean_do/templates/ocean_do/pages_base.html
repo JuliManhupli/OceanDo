@@ -64,6 +64,10 @@ OceanDo
 
 
         <div class="profile">
+            {% if request.user.role %}
+                <p>{{ request.user.role }}</p>
+            {% endif %}
+
             <a href="{% url 'users:profile' %}" class="link-to-profile">
                 {% if request.user.photo %}
                 <img id="logo-img" class="profile-picture" src="{{ user.photo.url }}" alt="Avatar">
