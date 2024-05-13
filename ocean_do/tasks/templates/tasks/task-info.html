@@ -41,8 +41,6 @@
                         <p class="title">Категорія:</p>
                         <p class="block-value">Виконання</p>
                     </div>
-                    <!--                    <i class='bx bx-dots-horizontal-rounded icon'></i>-->
-
                     <div class="task-settings">
                         <i class='bx bx-dots-horizontal-rounded icon'></i>
                         <ul class="task-settings-box">
@@ -237,11 +235,8 @@
 <script>
     // task deadline
     const taskUserDeadline = "{{ task.deadline }}";
-    console.log(taskUserDeadline);
-    console.log("{{ task.deadline }}");
 
     const allTaskItems = document.querySelectorAll('.task-settings');
-    console.log(allTaskItems);
     allTaskItems.forEach(item => {
         const menuIcon = item.querySelector('.icon');
         const menuOption = item.querySelector('.task-settings-box');

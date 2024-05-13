@@ -66,8 +66,7 @@
     {% else %} []
     {% endif %};
     let folderCount = existingFolders.length > 0 ? existingFolders.length : 0;
-    console.log("existingFolders");
-    console.log(existingFolders);
+
     if (existingFolders.length > 0) {
         existingFolders.forEach(folder => {
             folderCount++;
@@ -107,8 +106,7 @@
     {% else %} []
     {% endif %};
     let tagCount = existingTags.length > 0 ? existingTags.length : 1;
-    console.log("existingTags");
-    console.log(existingTags);
+
     if (existingTags.length > 0) {
         existingTags.forEach(tag => {
             const tagWrapper = document.createElement('div');

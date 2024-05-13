@@ -55,7 +55,6 @@
         {% endfor %}
     ];
 
-    console.log(myCompletionDates);
 
     const changeMonthName = {
       'січня': 'Січень',
@@ -78,8 +77,6 @@
       return `${changeMonthName[month]} ${year}`;
     });
 
-    console.log(monthYearArray);
-
     const proChart = document.getElementById('productivity');
     const todayDate = new Date();
     const currentMonth = todayDate.getMonth();
@@ -99,14 +96,12 @@
     months.reverse();
 
     const monthLabels = months.map(({ month, year }) => monthToString(month) + ' ' + year);
-    console.log(monthLabels);
 
     const dataForChart = monthLabels.map(label => {
       const count = monthYearArray.filter(month => month === label).length;
       return count > 0 ? count : 0;
     });
 
-    console.log(dataForChart);
 
     Chart.defaults.font.size = 16;
     Chart.defaults.font.family = "Cascadia Code";

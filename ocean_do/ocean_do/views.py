@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.utils import timezone
 from django.http import JsonResponse
-from django.db.models import Q, Count
+from django.db.models import Q
+
 from tasks.views import get_tasks, get_completed_tasks, get_folders
-from tasks.models import Task
 import traceback
 
 
@@ -25,7 +25,6 @@ def main(request):
         all_assigned = set(list(assigned_tasks) + list(solo_assignee_tasks) + list(completed_tasks))
         all_created = set(list(created_tasks) + list(created_complete))
         ratio = [len(all_assigned), len(all_created)]
-        print(ratio)
         return render(request, "ocean_do/index.html",
                       {'tasks_with_type': tasks_with_type, 'current_time': current_time,
                        'completed_tasks': completed_tasks, 'ratio': ratio})
@@ -59,9 +58,6 @@ def get_all_data(request):
                     all_type_data.append(folder_data)
                     folders_ids.add(folder.id)
 
-            print("0")
-            print(all_type_data)
-
             for task in assigned_tasks.filter(
                     Q(title__icontains=term) |
                     Q(assignees__user=user, assignees__tags__name__icontains=term) |
@@ -86,10 +82,6 @@ def get_all_data(request):
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
 
-            print("1")
-            print(all_type_data)
-
-
             for task in created_tasks.filter(
                     Q(title__icontains=term) |
                     Q(tags__name__icontains=term) |
@@ -107,9 +99,6 @@ def get_all_data(request):
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
-
-            print("2")
-            print(all_type_data)
 
             for task in solo_assignee_tasks.filter(
                     Q(title__icontains=term) |
@@ -129,9 +118,6 @@ def get_all_data(request):
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
 
-            print("3")
-            print(all_type_data)
-
             for task in solo_assigned_complete.filter(
                     Q(title__icontains=term) |
                     Q(tags__name__icontains=term) |
@@ -150,9 +136,6 @@ def get_all_data(request):
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
 
-            print("4")
-            print(all_type_data)
-
             for task in created_complete.filter(
                     Q(title__icontains=term) |
                     Q(tags__name__icontains=term) |
@@ -170,9 +153,6 @@ def get_all_data(request):
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
-
-            print("5")
-            print(all_type_data)
 
             for task in assigned_complete.filter(
                     Q(title__icontains=term) |
@@ -197,9 +177,6 @@ def get_all_data(request):
                     }
                     all_type_data.append(task_data)
                     added_task_ids.add(task.id)
-
-            print("6")
-            print(all_type_data)
 
             return JsonResponse(all_type_data, safe=False)
         return render(request, "ocean_do/index.html")

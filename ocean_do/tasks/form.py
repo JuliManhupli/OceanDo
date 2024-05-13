@@ -60,5 +60,4 @@ class CommentForm(forms.ModelForm):
         fields = ['message']
         widgets = {
             'message': forms.Textarea(attrs={'class': 'comment-text-to-send', 'placeholder': 'Введіть текст...'}),
-
         }

@@ -2,7 +2,6 @@ import json
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from tasks.models import TaskChat, ChatComment
 from tasks.views import send_notification

@@ -1,18 +1,21 @@
 from accounts.models import User
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_http_methods
 from ocean_do.aws import upload_avatar_to_s3, delete_avatar_from_s3
-
-from .forms import UserUpdateForm
 from tasks.views import get_tasks, get_completed_tasks
 
+from .forms import UserUpdateForm
 
+
+@login_required
 def profile_view(request):
     return render(request, "users/profile.html")
 
 
+@login_required
 def edit_profile_view(request):
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, request.FILES)

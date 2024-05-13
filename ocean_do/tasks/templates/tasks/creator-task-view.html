@@ -207,7 +207,6 @@
 
     const todayTime = new Date();
     const dateNow = new Date(todayTime.getFullYear(), todayTime.getMonth(), todayTime.getDate());
-    console.log(dateNow);
 
     let taskComplete = 0, taskIncomplete = 0, taskOverDue = 0;
 
@@ -219,9 +218,6 @@
             {% endif %}
     {% endfor %}
 
-    console.log(taskComplete);
-    console.log(taskIncomplete);
-    console.log("{{task.deadline}}");
 
     const [dayNow, monthStr, yearNow] = "{{task.deadline}}".split(' ');
     const month = monthNames[monthStr];
@@ -272,16 +268,12 @@
         chatSocket.onmessage = function (e) {
             const data = JSON.parse(e.data);
             const assignmentId = userInfo.id.split('_')[2];
-            console.log(assignmentId);
             addCommentToPage(data.html, assignmentId);
         };
     });
 
     function addCommentToPage(html, assignmentId) {
         var commentsList = document.getElementById('chat_messages_' + assignmentId); // Використовувати ідентифікатор користувача
-        console.log(commentsList);
-        console.log('chat_messages_' + assignmentId);
-        console.log(commentsList);
         var newComment = document.createElement('div');
         newComment.innerHTML = html;
         commentsList.appendChild(newComment);
@@ -289,7 +281,6 @@
 
 
     const allTaskItems = document.querySelectorAll('.task-settings');
-    console.log(allTaskItems);
     allTaskItems.forEach(item => {
         const menuIcon = item.querySelector('.icon');
         const menuOption = item.querySelector('.task-settings-box');

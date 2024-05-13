@@ -17,7 +17,6 @@ from .utils import send_task
 
 
 def send_notification(message, assignee):
-    # notification_message = f"Завдання \"{task.title}\" було оновлено"
     notification = Notification.objects.create(
         message=message,
     )
@@ -55,21 +54,17 @@ def get_tasks(request):
     assigned_query = assigned_query.exclude(id__in=solo_assignee_query)
 
     if request.method == "POST":
-        print("HERE")
         search_tag = request.POST.get('tag-filter')
         search_folder = request.POST.get('folder-filter')
-        print(search_tag, search_folder)
         if search_tag:
             created_query = created_query.filter(tags__name=search_tag)
             assigned_query = assigned_query.filter(assignees__user=user, assignees__tags__name=search_tag)
             solo_assignee_query = solo_assignee_query.filter(tags__name=search_tag)
-            print(created_query, assigned_query, solo_assignee_query)
 
         if search_folder:
             created_query = created_query.filter(folders__name=search_folder)
             assigned_query = assigned_query.filter(assignees__user=user, assignees__folders__name=search_folder)
             solo_assignee_query = solo_assignee_query.filter(folders__name=search_folder)
-            print(created_query, assigned_query, solo_assignee_query)
 
     return assigned_query, created_query, solo_assignee_query
 
@@ -86,7 +81,6 @@ def get_tags(request):
 
 def get_sorting(request, created_tasks, combined_query):
     if request.method == "POST":
-        print("HERE ALSO")
         sort_order = request.POST.get('sorting')
         sort_key = None
         if sort_order == 'title':
@@ -97,7 +91,6 @@ def get_sorting(request, created_tasks, combined_query):
         if sort_key:
             created_tasks = sorted(created_tasks, key=sort_key)
             combined_query = sorted(combined_query, key=sort_key)
-            print(created_tasks, combined_query)
 
     return created_tasks, combined_query
 
@@ -147,6 +140,7 @@ def get_completed_tasks(request):
     return combined_query, solo_assignee_tasks, created_tasks, assigned_tasks
 
 
+@login_required
 def completed_tasks(request):
     combined_query, solo_assignee_tasks, created_tasks, _ = get_completed_tasks(request)
     created_tasks_sorted, combined_query_sorted = get_sorting(request, created_tasks, combined_query)
@@ -159,6 +153,7 @@ def completed_tasks(request):
                    'all_user_folders': all_user_folders, 'all_user_tags': all_user_tags})
 
 
+@login_required
 def folder_tasks(request, folder_id):
     user = request.user
     folder = Folder.objects.get(id=folder_id)
@@ -173,21 +168,17 @@ def folder_tasks(request, folder_id):
     assigned_tasks = assigned_tasks.exclude(id__in=solo_assignee_tasks)
 
     if request.method == "POST":
-        print("HERE")
         search_tag = request.POST.get('tag-filter')
         search_folder = request.POST.get('folder-filter')
-        print(search_tag, search_folder)
         if search_tag:
             created_tasks = created_tasks.filter(tags__name=search_tag)
             assigned_tasks = assigned_tasks.filter(assignees__user=user, assignees__tags__name=search_tag)
             solo_assignee_tasks = solo_assignee_tasks.filter(tags__name=search_tag)
-            print(created_tasks, assigned_tasks, solo_assignee_tasks)
 
         if search_folder:
             created_tasks = created_tasks.filter(folders__name=search_folder)
             assigned_tasks = assigned_tasks.filter(assignees__user=user, assignees__folders__name=search_folder)
             solo_assignee_tasks = solo_assignee_tasks.filter(folders__name=search_folder)
-            print(created_tasks, assigned_tasks, solo_assignee_tasks)
 
     combined_query = set(list(assigned_tasks) + list(solo_assignee_tasks))
     created_tasks_sorted, combined_query_sorted = get_sorting(request, created_tasks, combined_query)
@@ -202,6 +193,7 @@ def folder_tasks(request, folder_id):
                    'all_user_folders': all_user_folders, 'all_user_tags': all_user_tags})
 
 
+@login_required
 def calendar_view(request):
     assigned_tasks, created_tasks, solo_assignee_tasks = get_tasks(request)
     solo_assignee_tasks_transform = transform_tasks(request, solo_assignee_tasks, True, True)
