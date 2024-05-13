@@ -881,11 +881,24 @@ nav .notification-block #notification-dropdown li {
     border-bottom: 2px solid var(--light-grey);
 }
 
+nav .profile {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 nav .profile img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+nav .profile p {
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* NAVIGATION */
@@ -985,7 +998,9 @@ main .task .head .folder .icon {
 main .task .head .folder .folder-name {
     margin-left: 5px;
     overflow: hidden;
+    /*white-space: nowrap;*/
     text-overflow: ellipsis;
+    /*max-width: 50px;*/
 }
 
 .task-settings{
@@ -1035,6 +1050,7 @@ main .task .name {
     font-size: 20px;
     margin-top: 17px;
     overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
 }
 

@@ -64,9 +64,6 @@ OceanDo
 
 
         <div class="profile">
-            {% if request.user.role %}
-                <p>{{ request.user.role }}</p>
-            {% endif %}
 
             <a href="{% url 'users:profile' %}" class="link-to-profile">
                 {% if request.user.photo %}
@@ -75,6 +72,10 @@ OceanDo
                 <img class="logo-img" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
                 {% endif %}
             </a>
+
+            {% if request.user.role %}
+                <p>{{ request.user.role }}</p>
+            {% endif %}
         </div>
     </nav>
 
