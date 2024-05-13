@@ -1042,7 +1042,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (tasks === '') {
             tasks = `
             <div class="no-task">
-                <h3>Завдань нема</h3>
+                <h3>Завдань немає</h3>
             </div>
             `;
         }
