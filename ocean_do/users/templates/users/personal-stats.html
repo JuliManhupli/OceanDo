@@ -41,7 +41,6 @@ Cтатистичні дані
 
     const dateToday = new Date();
     const dateTodaYCorrect = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate());
-    console.log(dateTodaYCorrect);
 
     const assignedDeadlines = [
         {% for task in all_assigned_incomplete %}
@@ -49,7 +48,6 @@ Cтатистичні дані
         {% endfor %}
     ];
 
-    console.log(assignedDeadlines);
 
     const parsedDeadlines = assignedDeadlines.map(deadline => {
         const [day, monthStr, year] = deadline.split(' ');
@@ -57,7 +55,6 @@ Cтатистичні дані
         return new Date(year, month, day);
     });
 
-    console.log(parsedDeadlines);
     let isInCompleteAssigned = 0,
         isOverDueAssigned = 0;
 
@@ -69,7 +66,6 @@ Cтатистичні дані
         }
     });
 
-    console.log(isInCompleteAssigned, isOverDueAssigned);
 
     const statusAssigned = document.getElementById('statusAssigned');
     Chart.defaults.font.size = 16;
@@ -103,7 +99,6 @@ Cтатистичні дані
         {% endfor %}
     ];
 
-    console.log(createdDeadlines);
 
     const parsedCreatedDeadlines = createdDeadlines.map(deadline => {
         const [day, monthStr, year] = deadline.split(' ');
@@ -111,7 +106,6 @@ Cтатистичні дані
         return new Date(year, month, day);
     });
 
-    console.log(parsedCreatedDeadlines);
     let isInCompleteCreated = 0,
         isOverDueCreated = 0;
 
@@ -123,7 +117,6 @@ Cтатистичні дані
         }
     });
 
-    console.log(isInCompleteCreated, isOverDueCreated);
 
     const statusCreated = document.getElementById('statusCreated');
     new Chart(statusCreated, {

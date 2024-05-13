@@ -15,7 +15,6 @@
 <!-- MAIN -->
 <main>
     <div class="profile-container">
-<!--        <img class="profile-picture" src="{% static 'img/christin-hume-Hcfwew744z4-unsplash.jpg' %}" alt="!">-->
         {% if user.photo %}
         <img class="profile-picture" src="{{ user.photo.url }}" alt="Avatar">
         {% else %}

@@ -1,6 +1,6 @@
 import shortuuid as shortuuid
 from accounts.models import User
-from django.db import models, IntegrityError
+from django.db import models
 
 
 class Tag(models.Model):

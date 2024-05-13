@@ -375,12 +375,6 @@ notificationSocket.onclose = function () {
     console.error('Chat socket closed unexpectedly');
 };
 
-// Function to clear notification count from local storage
-// function clearNotificationCount() {
-//     localStorage.removeItem('notificationCount');
-//     // updateNotificationCount(); // Update the displayed count
-// }
-
 // Function to update the notification count
 function updateNotificationCount() {
     const numberSpan = document.getElementById('notification-number');
