@@ -1,14 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
 from ocean_do.aws import upload_avatar_to_s3, delete_avatar_from_s3
 from tasks.views import get_tasks, get_completed_tasks
 
 from .forms import UserUpdateForm, GroupForm
 from accounts.models import Group, User
-
 
 
 @login_required
@@ -43,6 +42,53 @@ def create_group(request):
     else:
         form = GroupForm()
     return render(request, "users/create-group.html", {'form': form})
+
+
+def edit_group(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    members = group.members.all()
+
+    print(members)
+    if request.method == 'POST':
+        form = GroupForm(request.POST, instance=group)
+
+        if form.is_valid():
+            group.members.clear()
+            group = form.save(commit=False)
+            group.save()
+
+            members = request.POST.getlist('assignees')[0].split(',')
+            print(members)
+            for members_email in members:
+                member = User.objects.get(email=members_email)
+                group.members.add(member)
+
+            return redirect('users:groups')
+    else:
+        form = GroupForm(instance=group)
+    return render(request, "users/edit-group.html",
+                  {'form': form, 'group': group})
+
+
+def delete_group(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    if group.owner == request.user:
+        group.delete()
+        return JsonResponse({'message': 'Група успішно видалена'}, status=204)
+    else:
+        return JsonResponse({'error': 'Ви не маєте права видаляти цю групу'}, status=403)
+
+
+def get_all_groups(request):
+    user = request.user
+    print(user)
+    groups = Group.objects.filter(owner=user)
+    print(groups)
+    # users_data = list(groups.members.values('email', 'username'))
+    users_data = list(groups.values('id', 'name', 'members__email', 'members__username'))
+    # print(users_data)
+    return JsonResponse(users_data, safe=False)
+
 
 @login_required
 def edit_profile_view(request):
