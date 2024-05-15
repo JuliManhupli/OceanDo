@@ -1,4 +1,3 @@
-from accounts.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -7,13 +6,43 @@ from django.views.decorators.http import require_http_methods
 from ocean_do.aws import upload_avatar_to_s3, delete_avatar_from_s3
 from tasks.views import get_tasks, get_completed_tasks
 
-from .forms import UserUpdateForm
+from .forms import UserUpdateForm, GroupForm
+from accounts.models import Group, User
+
 
 
 @login_required
 def profile_view(request):
     return render(request, "users/profile.html")
 
+
+def group_view(request):
+    user = request.user
+    print(user)
+    groups = Group.objects.filter(owner=user)
+    print(groups)
+    return render(request, "users/group.html", {'groups': groups})
+
+
+def create_group(request):
+    if request.method == 'POST':
+        form = GroupForm(request.POST)
+        if form.is_valid():
+            print(form)
+            group = form.save(commit=False)
+            group.owner = request.user
+            group.save()
+
+            members = request.POST.getlist('assignees')[0].split(',')
+            print(members)
+            for members_email in members:
+                member = User.objects.get(email=members_email)
+                group.members.add(member)
+
+            return redirect('users:groups')
+    else:
+        form = GroupForm()
+    return render(request, "users/create-group.html", {'form': form})
 
 @login_required
 def edit_profile_view(request):

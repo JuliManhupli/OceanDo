@@ -1,11 +1,26 @@
+from accounts.models import Group
+from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import Form, FileField, CharField, TextInput
 
 
-class UserUpdateForm(Form):
-    file = FileField(required=False)
-    username = CharField(required=False, widget=TextInput(attrs={"class": "data-input"}))
-    role = CharField(max_length=100, required=False, widget=TextInput(attrs={"class": "data-input"}))
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        title = cleaned_data.get('name')
+
+        # Перевірка обов'язкових полів
+        if not title:
+            self.add_error('name', 'Це поле є обов\'язковим.')
+
+
+class UserUpdateForm(forms.Form):
+    file = forms.FileField(required=False)
+    username = forms.CharField(required=False, widget=forms.TextInput(attrs={"class": "data-input"}))
+    role = forms.CharField(max_length=100, required=False, widget=forms.TextInput(attrs={"class": "data-input"}))
 
     def clean_file(self):
         file = self.cleaned_data.get('file')

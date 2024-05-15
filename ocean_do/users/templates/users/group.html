@@ -1,0 +1,43 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Групи
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'users/partials/groups-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+
+<!-- MAIN -->
+<main>
+    <h1 class="title">Групи</h1>
+    <a href="{% url 'users:create_group' %}" class="plus-task">
+        <i class='bx bx-plus-circle icon create-task-btn'></i>
+    </a>
+
+
+    <div class="profile-container">
+        {% if groups %}
+        {% for group in groups %}
+        <div class="group">
+            <h1 class="title">{{ group.name }}</h1>
+            {% for user in group.members.all %}
+            <p class="member">{{ user.username }}</p>
+            <p class="member">{{ user.email }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <h1>Немає груп</h1>
+        {% endif %}
+
+    </div>
+</main>
+
+<!-- MAIN -->
+{% endblock %}
