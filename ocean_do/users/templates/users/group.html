@@ -38,11 +38,15 @@
                     </ul>
                 </div>
             </div>
+            <div class="group-users">
+                {% for user in group.members.all %}
+                <div class="chosen-user">
+                    <p class="member name">{{ user.username }}</p>
+                    <p class="member email">{{ user.email }}</p>
+                </div>
+                {% endfor %}
+            </div>
 
-            {% for user in group.members.all %}
-            <p class="member">{{ user.username }}</p>
-            <p class="member">{{ user.email }}</p>
-            {% endfor %}
         </div>
         {% endfor %}
 

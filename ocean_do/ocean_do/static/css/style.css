@@ -2661,7 +2661,8 @@ main .group .head{
 }
 
 main .group .title{
-
+    padding: 10px;
+    font-size: 24px;
 }
 
 
@@ -2708,4 +2709,26 @@ main .group-settings .group-settings-box a:hover{
     background: var(--light-grey);
 }
 
+main .group .group-users{
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
+main .group .chosen-user{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+main .group .chosen-user .name{
+    font-weight: 600;
+}
+
+main .group .chosen-user .email{
+    padding: 5px;
+    background: var(--light-grey);
+    width: fit-content;
+    border-radius: 5px;
+}
