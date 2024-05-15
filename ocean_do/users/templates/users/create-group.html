@@ -1,0 +1,120 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Нова група
+{% endblock %}
+
+{% block side-menu %}
+{% include 'users/partials/groups-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+<!-- MAIN -->
+<main>
+    <div class="task-popup">
+        <form id="form" method="post" class="form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2>Нова група</h2>
+
+            <div class="form-element">
+                <div class="important-area">
+                    <p class="title">Назва </p>
+                    <p class="star">*</p>
+                </div>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <span>{{ form.name.errors }}</span>
+                {% endif %}
+            </div>
+            <div class="form-element">
+                <div class="users-add-block">
+                    <div class="important-area">
+                        <p class="title">Учасники</p>
+                        <p class="star">*</p>
+                    </div>
+                </div>
+                <div class="users-search">
+                    <div class="form-group">
+                        <i class='bx bx-search icon'></i>
+                        <input id="users-search-bar" type="text" placeholder="Пошук учасників...">
+                        <input type="hidden" name="assignees" id="chosen-user-block">
+                    </div>
+                    {% if form.members.errors %}
+                    <span>{{ form.members.errors }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <button type="submit" class="make-task">Створити</button>
+        </form>
+    </div>
+
+</main>
+<!-- MAIN -->
+
+<script>
+
+
+    // SEARCH USERS AUTO-COMPLETE
+    $( function() {
+        const selectedItems = [];
+        $( "#users-search-bar" ).autocomplete({
+            source: "{% url 'tasks:users_for_create' %}",
+            minLength: 3,
+            focus: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                $("#chosen-user-block").val(ui.item.email);
+                if (selectedItems.indexOf(ui.item.email) === -1) {
+                    selectedItems.push(ui.item.email);
+                    const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+
+                    const newUserInfo = $("<div class='chosen-user-info'>");
+                    newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "</p>");
+                    newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
+
+                    newChosenUser.append(newUserInfo);
+                    newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+
+                    updateHiddenInput();
+                    return false;
+                }
+            }
+        })
+        .autocomplete( "instance" )._renderItem = function( ul, item ) {
+          return $( "<li>" )
+            .append( "<div class='autosearch-name' style='font-weight: 600;'>" + item.username + "</div>"
+                + "<div class='autosearch-email'>" + item.email + "</div>" )
+            .appendTo( ul );
+        };
+
+        //delete user
+        $(".users-search").on("click", ".delete-item", function () {
+            const itemValue = $(this).prev(".chosen-user-info").find(".chosen-user-email").text();
+            const index = selectedItems.indexOf(itemValue);
+            if (index !== -1) {
+                selectedItems.splice(index, 1);
+            }
+            $(this).parent(".chosen-user").remove();
+        });
+
+        function updateHiddenInput() {
+            $("#chosen-user-block").val(selectedItems.join(',')); // Concatenate emails with a delimiter
+        }
+
+
+        const form = document.getElementById('form');
+        form.addEventListener('submit', function (event) {
+            if (selectedItems.length === 0) {
+                event.preventDefault();
+                alert('Будь ласка, додайте виконавців перед відправленням форми.');
+            }
+        });
+    });
+
+
+</script>
+{% endblock %}
