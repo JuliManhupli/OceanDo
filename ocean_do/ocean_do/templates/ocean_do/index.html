@@ -105,19 +105,20 @@
 
     Chart.defaults.font.size = 16;
     Chart.defaults.font.family = "Cascadia Code";
-    new Chart(proChart, {
+    var myChart = new Chart(proChart, {
         type: 'bar',
         data: {
           labels: monthLabels,
           datasets: [{
-            label: 'Кількість виконаних призначених на мене завдань',
-            // data: [2, 2, 2, 5, 2, 3, 7, 8, 4, 0, 6, 9],
+            label: 'Виконані мною завдання',
             data: dataForChart,
             borderWidth: 1,
             backgroundColor: '#7187E4'
           }]
         },
+        responsive: true,
         options: {
+            indexAxis: 'y',
           scales: {
             y: {
               beginAtZero: true
@@ -151,8 +152,8 @@
         type: 'doughnut',
         data: {
             labels: [
-                'Завдань типу Виконання',
-                'Завдань типу Моніторинг'
+                'Завдань Виконання',
+                'Завдань Моніторингу'
             ],
             datasets: [{
                 label: 'Кількість завдань',
@@ -163,7 +164,8 @@
                 ],
                 hoverOffset: 4
             }]
-        }
+        },
+        responsive: true
     });
 
 </script>

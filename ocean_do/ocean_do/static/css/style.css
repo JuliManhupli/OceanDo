@@ -458,15 +458,6 @@ body {
     transition: all .3s ease;
 }
 
-@media screen and (max-width: 992px) {
-    .form-login {
-        color: white;
-    }
-
-    .other-options {
-        color: white;
-    }
-}
 
 @media screen and (max-width: 576px) {
     .other-options {
@@ -501,6 +492,23 @@ body {
 
 .register-button {
     margin-top: 25px;
+}
+
+@media screen and (max-width: 992px) {
+    .form-login {
+        color: white;
+    }
+
+    .data-input,
+    .register-button{
+        color: black;
+    }
+
+    .other-options {
+        color: white;
+    }
+
+
 }
 
 
@@ -1139,10 +1147,36 @@ main .additional-chart {
     width: 34%;
 }
 
+@media screen and (max-width: 1075px) {
+    main .row-stats{
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    main .rect-chart {
+        width: 100%;
+    }
+
+    main .additional-chart {
+        width: 50%;
+    }
+
+    main .additional-chart{
+        margin-top: 0;
+    }
+
+}
+
+@media screen and (max-width: 850px) {
+
+    main .additional-chart {
+        width: 100%;
+    }
+
+}
+
 
 /* CONTENT */
-
-
 
 /* ----------------------------------TASKS PAGE---------------------------------- */
 
@@ -1718,6 +1752,20 @@ main .task-info-page-container .task-info-container .info-block,
 main .task-info-page-container .task-info-container .info-block .tags-values {
     display: flex;
     align-items: center;
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 450px) {
+
+    main .task-info-page-container .task-info-container .user-status-block,
+    main .task-info-page-container .task-info-container .head .category-block,
+    main .task-info-page-container .task-info-container .info-block,
+    main .task-info-page-container .task-info-container .info-block .tags-values {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
 }
 
 main .task-info-page-container .task-info-container .head,
@@ -1800,6 +1848,15 @@ main .task-info-page-container .task-info-container .time-block{
 
 main .task-info-page-container .task-info-container .time-block .time-value{
     margin-left: 10px;
+}
+
+@media screen and (max-width: 450px) {
+
+    main .task-info-page-container .task-info-container .head .category-block .block-value,
+    main .task-info-page-container .task-info-container .time-block .time-value{
+        margin-left: 0;
+    }
+
 }
 
 main .task-completion-wrapper{
@@ -1943,6 +2000,21 @@ main .additional-container .file-div .user-file-btns{
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transition: all .3s ease;
+}
+
+@media screen and (max-width: 1200px){
+    main .additional-container .file-div .user-file-btns{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media screen and (max-width: 992px){
+    main .additional-container .file-div .user-file-btns{
+        flex-direction: row;
+        align-items: center;
+    }
 }
 
 main .additional-container .file-div .user-file-btns a,
@@ -2059,11 +2131,6 @@ main .creator-user-view{
     height: fit-content;
 }
 
-@media screen and (max-width: 768px) {
-    main .creator-user-view{
-        flex-direction: column;
-    }
-}
 
 main .creator-user-view .left-users{
     border-right: 3px solid var(--light-grey);
@@ -2080,6 +2147,17 @@ main .creator-user-view .left-users .users-ul {
     overflow-y: auto;
     padding: 15px 10px;
     transition: all .3s ease;
+}
+
+@media screen and (max-width: 576px) {
+    main .creator-user-view{
+        flex-direction: column;
+    }
+
+    main .creator-user-view .left-users .users-ul {
+        height: 200px;
+    }
+
 }
 
 main .creator-user-view .left-users .users-ul li {
@@ -2126,6 +2204,13 @@ main .creator-user-view .users-data-block .user-info.active{
 main .creator-user-view .users-data-block .users-status-files{
     border-bottom: 3px solid var(--light-grey);
     padding: 30px;
+}
+
+@media screen and (max-width: 576px) {
+    main .creator-user-view .users-data-block .users-status-files{
+        border-top: 3px solid var(--light-grey);
+    }
+
 }
 
 main .creator-user-view .users-data-block .users-status-files .user-status-block{
@@ -2184,6 +2269,8 @@ main .creator-user-view .users-data-block .users-status-files .vertical-block .f
     align-items: center;
     justify-content: space-between;
 }
+
+
 
 main .creator-user-view .users-data-block .users-status-files .vertical-block .file-div .user-file-btns a{
     padding: 3.5px;
@@ -2539,3 +2626,86 @@ main .no-task h3{
     font-size: 20px;
     font-weight: 600;
 }
+
+/* ----------------------------------TASK INFO PAGE---------------------------------- */
+main .group-tab{
+     display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+main .group-tab .plus-group{
+    background: var(--yellow);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+main .group-tab .plus-group .icon {
+    font-size: 24px;
+    padding: 5px;
+}
+
+
+main .group{
+    margin-top: 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+main .group .head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--light-grey);
+    padding: 10px;
+}
+
+main .group .title{
+
+}
+
+
+main .group-settings{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main .group-settings .icon {
+    font-size: 32px;
+    cursor: pointer;
+}
+
+main .group-settings .group-settings-box{
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 140px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 4px 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .3s ease;
+}
+
+main .group-settings .group-settings-box.show{
+    top: 100%;
+    opacity: 1;
+    pointer-events: visible;
+}
+
+main .group-settings .group-settings-box a{
+    display: block;
+    padding: 6px 16px;
+    transition: all .3s ease;
+}
+
+main .group-settings .group-settings-box a:hover{
+    background: var(--light-grey);
+}
+
+
