@@ -1460,6 +1460,18 @@ main .profile-container .edit-form .edit-profile .form-area #file-name{
     margin-top: 5px;
 }
 
+main .profile-container .edit-form .edit-profile .form-area .select-role{
+    border: black solid 1px;
+    border-radius: 7px;
+}
+
+main .profile-container .edit-form .edit-profile .form-area .select-role,
+main .profile-container .edit-form .edit-profile .form-area .select-role option{
+    font-family: "Exo 2";
+    font-size: 16px;
+    padding: 5px;
+}
+
 main .profile-container .edit-form .edit-profile .edit-profile-btn{
     margin-top: 40px;
     transition: all .3s ease;

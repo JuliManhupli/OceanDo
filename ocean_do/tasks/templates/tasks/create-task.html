@@ -102,6 +102,14 @@
                     </div>
                 </div>
                 <div class="users-search">
+                    <div>
+                        <select name="select-group">
+                            <option selected disabled=true>--Вибрати групу--</option>
+<!--                            {% for tag in all_user_tags %}-->
+<!--                            <option>{{ tag.name }}</option>-->
+<!--                            {% endfor %}-->
+                        </select>
+                    </div>
                     <div class="form-group">
                         <i class='bx bx-search icon'></i>
                         <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
@@ -161,7 +169,7 @@
                     const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
 
                     const newUserInfo = $("<div class='chosen-user-info'>");
-                    newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "</p>");
+                    newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "[" + "]" "</p>");
                     newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
 
                     newChosenUser.append(newUserInfo);
