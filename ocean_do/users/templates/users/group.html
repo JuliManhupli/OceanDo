@@ -29,10 +29,10 @@
                 <div class="group-settings">
                     <i class='bx bx-dots-horizontal-rounded icon'></i>
                     <ul class="group-settings-box">
-                        <a href="#" class="edit-group-btn">
+                        <a href="{% url 'users:edit_group' group.id %}" class="edit-group-btn">
                             <li>Змінити</li>
                         </a>
-                        <a href="#" class="delete-group-btn">
+                        <a href="#" class="delete-group-btn" data-id="{{ group.id }}">
                             <li>Видалити</li>
                         </a>
                     </ul>

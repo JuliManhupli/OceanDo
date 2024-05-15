@@ -209,6 +209,46 @@ function onDeleteClick(event) {
     }
 }
 
+
+// DELETE GROUP
+document.addEventListener('DOMContentLoaded', function () {
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    const deleteLinks = document.querySelectorAll('.delete-group-btn');
+    deleteLinks.forEach(link => {
+        link.removeEventListener('click', onDeleteClickGrop);
+    });
+
+    deleteLinks.forEach(link => {
+        link.addEventListener('click', onDeleteClickGrop);
+    });
+});
+
+function onDeleteClickGrop(event) {
+    event.preventDefault();
+    const confirmation = confirm('Ви впевнені, що хочете видалити цю групу?');
+    if (confirmation) {
+        const groupId = this.dataset.id;
+        axios.delete(`/users/${groupId}/delete/`)
+            .then(response => {
+                if (response.status === 204) {
+                    const listItem = this.parentElement;
+                    listItem.remove();
+                    alert('Групу успішно видалено');
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Помилка під час виконання запиту:', error);
+                if (error.response.status === 403) {
+                    alert('Ви не маєте дозволу на видалення цієї групи');
+                } else {
+                    alert('Помилка під час видалення групи');
+                }
+            });
+    }
+}
+
 // CREATE TASK TAGS
 document.addEventListener('DOMContentLoaded', function () {
     const addButton = document.getElementById('add-tag-input');
