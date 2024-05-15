@@ -1050,3 +1050,52 @@ document.addEventListener('DOMContentLoaded', function () {
         tasksContainer.innerHTML = tasks;
     }
 });
+
+
+// GROUP MENU
+document.addEventListener('DOMContentLoaded', function () {
+    const groupContainers = document.querySelectorAll('.group');
+    groupContainers.forEach(groupContainer => {
+        groupContainer.addEventListener('click', function(event) {
+            if (event.target.closest('.group-settings .icon')) {
+                const menuOption = event.target.closest('.group-settings').querySelector('.group-settings-box');
+                if (menuOption) {
+                    menuOption.classList.toggle('show');
+                }
+            }
+        });
+    });
+
+
+    document.addEventListener('click', function (e) {
+        groupContainers.forEach(groupContainer => {
+            const menuOptions = groupContainer.querySelectorAll('.group-settings-box');
+            menuOptions.forEach(menuOption => {
+                const isIconClicked = e.target.closest('.group-settings .icon');
+                const isMenuClicked = e.target.closest('.group-settings-box');
+
+                if (!isIconClicked && !isMenuClicked && menuOption.classList.contains('show')) {
+                    menuOption.classList.remove('show');
+                }
+            })
+        });
+    });
+
+
+    // document.addEventListener('click', function (e) {
+    //     groupContainers.forEach(groupContainer => {
+    //         axios.defaults.xsrfCookieName = 'csrftoken';
+    //         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    //         const deleteLinks = groupContainer.querySelectorAll('.delete-link');
+    //
+    //         deleteLinks.forEach(link => {
+    //             link.removeEventListener('click', onDeleteClick);
+    //         });
+    //
+    //         deleteLinks.forEach(link => {
+    //             link.addEventListener('click', onDeleteClick);
+    //         });
+    //     });
+    // });
+
+});

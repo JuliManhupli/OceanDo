@@ -14,17 +14,31 @@
 
 <!-- MAIN -->
 <main>
-    <h1 class="title">Групи</h1>
-    <a href="{% url 'users:create_group' %}" class="plus-task">
-        <i class='bx bx-plus-circle icon create-task-btn'></i>
-    </a>
-
-
-    <div class="profile-container">
+    <div class="group-tab">
+        <h1 class="title">Групи</h1>
+        <a href="{% url 'users:create_group' %}" class="plus-group">
+            <i class='bx bx-plus-circle icon'></i>
+        </a>
+    </div>
+    <div class="group-container">
         {% if groups %}
         {% for group in groups %}
         <div class="group">
-            <h1 class="title">{{ group.name }}</h1>
+            <div class="head">
+                <h1 class="title">{{ group.name }}</h1>
+                <div class="group-settings">
+                    <i class='bx bx-dots-horizontal-rounded icon'></i>
+                    <ul class="group-settings-box">
+                        <a href="#" class="edit-group-btn">
+                            <li>Змінити</li>
+                        </a>
+                        <a href="#" class="delete-group-btn">
+                            <li>Видалити</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+
             {% for user in group.members.all %}
             <p class="member">{{ user.username }}</p>
             <p class="member">{{ user.email }}</p>
@@ -33,7 +47,9 @@
         {% endfor %}
 
         {% else %}
-        <h1>Немає груп</h1>
+        <div class="no-task">
+              <h3>Груп немає</h3>
+          </div>
         {% endif %}
 
     </div>
