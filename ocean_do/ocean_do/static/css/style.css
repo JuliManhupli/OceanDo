@@ -1694,6 +1694,19 @@ main .task-popup .form .form-element .users-search .chosen-user .icon{
     cursor: pointer;
 }
 
+main .task-popup .form .form-element .users-search .select-group{
+    margin-bottom: 10px;
+    border: black solid 1px;
+    border-radius: 7px;
+}
+
+main .task-popup .form .form-element .users-search .select-group,
+main .task-popup .form .form-element .users-search .select-group option {
+    font-family: "Exo 2";
+    padding: 10px;
+    font-size: 16px;
+}
+
 main .task-popup .form .make-task {
     background: var(--yellow);
     width: 100%;
@@ -2587,17 +2600,18 @@ main .no-task h3{
 
 .long-chart{
     width: 90%;
+    transition: all .3s ease;
 }
 
 .personal-statistics{
-    /*width: 100%;*/
     display: flex;
     gap: 20px;
+    transition: all .3s ease;
 }
 
 .personal-round{
-    /*display: flex;*/
     width: 40%;
+    transition: all .3s ease;
 }
 
 .personal-statistics .percentage{
@@ -2637,6 +2651,29 @@ main .no-task h3{
 .personal-statistics .percentage .block span{
     font-size: 20px;
     font-weight: 600;
+}
+
+@media (max-width: 992px){
+
+    .personal-statistics{
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .personal-round{
+        width: 80%;
+    }
+
+    .long-chart{
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px){
+
+    .personal-round{
+        width: 100%;
+    }
 }
 
 /* ----------------------------------TASK INFO PAGE---------------------------------- */

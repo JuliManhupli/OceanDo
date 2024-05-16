@@ -41,6 +41,9 @@
             <div class="group-users">
                 {% for user in group.members.all %}
                 <div class="chosen-user">
+                    {% if user.role %}
+                    <p class="member name">[{{ user.role }}]</p>
+                    {% endif %}
                     <p class="member name">{{ user.username }}</p>
                     <p class="member email">{{ user.email }}</p>
                 </div>

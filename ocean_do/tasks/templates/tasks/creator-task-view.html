@@ -104,6 +104,9 @@
                 {% for assignment in assignments %}
                 <li>
                     <a class="user-div {% if forloop.first %}active{% endif %}">
+                        {% if assignment.user.role %}
+                        <p class="name">[{{ assignment.user.role }}]</p>
+                        {% endif %}
                         <p class="name">{{ assignment.user.username }}</p>
                         <p class="email">{{ assignment.user.email }}</p>
                     </a>
