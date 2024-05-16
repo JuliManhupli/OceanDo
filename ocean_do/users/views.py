@@ -79,22 +79,36 @@ def delete_group(request, group_id):
         return JsonResponse({'error': 'Ви не маєте права видаляти цю групу'}, status=403)
 
 
-def get_all_groups(request):
-    user = request.user
-    groups = Group.objects.filter(owner=user)
+# def get_all_groups(request):
+#     user = request.user
+#     groups = Group.objects.filter(owner=user)
+#
+#     users_data = []
+#     for group in groups:
+#         members = list(group.members.values('email', 'username', 'role'))
+#         group_data = {
+#             'id': group.id,
+#             'name': group.name,
+#             'members': members
+#         }
+#         users_data.append(group_data)
+#     print(users_data)
+#     return JsonResponse(users_data, safe=False)
 
-    users_data = []
-    for group in groups:
-        members = list(group.members.values('email', 'username', 'role'))
-        group_data = {
-            'id': group.id,
-            'name': group.name,
-            'members': members
-        }
-        users_data.append(group_data)
-    print(users_data)
-    return JsonResponse(users_data, safe=False)
+def users_for_group(request):
+    group_id = request.GET.get('group')
+    if not group_id:
+        return JsonResponse({'error': 'Group name is required'}, status=400)
 
+    try:
+        group = get_object_or_404(Group, id=group_id)
+        users = group.members.all()
+        users_data = [{'username': user.username, 'email': user.email, 'role': user.role} for user in users]
+        return JsonResponse(users_data, safe=False)
+    except Group.DoesNotExist:
+        return JsonResponse({'error': 'Group not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
 def edit_profile_view(request):

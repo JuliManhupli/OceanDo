@@ -14,6 +14,7 @@ from ocean_do.aws import upload_file_to_s3, upload_assignment_file_to_s3, delete
 from .form import TaskForm, CommentForm, TaskEditForm
 from .models import Tag, Task, TaskAssignment, File, Folder, TaskChat, ChatComment
 from .utils import send_task
+from accounts.models import Group
 
 
 def send_notification(message, assignee):
@@ -382,6 +383,8 @@ def save_task(request, form, old_files=None):
 
 
 def create_task(request):
+    user = request.user
+    groups = Group.objects.filter(owner=user)
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
@@ -389,7 +392,7 @@ def create_task(request):
             return redirect('tasks:all_tasks')
     else:
         form = TaskForm()
-    return render(request, "tasks/create-task.html", {'form': form})
+    return render(request, "tasks/create-task.html", {'form': form, 'groups': groups})
 
 
 def derivative_task(request, task_id):
