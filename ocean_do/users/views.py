@@ -81,12 +81,18 @@ def delete_group(request, group_id):
 
 def get_all_groups(request):
     user = request.user
-    print(user)
     groups = Group.objects.filter(owner=user)
-    print(groups)
-    # users_data = list(groups.members.values('email', 'username'))
-    users_data = list(groups.values('id', 'name', 'members__email', 'members__username'))
-    # print(users_data)
+
+    users_data = []
+    for group in groups:
+        members = list(group.members.values('email', 'username', 'role'))
+        group_data = {
+            'id': group.id,
+            'name': group.name,
+            'members': members
+        }
+        users_data.append(group_data)
+    print(users_data)
     return JsonResponse(users_data, safe=False)
 
 
@@ -101,6 +107,7 @@ def edit_profile_view(request):
             avatar_file = form.cleaned_data.get('file')
             username = form.cleaned_data.get('username')
             role = form.cleaned_data.get('role')
+            print(role)
 
             if avatar_file:
                 avatar_url = upload_avatar_to_s3(user_email, avatar_file)

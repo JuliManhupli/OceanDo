@@ -492,7 +492,8 @@ def get_users(request, template_name):
         users = User.objects.filter(
             Q(email__icontains=term) | Q(username__icontains=term)
         )
-        users_data = list(users.values('email', 'username'))
+        users_data = list(users.values('email', 'username', 'role'))
+        print(users_data)
         return JsonResponse(users_data, safe=False)
     return render(request, template_name)
 
