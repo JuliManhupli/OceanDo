@@ -102,14 +102,13 @@
                     </div>
                 </div>
                 <div class="users-search">
-                    <div>
-<!--                        <select name="select-group">-->
-<!--                            <option selected disabled=true>&#45;&#45;Вибрати групу&#45;&#45;</option>-->
-<!--&lt;!&ndash;                            {% for tag in all_user_tags %}&ndash;&gt;-->
-<!--&lt;!&ndash;                            <option>{{ tag.name }}</option>&ndash;&gt;-->
-<!--&lt;!&ndash;                            {% endfor %}&ndash;&gt;-->
-<!--                        </select>-->
-                    </div>
+                    <select name="select-group" class="select-group">
+                        <option selected disabled>--Вибрати групу--</option>
+                        {% for group in groups %}
+                        <option value="{{ group.id }}">{{ group.name }}</option>
+                        {% endfor %}
+                    </select>
+
                     <div class="form-group">
                         <i class='bx bx-search icon'></i>
                         <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
@@ -152,66 +151,103 @@
     }
 
     // SEARCH USERS AUTO-COMPLETE
-    $( function() {
-        const selectedItems = [];
-        $( "#users-search-bar" ).autocomplete({
-            source: "{% url 'tasks:users_for_create' %}",
-            minLength: 3,
-            focus: function (event, ui) {
-                $("#users-search-bar").val(ui.item.username);
+    $(function() {
+    const selectedItems = [];
+
+    // Initialize autocomplete for the search bar
+    $("#users-search-bar").autocomplete({
+        source: "{% url 'tasks:users_for_create' %}",
+        minLength: 3,
+        focus: function(event, ui) {
+            $("#users-search-bar").val(ui.item.username);
+            return false;
+        },
+        select: function(event, ui) {
+            $("#users-search-bar").val(ui.item.username);
+            $("#chosen-user-block").val(ui.item.email);
+            if (selectedItems.indexOf(ui.item.email) === -1) {
+                selectedItems.push(ui.item.email);
+                const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+
+                const newUserInfo = $("<div class='chosen-user-info'>");
+                newUserInfo.append("<p class='chosen-user-name'>" + ui.item.username + (ui.item.role ? " [" + ui.item.role + "]" : "") + "</p>");
+                newUserInfo.append("<p class='chosen-user-email'>" + ui.item.email + "</p>");
+
+                newChosenUser.append(newUserInfo);
+                newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+
+                updateHiddenInput();
                 return false;
-            },
-            select: function (event, ui) {
-                $("#users-search-bar").val(ui.item.username);
-                $("#chosen-user-block").val(ui.item.email);
-                console.log(ui.item.role)
-                if (selectedItems.indexOf(ui.item.email) === -1) {
-                    selectedItems.push(ui.item.email);
-                    const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
-
-                    const newUserInfo = $("<div class='chosen-user-info'>");
-                    newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + (ui.item.role ? " [" +  ui.item.role + "]" : "") + "</p>");
-                    newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
-
-                    newChosenUser.append(newUserInfo);
-                    newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
-
-                    updateHiddenInput();
-                    return false;
-                }
             }
-        })
-        .autocomplete("instance")._renderItem = function(ul, item) {
-            return $("<li>")
-                .append("<div class='autosearch-name' style='font-weight: 600;'>" + item.username + (item.role ? " [" + item.role + "]" : "") + "</div>" +
-                    "<div class='autosearch-email'>" + item.email + "</div>")
-                .appendTo(ul);
-        };
-
-
-        //delete user
-        $(".users-search").on("click", ".delete-item", function () {
-            const itemValue = $(this).prev(".chosen-user-info").find(".chosen-user-email").text();
-            const index = selectedItems.indexOf(itemValue);
-            if (index !== -1) {
-                selectedItems.splice(index, 1);
-            }
-            $(this).parent(".chosen-user").remove();
-        });
-
-        function updateHiddenInput() {
-            $("#chosen-user-block").val(selectedItems.join(',')); // Concatenate emails with a delimiter
         }
+    }).autocomplete("instance")._renderItem = function(ul, item) {
+        return $("<li>")
+            .append("<div class='autosearch-name' style='font-weight: 600;'>" + item.username + (item.role ? " [" + item.role + "]" : "") + "</div>" +
+                    "<div class='autosearch-email'>" + item.email + "</div>")
+            .appendTo(ul);
+    };
 
+    // Listen for changes on the select element
+    $(".select-group").on("change", function() {
+        const selectedGroup = $(this).val();
+        if (selectedGroup) {
+            fetchUsersForGroup(selectedGroup);
+        }
+    });
 
-        const form = document.getElementById('form');
-        form.addEventListener('submit', function (event) {
-            if (selectedItems.length === 0) {
-                event.preventDefault();
-                alert('Будь ласка, додайте виконавців перед відправленням форми.');
+    // Fetch users for the selected group
+    function fetchUsersForGroup(groupName) {
+        $.ajax({
+            url: "{% url 'users:users_for_group' %}",
+            method: "GET",
+            data: { group: groupName },
+            success: function(users) {
+                $(".chosen-user").remove();
+                selectedItems.length = 0;
+
+                users.forEach(user => {
+                    if (selectedItems.indexOf(user.email) === -1) {
+                        selectedItems.push(user.email);
+                        const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+
+                        const newUserInfo = $("<div class='chosen-user-info'>");
+                        newUserInfo.append("<p class='chosen-user-name'>" + user.username + (user.role ? " [" + user.role + "]" : "") + "</p>");
+                        newUserInfo.append("<p class='chosen-user-email'>" + user.email + "</p>");
+
+                        newChosenUser.append(newUserInfo);
+                        newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+                    }
+                });
+                updateHiddenInput();
             }
         });
+    }
+
+    // Delete user
+    $(".users-search").on("click", ".delete-item", function() {
+        const itemValue = $(this).prev(".chosen-user-info").find(".chosen-user-email").text();
+        const index = selectedItems.indexOf(itemValue);
+        if (index !== -1) {
+            selectedItems.splice(index, 1);
+        }
+        $(this).parent(".chosen-user").remove();
+        updateHiddenInput();
     });
+
+    // Update hidden input
+    function updateHiddenInput() {
+        $("#chosen-user-block").val(selectedItems.join(',')); // Concatenate emails with a delimiter
+    }
+
+    // Form submission validation
+    const form = document.getElementById('form');
+    form.addEventListener('submit', function(event) {
+        if (selectedItems.length === 0) {
+            event.preventDefault();
+            alert('Будь ласка, додайте виконавців перед відправленням форми.');
+        }
+    });
+});
 
 
 </script>
