@@ -47,6 +47,14 @@
                 <div class="form-area role-area">
                     <p class="data-name edit-title">Роль</p>
                     {{ form.role }}
+                    <select class="select-role" name="role">
+                        <option selected disabled=true>--Вибрати роль--</option>
+                        <option value="empty">------------</option>
+                        <option value="student">Студент</option>
+                        <option value="student-monitor">Староста</option>
+                        <option value="professor">Викладач</option>
+                        <option value="professor-curator">Викладач-куратор</option>
+                    </select>
                 </div>
 
                 {% if form.errors and form.non_field_errors %}
