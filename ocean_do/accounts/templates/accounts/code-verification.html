@@ -1,0 +1,34 @@
+{% extends 'accounts/register_base.html' %}
+{% load static %}
+{% block title %}
+    Підтвердження коду
+{% endblock %}
+
+{% block content_area %}
+    <form class="form-login" method="POST">
+        {% csrf_token %}
+        <p class="title-for-account">Введіть код підтвердження</p>
+        <div class="form-area">
+            <p class="data-name">Код</p>
+            <div class="code-form">
+                <input class="data-input code-input" type="number" name="otp_digit_1">
+                <input class="data-input code-input" type="number" disabled name="otp_digit_2">
+                <input class="data-input code-input" type="number" disabled name="otp_digit_3">
+                <input class="data-input code-input" type="number" disabled name="otp_digit_4">
+                <input class="data-input code-input" type="number" disabled name="otp_digit_5">
+                <input class="data-input code-input" type="number" disabled name="otp_digit_6">
+            </div>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        <button class="account-button code-verify-btn">Підтвердити</button>
+    </form>
+
+    <form action="{% url 'accounts:resend-otp' %}" class="other-options" method="post">
+        {% csrf_token %}
+        <button class="login__link" type="submit">Надіслати код ще раз</button>
+    </form>
+{% endblock %}

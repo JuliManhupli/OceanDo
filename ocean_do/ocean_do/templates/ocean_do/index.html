@@ -1,0 +1,173 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Головна
+{% endblock %}
+
+{% block side-menu %}
+{% include 'ocean_do/partials/main-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+<!-- MAIN -->
+<main>
+    <h1 class="title">Важливі завдання</h1>
+    {% if tasks_with_type|length == 0 %}
+      <div class="no-task">
+          <h3>Завдань немає</h3>
+      </div>
+    {% else %}
+    <div class="important-tasks active">
+
+{% for task, task_type in tasks_with_type %}
+        {% if task_type == 'assigned' %}
+        {% include 'tasks/task-type/assigned-task.html'%}
+        {% elif task_type == 'solo' %}
+        {% include 'tasks/task-type/solo-task.html'%}
+        {% else %}
+        {% include 'tasks/task-type/created-task.html'%}
+        {% endif %}
+{% endfor %}
+
+    </div>
+    {% endif %}
+    <h1 class="title users-block">Продуктивність</h1>
+    <div class="statistics row-stats">
+        <div class="chart rect-chart">
+            <canvas id="productivity"></canvas>
+        </div>
+        <div class="chart additional-chart round-chart">
+            <canvas id="accountType"></canvas>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    // PRODUCTIVITY GRAPH1
+    const myCompletionDates = [
+        {% for task in completed_tasks %}
+            {% for assignment in task.assignees.all %}
+                {% if assignment.user == request.user %}
+                    "{{ assignment.completion_time }}",
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    ];
+
+
+    const changeMonthName = {
+      'січня': 'Січень',
+      'лютого': 'Лютий',
+      'березня': 'Березень',
+      'квітня': 'Квітень',
+      'травня': 'Травень',
+      'червня': 'Червень',
+      'липня': 'Липень',
+      'серпня': 'Серпень',
+      'вересня': 'Вересень',
+      'жовтня': 'Жовтень',
+      'листопада': 'Листопад',
+      'грудня': 'Грудень'
+    };
+
+    // get month and year
+    const monthYearArray = myCompletionDates.map(dateString => {
+      const [_, month, year] = dateString.split(' ');
+      return `${changeMonthName[month]} ${year}`;
+    });
+
+    const proChart = document.getElementById('productivity');
+    const todayDate = new Date();
+    const currentMonth = todayDate.getMonth();
+    const currentYear = todayDate.getFullYear();
+    const months = [];
+
+    // get labels
+    for (let i = currentMonth; i >= currentMonth - 11; i--) {
+        let month = i;
+        let year = currentYear;
+        if (month < 0) {
+            month = 12 + month;
+            year -= 1;
+        }
+        months.push({ month, year });
+    }
+    months.reverse();
+
+    const monthLabels = months.map(({ month, year }) => monthToString(month) + ' ' + year);
+
+    const dataForChart = monthLabels.map(label => {
+      const count = monthYearArray.filter(month => month === label).length;
+      return count > 0 ? count : 0;
+    });
+
+
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    var myChart = new Chart(proChart, {
+        type: 'bar',
+        data: {
+          labels: monthLabels,
+          datasets: [{
+            label: 'Виконані мною завдання',
+            data: dataForChart,
+            borderWidth: 1,
+            backgroundColor: '#7187E4'
+          }]
+        },
+        responsive: true,
+        options: {
+            indexAxis: 'y',
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+    function monthToString(month) {
+        const monthsArray = [
+        "Січень",
+        "Лютий",
+        "Березень",
+        "Квітень",
+        "Травень",
+        "Червень",
+        "Липень",
+        "Серпень",
+        "Вересень",
+        "Жовтень",
+        "Листопад",
+        "Грудень"
+    ];
+        return monthsArray[month];
+    }
+
+
+    // TYPE RATIO CHART
+    const accountType = document.getElementById('accountType');
+    new Chart(accountType, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Завдань Виконання',
+                'Завдань Моніторингу'
+            ],
+            datasets: [{
+                label: 'Кількість завдань',
+                data: {{ ratio }},
+                backgroundColor: [
+                    '#FDC969',
+                    '#263D9D'
+                ],
+                hoverOffset: 4
+            }]
+        },
+        responsive: true
+    });
+
+</script>
+
+{% endblock %}

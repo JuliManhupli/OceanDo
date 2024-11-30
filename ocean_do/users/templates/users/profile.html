@@ -1,0 +1,44 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Профіль
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'users/partials/profile-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+
+<!-- MAIN -->
+<main>
+    <div class="profile-container">
+        {% if user.photo %}
+        <img class="profile-picture" src="{{ user.photo.url }}" alt="Avatar">
+        {% else %}
+        <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
+        {% endif %}
+        <h1 class="title profile-name">{{ request.user.username }}</h1>
+        <h2 class="sub-text">{{ request.user.email }}</h2>
+        <div class="profile-menu">
+            <a class="profile-menu-item" href="{% url 'users:edit-profile' %}" class="menu-item-link">
+                <i class='bx bx-edit icon'></i>
+                <p class="menu-text">Редагувати профіль</p>
+            </a>
+            <a class="profile-menu-item"  href="{% url 'tasks:completed_tasks' %}" class="menu-item-link">
+                <i class='bx bx-check-square icon'></i>
+                <p class="menu-text">Виконані завдання</p>
+            </a>
+            <a class="profile-menu-item" href="{% url 'users:personal-stats' %}" class="menu-item-link">
+                <i class='bx bx-stats icon'></i>
+                <p class="menu-text">Статистичні дані</p>
+            </a>
+        </div>
+    </div>
+
+</main>
+
+<!-- MAIN -->
+{% endblock %}

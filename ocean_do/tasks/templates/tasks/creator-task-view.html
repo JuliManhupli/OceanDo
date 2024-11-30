@@ -1,0 +1,312 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+{{ task.title }}
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'tasks/partials/task-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+<main>
+    <div class="task-path">
+        {% for folder in task.folders.all %}
+        <h1 class="title folder">{{ folder.name }}</h1>
+        <h1 class="title divider">/</h1>
+        {% empty %}
+        {% endfor %}
+        <h1 class="title task-name">{{ task.title }}</h1>
+    </div>
+
+    <div class="task-divider">
+        <div class="task-info-page-container creator-task-info">
+            <div class="task-info-container">
+                <div class="head">
+                    <div class="category-block">
+                        <p class="title">Категорія:</p>
+                        <p class="block-value">Моніторинг</p>
+                    </div>
+                    <div class="task-settings">
+                        <i class='bx bx-dots-horizontal-rounded icon'></i>
+                        <ul class="task-settings-box">
+                            <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
+                                <li>Змінити</li>
+                            </a>
+                            <a href="#" class="delete-link" data-id="{{ task.id }}">
+                                <li>Видалити</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-block user-status-block">
+                    <p class="title not-center">Статус виконання:</p>
+                    <p class="user-task-status check-status">
+                        {% if task.is_completed %}
+                        Виконано
+                        {% else %}
+                        У процесі виконання
+                        {% endif %}
+                    </p>
+
+                </div>
+                {% if task.tags.all %}
+                <div class="info-block">
+
+                    <p class="title">Теги:</p>
+                    <div class="tags-values">
+                        {% for tag in task.tags.all %}
+                        <p class="tag">{{ tag.name }}</p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+                {% endif %}
+                {% if task.description %}
+                <div class="info-block vertical-block">
+                    <p class="title">Опис:</p>
+                    <p class="description">{{ task.description }}</p>
+                </div>
+                {% endif %}
+                {% if task.files.all %}
+                <div class="info-block vertical-block">
+                    <p class="title">Файли:</p>
+                    <ul class="file-list">
+                        {% for file in task.files.all %}
+                        <div class="file-div">
+                            <li class="file-li">{{ file.title }}</li>
+                            <a href="{{ file.file.url }}"
+                               onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                            </li>
+                        </div>
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+                {% endif %}
+                <div class="info-block time-block">
+                    <p class="title not-center">Термін виконання</p>
+                    <p class="time-value">{{ task.deadline }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h1 class="title users-block">Учасники</h1>
+
+    <div class="creator-user-view">
+        <div class="left-users">
+            <p class="title">Користувачі</p>
+            <ul class="users-ul">
+                {% for assignment in assignments %}
+                <li>
+                    <a class="user-div {% if forloop.first %}active{% endif %}">
+                        {% if assignment.user.role %}
+                        <p class="name">[{{ assignment.user.role }}]</p>
+                        {% endif %}
+                        <p class="name">{{ assignment.user.username }}</p>
+                        <p class="email">{{ assignment.user.email }}</p>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="users-data-block">
+            {% for assignment, comments, task_chat in assignee_data %}
+
+            <div class="user-info {% if forloop.first %}active{% endif %}" id="user_info_{{ assignment.id }}"
+                 data-chat-name="{{ task_chat.name }}" ws-connect="/ws/comments/{{ task_chat.name }}/">
+                <div class="users-status-files">
+                    <div class="user-status-block">
+                        <p class="title">Статус виконання:</p>
+                        <p class="user-task-status check-status" id="task-status-check">
+                            {% if assignment.is_completed %}
+                            Виконано
+                            {% else %}
+                            У процесі виконання
+                            {% endif %}</p>
+                    </div>
+                    {% if assignment.files.all %}
+                    <div class="info-block vertical-block">
+                        <p class="title">Файли:</p>
+                        <ul class="file-list">
+                            {% for file in assignment.files.all %}
+                            <div class="file-div">
+                                <li class="file-li">{{ file.title }}</li>
+                                <div class="user-file-btns">
+                                    <a href="{{ file.file.url }}"
+                                       onclick="window.open(this.href, '_blank'); return false;">Завантажити</a>
+                                </div>
+                                </li>
+                            </div>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="task-info-comment-section comment-in-other-block">
+                    <div class="leave-comment">
+                        <p class="title">Залишити коментар</p>
+                        <form id="chat_message_form_{{ assignment.id }}" hx-ext="ws" ws-send
+                              _="on htmx:wsAfterSend reset() me">
+                            {% csrf_token %}
+                            {{ form.message }}
+                            <div class="button-wrapper">
+                                <button type="submit" class="make-comment">Надіслати</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="comment-section" hx-get="/tasks/comments/{{ task_chat.name }}/" hx-target="#comments">
+                        <p class="title">Приватні коментарі:</p>
+                        <div id="comments_{{ assignment.id }}">
+                            <ul id='chat_messages_{{ assignment.id }}'>
+                                {% for comment in comments reversed %}
+                                <div class="comment">
+                                    {% if comment.user.photo %}
+                                    <img class="profile-picture" src="{{ comment.user.photo.url }}" alt="Avatar">
+                                    {% else %}
+                                    <img class="profile-picture" src="{% static 'img/profile-picture.jpg' %}"
+                                         alt="No image">
+                                    {% endif %}
+                                    <div class="comment-text-block">
+                                        <div class="head">
+                                            <p class="user-name">{{ comment.user.username }}</p>
+                                            <p class="sent-date">{{ comment.created|date:"d.m.Y H:i" }}</p>
+                                        </div>
+                                        <p class="comment-text">{{ comment.message }}</p>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+    </div>
+
+     <h1 class="title users-block">Статистика виконавців</h1>
+
+    <div class="statistics creator-statistics">
+        <div class="chart round-chart">
+            <canvas id="usersTaskStatus" width="500" height="500"></canvas>
+        </div>
+    </div>
+</main>
+<!-- MAIN -->
+
+<script>
+
+    const monthNames = {
+        'січня': 0, 'лютого': 1, 'березня': 2, 'квітня': 3, 'травня': 4, 'червня': 5,
+        'липня': 6, 'серпня': 7, 'вересня': 8, 'жовтня': 9, 'листопада': 10, 'грудня': 11
+    };
+
+    const todayTime = new Date();
+    const dateNow = new Date(todayTime.getFullYear(), todayTime.getMonth(), todayTime.getDate());
+
+    let taskComplete = 0, taskIncomplete = 0, taskOverDue = 0;
+
+    {% for assignment, _, _ in assignee_data %}
+            {% if assignment.is_completed %}
+                taskComplete++;
+            {% else %}
+                taskIncomplete++;
+            {% endif %}
+    {% endfor %}
+
+
+    const [dayNow, monthStr, yearNow] = "{{task.deadline}}".split(' ');
+    const month = monthNames[monthStr];
+    const mapDeadline = new Date(yearNow, month, dayNow);
+
+    if (mapDeadline.getTime() < dateNow.getTime()) {
+
+        taskOverDue = taskIncomplete;
+        taskIncomplete = 0;
+    }
+
+
+    // task statistics
+    const usersStatuses = document.getElementById('usersTaskStatus');
+
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    new Chart(usersStatuses, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Виконано',
+                'У процесі виконання',
+                'Невчасно виконано'
+            ],
+            datasets: [{
+                label: 'Кількість виконавців',
+                data: [taskComplete, taskIncomplete, taskOverDue],
+                backgroundColor: [
+                    '#5E967C',
+                    '#FDC969',
+                    '#B5415C'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+    const deadLineTime = "{{ task.deadline }}";
+
+    const allUserInfos = document.querySelectorAll('.user-info');
+
+    // task comments
+    allUserInfos.forEach(userInfo => {
+        const chatName = userInfo.dataset.chatName; // Отримати ім'я чату
+        const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/comments/' + chatName + '/');
+
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            const assignmentId = userInfo.id.split('_')[2];
+            addCommentToPage(data.html, assignmentId);
+        };
+    });
+
+    function addCommentToPage(html, assignmentId) {
+        var commentsList = document.getElementById('chat_messages_' + assignmentId); // Використовувати ідентифікатор користувача
+        var newComment = document.createElement('div');
+        newComment.innerHTML = html;
+        commentsList.appendChild(newComment);
+    }
+
+
+    const allTaskItems = document.querySelectorAll('.task-settings');
+    allTaskItems.forEach(item => {
+        const menuIcon = item.querySelector('.icon');
+        const menuOption = item.querySelector('.task-settings-box');
+
+        menuIcon.addEventListener('click', function () {
+            menuOption.classList.toggle('show');
+        })
+    })
+
+
+    window.addEventListener('click', function (e) {
+        allTaskItems.forEach(item => {
+            const menuIcon = item.querySelector('.icon'),
+                menuOption = item.querySelector('.task-settings-box');
+
+            if (e.target !== menuIcon) {
+                if (e.target !== menuOption) {
+                    if (menuOption.classList.contains('show')) {
+                        menuOption.classList.remove('show');
+                    }
+                }
+            }
+        })
+    });
+</script>
+{% endblock %}

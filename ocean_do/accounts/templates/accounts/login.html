@@ -1,0 +1,42 @@
+{% extends 'accounts/register_base.html' %}
+{% load static %}
+{% block title %}
+Вхід
+{% endblock %}
+
+{% block content_area %}
+<form class="form-login" method="post">
+
+    {% csrf_token %}
+    <div class="form-area">
+        <p class="data-name">Пошта</p>
+        {{ form.email }}
+        {% if form.errors.email %}
+        <p class="error-message">{{ form.errors.email }}</p>
+        {% endif %}
+    </div>
+    <div class="form-area">
+        <p class="data-name">Пароль</p>
+        {{ form.password }}
+        {% if form.errors.password %}
+        <p class="error-message">{{ form.errors.password }}</p>
+        {% endif %}
+    </div>
+
+    <div class="other-options">
+        <a class="login__link" href="{% url 'accounts:register' %}">Зареєструватися</a>
+        <a class="login__link" href="{% url 'accounts:email' %}">Забули пароль?</a>
+    </div>
+
+    {% if form.errors and form.non_field_errors %}
+    <p>{{form.non_field_errors}}</p>
+    {% endif %}
+
+    {% if messages %}
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    <button class="account-button register-button" type="submit">Увійти</button>
+</form>
+{% endblock %}

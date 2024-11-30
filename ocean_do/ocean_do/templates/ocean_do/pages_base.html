@@ -1,0 +1,229 @@
+{% extends 'ocean_do/base.html' %}
+{% load static %}
+{% block title %}
+{% if page_title %}
+{{ page_title }}
+{% else %}
+OceanDo
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<body class="home-body" hx-ext="ws" ws-connect="/ws/notifications/">
+<!--<body class="home-body" >-->
+<!-- SIDEBAR -->
+<section id="sidebar">
+    <div class="brand">
+        <a href="{% url 'main' %}" class="brand logo-brand"><img class="icon main-logo"
+                                                                 src="{% static 'img/logo/logo-removebg.png' %}"
+                                                                 alt="!">TaskDo</a>
+    </div>
+
+
+    <ul class="side-menu">
+        <div class="upper-menu">
+            {% block side-menu %}
+            {% endblock %}
+        </div>
+        <div class="lower-menu">
+            <li><a href="{% url 'accounts:logout' %}" id="logout-btn"><i class='bx bx-exit icon'></i> Вийти</a></li>
+        </div>
+    </ul>
+</section>
+<!-- SIDEBAR -->
+<!-- CONTENT -->
+<section id="content" class="tasks-class">
+    <!-- NAVBAR -->
+    <nav>
+        <i class='bx bx-menu toggle-sidebar'></i>
+        <form action="#" class="form-data-search">
+            <div class="form-group">
+                <i class='bx bx-search icon'></i>
+                <input type="text" id="all-data-search-bar" placeholder="Пошук...">
+                <input type="hidden" name="all-data-search" id="chosen-data-block">
+            </div>
+        </form>
+
+
+        <div class="notification-block">
+            <a href="#" class="nav-link">
+                <i class='bx bx-bell icon'></i>
+                <span id="notification-number" class="badge" data-unread="{{ unread_notification_count }}"></span>
+
+            </a>
+            <ul class="dropdown-menu min-w-max absolute hidden bg-white text-base z-50 float-left py-2 list-none text-left rounded-lg shadow-lg mt-1 hidden m-0 bg-clip-padding border-none left-auto right-0"
+                aria-labelledby="dropdownMenuButton1" id="notification-dropdown">
+                <!-- Notifications go here -->
+                <hr class="h-0 my-2 border border-solid border-t-0 border-gray-700 opacity-25"/>
+                {% for i in notifications %}
+                <li>{{ i }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+
+        <div class="profile">
+
+            <a href="{% url 'users:profile' %}" class="link-to-profile">
+                {% if request.user.photo %}
+                <img id="logo-img" class="profile-picture" src="{{ user.photo.url }}" alt="Avatar">
+                {% else %}
+                <img class="logo-img" src="{% static 'img/profile-picture.jpg' %}" alt="No image">
+                {% endif %}
+            </a>
+
+            {% if request.user.role %}
+                <p>{{ request.user.role }}</p>
+            {% endif %}
+        </div>
+    </nav>
+
+    <script>
+
+        $( function() {
+            $( "#all-data-search-bar" ).autocomplete({
+                source: "{% url 'all-data' %}",
+                minLength: 1,
+                focus: function (event, ui) {
+                    $("#all-data-search-bar").val(ui.item.title);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#all-data-search-bar").val(ui.item.title);
+                    window.location.href = ui.item.link;
+                    return false;
+                }
+            })
+            .autocomplete( "instance" )._renderItem = function( ul, item ) {
+                var listItem = $("<li style='max-height: 200px;'>");
+                if(item.type === "folder") {
+                    listItem.append(
+                        "<a href=\"" + item.link + "\" style='display: flex; flex-direction: column'>" +
+                        "<div class='autosearch-title' style='font-weight: 600;'> Папка: </div>" +
+                        "<div class='autosearch-title'>" + item.title + "</div>" +
+                        "</a>"
+                    );
+                } else if(item.type === "task") {
+                    listItem.append( "<a href=\"" + item.link + "\" style='display: flex; flex-direction: column'>" +
+                    "<div class='autosearch-title' style='font-weight: 600;'> Завдання: [" + item.task_type + "]</div>"
+                        + "<div class='autosearch-title'>" + item.title + "</div>"
+                    + "<div class='autosearch-tag'> Теги: " + item.tags + "</div>"
+                    + "<div class='autosearch-folder'> Папки: " + item.folders + "</div>"
+                    + "</a>");
+                }
+                return listItem.appendTo( ul );
+            };
+
+        });
+
+    </script>
+
+    {% block content_area %}
+    {% endblock %}
+    <!-- MAIN -->
+    <!-- CONTENT -->
+
+</section>
+</body>
+
+{% else %}
+<!-- Цей блок буде видимим тільки для неавторизованих користувачів -->
+<body>
+<div class="wrapper landing">
+    <div class="login-page landing-page">
+        <div class="landing-container">
+            <div class="greeting-block">
+                <img src="{% static 'img/landing/add_tasks.svg' %}" alt="">
+                <div class="greeting-info">
+                    <h1 class="product-name">TaskDo</h1>
+                    <p class="product-info first-info">Робота із завданнями.
+                    </p>
+                    <p class="product-info">
+                        Створюй, редагуй, переглядай.
+                    </p>
+                    <p class="product-info">
+                        Отримуй, виконуй, передавай, проводь моніторинг.
+                    </p>
+                    <div class="product-button-block">
+                        <a href="{% url 'accounts:login' %}" class="start-button">Розпочати</a>
+                    </div>
+                </div>
+            </div>
+            <hr class="landing-divider">
+            <div class="detail-block">
+                <div class="detail-element">
+                    <div class="image-container">
+                        <img src="{% static 'img/landing/completed_tasks.svg' %}" alt="">
+                    </div>
+                    <div class="detail-text">
+                        <h2 class="detail-title">
+                            Ієрархія передачі завдань
+                        </h2>
+                        <p class="detail-desc">
+                            Отримуйте завдання та створюйте нове на основі отриманого для інших виконавців.
+                        </p>
+                    </div>
+                </div>
+                <div class="detail-element">
+                    <div class="image-container">
+                        <img src="{% static 'img/landing/online_calendar.svg' %}" alt="">
+                    </div>
+                    <div class="detail-text">
+                        <h2 class="detail-title">
+                            Календар
+                        </h2>
+                        <p class="detail-desc">
+                            Відслідковуйте терміни виконання ваших завдань, щоб не пропустити дедлайни.
+                        </p>
+                    </div>
+                </div>
+                <div class="detail-element">
+                    <div class="image-container">
+                        <img class="correction" src="{% static 'img/landing/my_files.svg' %}" alt="">
+                    </div>
+                    <div class="detail-text">
+                        <h2 class="detail-title">
+                            Файли та папки
+                        </h2>
+                        <p class="detail-desc">
+                            Використовуйте папки задля зберігання ваших завдань, а також передавайте чи
+                            отримуйте файли у процесі виконання.
+                        </p>
+                    </div>
+                </div>
+                <div class="detail-element">
+                    <div class="image-container">
+                        <img src="{% static 'img/landing/progress_indicator.svg' %}" alt="">
+                    </div>
+                    <div class="detail-text">
+                        <h2 class="detail-title">
+                            Статистика
+                        </h2>
+                        <p class="detail-desc">
+                            Відслідковуйте статистику виконання своїх завдань, а також проводьте моніторинг
+                            виконання.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <hr class="landing-divider">
+            <div class="last-panel">
+                <div class="ending-img">
+                    <img src="{% static 'img/landing/blooming.svg' %}" alt="">
+                </div>
+                <div class="closing-text">
+                    <h2 class="detail-title smaller-text">Все це та більше із</h2>
+                    <h1 class="product-name last-name">TaskDo</h1>
+                    <div class="product-button-block ending-btn-block">
+                        <a href="{% url 'accounts:login' %}" class="start-button ending-btn">Розпочати</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+{% endif %}
+{% endblock %}

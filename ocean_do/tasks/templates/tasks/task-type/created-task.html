@@ -1,0 +1,53 @@
+<div class="task" data-task-id="{{ task.id }}">
+    <div class="head">
+        <div onclick='location.href="/tasks/task-info-creator/{{ task.id }}";'>
+            <div class="status">
+                <p class="category">Моніторинг</p>
+                <a href="#" class="task-status-btn">
+                    {% if task.is_completed %}
+                    <i class='bx bxs-check-circle icon task-status done'></i>
+                    {% elif task.deadline|date:"Y-m-d" < current_time|date:"Y-m-d" %}
+                    <i class='bx bxs-x-circle icon task-status overdue'></i>
+                    {% else %}
+                    <i class='bx bxs-circle icon task-status'></i>
+                    {% endif %}
+                </a>
+
+            </div>
+            <div class="folder">
+                <i class='bx bx-folder icon'></i>
+                {% for folder in task.folders.all %}
+                <p class="folder-name">{{ folder.name }} |</p>
+                {% empty %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="task-settings">
+            <i class='bx bx-dots-horizontal-rounded icon'></i>
+            <ul class="task-settings-box">
+                <a href="{% url 'tasks:edit_task' task.id %}" class="edit-task-btn">
+                    <li>Змінити</li>
+                </a>
+                <a href="#" class="delete-link" data-id="{{ task.id }}">
+                    <li>Видалити</li>
+                </a>
+            </ul>
+        </div>
+    </div>
+    <div onclick='location.href="/tasks/task-info-creator/{{ task.id }}";'>
+        <h2 class="name">{{ task.title }}</h2>
+        <div class="tag-box">
+            {% for tag in task.tags.all %}
+            <p>{{ tag.name }}</p>
+            {% endfor %}
+        </div>
+        <div class="limit-block">
+            <p class="limit-block-title">Термін виконання:</p>
+            <p class="time-limit">{{ task.deadline }}</p>
+        </div>
+        <div class="participants">
+            <i class='bx bxs-user icon'></i>
+            <p class="user-number">{{ task.assignees.count }}</p>
+        </div>
+    </div>
+</div>

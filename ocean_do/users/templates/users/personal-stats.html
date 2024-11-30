@@ -1,0 +1,308 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Cтатистичні дані
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'users/partials/profile-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+
+<!-- MAIN -->
+<main>
+    <h1 class="title">Статус завдань із "Виконання" / Статус завдань із "Моніторингу" </h1>
+    <div class="statistics personal-statistics">
+        <div class="chart personal-round">
+            <canvas id="statusAssigned"></canvas>
+            <div class="percentage">
+                <div class="block">
+                    <i class='bx bxs-circle icon task-status'></i>
+                    <p class="in-progress-percent-assigned">У процесі виконання - </p>
+                    <span id="in-progress-assigned"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-check-circle icon done'></i>
+                    <p class="done-percent-assigned">Виконано - </p>
+                    <span id="done-assigned"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-x-circle icon overdue'></i>
+                    <p class="overdue-percent-assigned">Невчасно виконано - </p>
+                    <span id="overdue-assigned"></span>
+                </div>
+            </div>
+        </div>
+        <div class="chart personal-round">
+            <canvas id="statusCreated"></canvas>
+            <div class="percentage">
+                <div class="block">
+                    <i class='bx bxs-circle icon task-status'></i>
+                    <p class="in-progress-percent-created">У процесі виконання - </p>
+                    <span id="in-progress-created"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-check-circle icon done'></i>
+                    <p class="done-percent-created">Виконано - </p>
+                    <span id="done-created"></span>
+                </div>
+                <div class="block">
+                    <i class='bx bxs-x-circle icon overdue'></i>
+                    <p class="overdue-percent-created">Невчасно виконано - </p>
+                    <span id="overdue-created"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1 class="title users-block">Навантаження</h1>
+    <div class="statistics row-stats">
+        <div class="chart long-chart">
+            <canvas id="userLoad"></canvas>
+        </div>
+    </div>
+</main>
+
+
+<script>
+
+    const monthNames = {
+        'січня': 0, 'лютого': 1, 'березня': 2, 'квітня': 3, 'травня': 4, 'червня': 5,
+        'липня': 6, 'серпня': 7, 'вересня': 8, 'жовтня': 9, 'листопада': 10, 'грудня': 11
+    };
+
+    const dateToday = new Date();
+    const dateTodaYCorrect = new Date(dateToday.getFullYear(), dateToday.getMonth(), dateToday.getDate());
+
+    const assignedDeadlines = [
+        {% for task in all_assigned_incomplete %}
+            "{{ task.deadline }}",
+        {% endfor %}
+    ];
+
+
+    const parsedDeadlines = assignedDeadlines.map(deadline => {
+        const [day, monthStr, year] = deadline.split(' ');
+        const month = monthNames[monthStr];
+        return new Date(year, month, day);
+    });
+
+    let isInCompleteAssigned = 0,
+        isOverDueAssigned = 0,
+        isCompleteAssigned = {{all_assigned_complete}};
+
+    parsedDeadlines.forEach(deadline => {
+        if (deadline.getTime() < dateTodaYCorrect.getTime()) {
+            isOverDueAssigned++;
+        } else {
+            isInCompleteAssigned++;
+        }
+    });
+
+
+    let allAssigned = isInCompleteAssigned + isOverDueAssigned + isCompleteAssigned;
+
+    let percentageIsInCompleteAssigned = 0;
+    let percentageIsOverDueAssigned = 0;
+    let percentageIsCompleteAssigned = 0;
+
+    if (parsedDeadlines.length !== 0) {
+        percentageIsInCompleteAssigned = (isInCompleteAssigned / allAssigned) * 100;
+        percentageIsOverDueAssigned = (isOverDueAssigned / allAssigned) * 100;
+        percentageIsCompleteAssigned = (isCompleteAssigned / allAssigned) * 100;
+    }
+
+    document.getElementById("in-progress-assigned").textContent = percentageIsInCompleteAssigned.toFixed(2) + "%";
+    document.getElementById("overdue-assigned").textContent = percentageIsOverDueAssigned.toFixed(2) + "%";
+    document.getElementById("done-assigned").textContent = percentageIsCompleteAssigned.toFixed(2) + "%";
+
+    const statusAssigned = document.getElementById('statusAssigned');
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    new Chart(statusAssigned, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'У процесі виконання',
+                'Виконано',
+                'Невчасно виконано'
+            ],
+            datasets: [{
+                label: 'Кількість призначених мені завдань',
+                // data: {{ all_assigned }},
+                data: [isInCompleteAssigned, isCompleteAssigned, isOverDueAssigned],
+                backgroundColor: [
+                    '#FDC969',
+                    '#5E967C',
+                    '#B5415C'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+
+    const createdDeadlines = [
+        {% for task in all_created_incomplete %}
+            "{{ task.deadline }}",
+        {% endfor %}
+    ];
+
+
+    const parsedCreatedDeadlines = createdDeadlines.map(deadline => {
+        const [day, monthStr, year] = deadline.split(' ');
+        const month = monthNames[monthStr];
+        return new Date(year, month, day);
+    });
+
+    let isInCompleteCreated = 0,
+        isOverDueCreated = 0,
+        isCompleteCreated = {{all_created_complete}};
+
+    parsedCreatedDeadlines.forEach(deadline => {
+        if (deadline.getTime() < dateTodaYCorrect.getTime()) {
+            isOverDueCreated++;
+        } else {
+            isInCompleteCreated++;
+        }
+    });
+
+
+    let allCreated = isInCompleteCreated + isOverDueCreated + isCompleteCreated;
+
+    let percentageIsInCompleteCreated = 0;
+    let percentageIsOverDueCreated = 0;
+    let percentageIsCompleteCreated = 0;
+
+    if (parsedCreatedDeadlines.length !== 0) {
+        percentageIsInCompleteCreated = (isInCompleteCreated / allCreated) * 100;
+        percentageIsOverDueCreated = (isOverDueCreated / allCreated) * 100;
+        percentageIsCompleteCreated = (isCompleteCreated / allCreated) * 100;
+    }
+
+    document.getElementById("in-progress-created").textContent = percentageIsInCompleteCreated.toFixed(2) + "%";
+    document.getElementById("overdue-created").textContent = percentageIsOverDueCreated.toFixed(2) + "%";
+    document.getElementById("done-created").textContent = percentageIsCompleteCreated.toFixed(2) + "%";
+
+    const statusCreated = document.getElementById('statusCreated');
+    new Chart(statusCreated, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'У процесі виконання',
+                'Виконано',
+                'Невчасно виконано'
+            ],
+            datasets: [{
+                label: 'Кількість назначених мною завдань',
+                // data: {{ all_created }},
+                data: [isInCompleteCreated, isCompleteCreated, isOverDueCreated],
+                backgroundColor: [
+                    '#FDC969',
+                    '#5E967C',
+                    '#B5415C'
+                ],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+
+    // FUTURE TASKS GRAPH
+    const myDeadlines = [
+        {% for task in deadlineTasks %}
+            "{{ task.deadline }}",
+        {% endfor %}
+    ];
+
+
+    const changeMonthName = {
+      'січня': 'Січень',
+      'лютого': 'Лютий',
+      'березня': 'Березень',
+      'квітня': 'Квітень',
+      'травня': 'Травень',
+      'червня': 'Червень',
+      'липня': 'Липень',
+      'серпня': 'Серпень',
+      'вересня': 'Вересень',
+      'жовтня': 'Жовтень',
+      'листопада': 'Листопад',
+      'грудня': 'Грудень'
+    };
+
+    // get month and year
+    const monthYearArray = myDeadlines.map(dateString => {
+      const [_, month, year] = dateString.split(' ');
+      return `${changeMonthName[month]} ${year}`;
+    });
+
+    const userLoad = document.getElementById('userLoad');
+    const todayDate = new Date();
+    const currentMonth = todayDate.getMonth();
+    const currentYear = todayDate.getFullYear();
+    const months = [];
+
+    // get labels
+    for (let i = currentMonth; i <= currentMonth + 11; i++) {
+        let month = i % 12; // Ensure month stays within 0-11 range
+        let year = currentYear;
+        if (month < currentMonth) {
+            year += 1; // Increment the year
+        }
+    months.push({ month, year });
+}
+
+    const monthLabels = months.map(({ month, year }) => monthToString(month) + ' ' + year);
+
+    const dataForChart = monthLabels.map(label => {
+      const count = monthYearArray.filter(month => month === label).length;
+      return count > 0 ? count : 0;
+    });
+
+    Chart.defaults.font.size = 16;
+    Chart.defaults.font.family = "Cascadia Code";
+    new Chart(userLoad, {
+        type: 'bar',
+        data: {
+          labels: monthLabels,
+          datasets: [{
+            label: 'Кількість дедлайнів',
+            data: dataForChart,
+            borderWidth: 1,
+            backgroundColor: '#7187E4'
+          }]
+        },
+        responsive: true,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+    function monthToString(month) {
+        const monthsArray = [
+        "Січень",
+        "Лютий",
+        "Березень",
+        "Квітень",
+        "Травень",
+        "Червень",
+        "Липень",
+        "Серпень",
+        "Вересень",
+        "Жовтень",
+        "Листопад",
+        "Грудень"
+    ];
+        return monthsArray[month];
+    }
+
+</script>
+<!-- MAIN -->
+{% endblock %}

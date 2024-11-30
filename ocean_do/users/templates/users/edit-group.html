@@ -1,0 +1,152 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+
+{% block title %}
+Редагування групи
+{% endblock %}
+
+{% block side-menu %}
+{% include 'users/partials/groups-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+<!-- MAIN -->
+<main>
+    <div class="task-popup">
+        <form method="post" class="form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2>Редагування групи</h2>
+
+            <div class="form-element">
+                <div class="important-area">
+                    <p class="title">Назва </p>
+                    <p class="star">*</p>
+                </div>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <span>{{ form.name.errors }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-element">
+                <div class="users-add-block">
+                    <div class="important-area">
+                        <p class="title">Виконавці</p>
+                        <p class="star">*</p>
+                    </div>
+                </div>
+                <div class="users-search">
+                    <div class="form-group">
+                        <i class='bx bx-search icon'></i>
+                        <input id="users-search-bar" type="text" placeholder="Пошук виконавців...">
+                        <input type="hidden" name="assignees" id="chosen-user-block" value="{{ selectedItems|join:',' }}">
+                    </div>
+
+                    <div class="chosen-user">
+                    </div>
+                    {% if form.members.errors %}
+                    <span>{{ form.members.errors }}</span>
+                    {% endif %}
+                </div>
+
+
+            </div>
+            <button type="submit" class="make-task">Змінити</button>
+        </form>
+    </div>
+
+</main>
+<!-- MAIN -->
+
+<script>
+
+    var selectedItems = [];
+
+    // SEARCH USERS AUTO-COMPLETE
+    $(function () {
+        const initialAssignees = {% if group.members.all %}[{% for user in group.members.all %}"{{ user.email }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
+        const initialAssigneeNames = {% if group.members.all %}[{% for user in group.members.all %}"{{ user.username }}"{% if not forloop.last %}, {% endif %}{% endfor %}]{% else %}[]{% endif %};
+
+        console.log({% for user in group.members.all %}"{{ user.email }}"{% if not forloop.last %}, {% endif %}{% endfor %})
+        console.log(initialAssignees)
+        console.log(initialAssigneeNames)
+        if (initialAssignees.length > 0) {
+            selectedItems = initialAssignees;
+            updateHiddenInput();
+
+            // Додайте HTML-код для кожного обраного виконавця
+            initialAssignees.forEach((email, index) => {
+                const userInfo = {
+                    username: initialAssigneeNames[index],
+                    email: email
+                };
+                var newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+                var newUserInfo = $("<div class='chosen-user-info'>");
+                newUserInfo.append("<p class='chosen-user-name'>" + userInfo.username + "</p>");
+                newUserInfo.append("<p class='chosen-user-email'>" + userInfo.email + "</p>");
+                newChosenUser.append(newUserInfo);
+                newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+            });
+        }
+
+        $("#users-search-bar").autocomplete({
+            source: "{% url 'tasks:users_for_edit' %}",
+            minLength: 3,
+            focus: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                return false;
+            },
+            select: function (event, ui) {
+                $("#users-search-bar").val(ui.item.username);
+                $("#chosen-user-block").val(ui.item.email);
+                if (selectedItems.indexOf(ui.item.email) === -1) {
+                    selectedItems.push(ui.item.email);
+                    const newChosenUser = $("<div class='chosen-user'>").appendTo($(".users-search"));
+
+                    const newUserInfo = $("<div class='chosen-user-info'>");
+                    newUserInfo.append("<p  class='chosen-user-name'>" + ui.item.username + "</p>");
+                    newUserInfo.append("<p  class='chosen-user-email'>" + ui.item.email + "</p>");
+
+                    newChosenUser.append(newUserInfo);
+                    newChosenUser.append("<i class='bx bx-minus-circle icon delete-item'></i>");
+
+                    updateHiddenInput();
+                    return false;
+                }
+            }
+        })
+            .autocomplete("instance")._renderItem = function (ul, item) {
+            return $("<li>")
+                .append("<div class='autosearch-name' style='font-weight: 600;'>" + item.username + "</div>"
+                    + "<div class='autosearch-email'>" + item.email + "</div>")
+                .appendTo(ul);
+        };
+
+        //delete user
+        $(".users-search").on("click", ".delete-item", function () {
+            const itemValue = $(this).prev(".chosen-user-info").find(".chosen-user-email").text();
+            const index = selectedItems.indexOf(itemValue);
+            if (index !== -1) {
+                selectedItems.splice(index, 1);
+            }
+            $(this).parent(".chosen-user").remove();
+            updateHiddenInput();
+        });
+
+        function updateHiddenInput() {
+            $("#chosen-user-block").val(selectedItems.join(','));
+        }
+    });
+
+
+    const form = document.querySelector('.form');
+    form.addEventListener('submit', function (event) {
+        if (selectedItems.length === 0) {
+            event.preventDefault();
+            alert('Будь ласка, додайте виконавців перед відправленням форми.');
+        }
+    });
+
+</script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Виконані завдання
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'tasks/partials/task-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+<!-- MAIN -->
+<main>
+    <h1 class="title">Виконані завдання</h1>
+    {% include 'tasks/partials/tasks.html' %}
+</main>
+<!-- MAIN -->
+{% endblock %}

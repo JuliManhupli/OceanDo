@@ -1,0 +1,66 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+{% block title %}
+Групи
+{% endblock %}
+
+
+{% block side-menu %}
+{% include 'users/partials/groups-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+
+<!-- MAIN -->
+<main>
+    <div class="group-tab">
+        <h1 class="title">Групи</h1>
+        <a href="{% url 'users:create_group' %}" class="plus-group">
+            <i class='bx bx-plus-circle icon'></i>
+        </a>
+    </div>
+    <div class="group-container">
+        {% if groups %}
+        {% for group in groups %}
+        <div class="group">
+            <div class="head">
+                <h1 class="title">{{ group.name }}</h1>
+                <div class="group-settings">
+                    <i class='bx bx-dots-horizontal-rounded icon'></i>
+                    <ul class="group-settings-box">
+                        <a href="{% url 'users:edit_group' group.id %}" class="edit-group-btn">
+                            <li>Змінити</li>
+                        </a>
+                        <a href="#" class="delete-group-btn" data-id="{{ group.id }}">
+                            <li>Видалити</li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+            <div class="group-users">
+                {% for user in group.members.all %}
+                <div class="chosen-user">
+                    {% if user.role %}
+                    <p class="member name">[{{ user.role }}]</p>
+                    {% endif %}
+                    <p class="member name">{{ user.username }}</p>
+                    <p class="member email">{{ user.email }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        {% endfor %}
+
+        {% else %}
+        <div class="no-task">
+              <h3>Груп немає</h3>
+          </div>
+        {% endif %}
+
+    </div>
+</main>
+
+<!-- MAIN -->
+{% endblock %}

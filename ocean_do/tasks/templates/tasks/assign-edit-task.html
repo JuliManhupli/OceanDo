@@ -1,0 +1,140 @@
+{% extends 'ocean_do/pages_base.html' %}
+{% load static %}
+
+{% block title %}
+Редагування завдання
+{% endblock %}
+
+{% block side-menu %}
+{% include 'tasks/partials/task-side-menu.html' %}
+{% endblock %}
+
+{% block content_area %}
+
+<!-- MAIN -->
+<main>
+    <div class="task-popup">
+        <form method="post" class="form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h2>Редагування завдання</h2>
+
+            <div class="form-element">
+                <div class="important-area">
+                    <p class="title">Завдання "{{ task.title }}"</p>
+                </div>
+                {% if form.title.errors %}
+                <span>{{ form.title.errors }}</span>
+                {% endif %}
+            </div>
+            <div class="form-element">
+                <div class="existing-folder">
+                    <p class="title">Папка</p>
+                    <input type="text" name="folders" placeholder="Введіть назву папки">
+                    <div class="add" id="add-folder-input">
+                        <i class='bx bx-plus-circle icon'></i>
+                    </div>
+                </div>
+                <div id="folder-inputs">
+                </div>
+            </div>
+            <div class="form-element">
+                <div class="tag-block">
+                    <p class="title">Теги</p>
+                    <div class="add" id="add-tag-input">
+                        <i class='bx bx-plus-circle icon'></i>
+                    </div>
+
+                </div>
+                <div id="tag-inputs">
+                    <!-- Поле для першого тегу -->
+                    <input id="first-tag" type="text" name="tags" placeholder="Введіть тег">
+                </div>
+            </div>
+
+            <button type="submit" class="make-task">Створити</button>
+        </form>
+    </div>
+
+</main>
+<!-- MAIN -->
+
+<script>
+    // ADD EXISTING FOLDERS
+    const folderInputs = document.getElementById('folder-inputs');
+    const existingFolders = {% if task_assignment.folders.all %}
+    [{% for folder in task_assignment.folders.all %}"{{ folder.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]
+    {% else %} []
+    {% endif %};
+    let folderCount = existingFolders.length > 0 ? existingFolders.length : 0;
+
+    if (existingFolders.length > 0) {
+        existingFolders.forEach(folder => {
+            folderCount++;
+
+            const folderWrapper = document.createElement('div');
+            folderWrapper.classList.add('folder-wrapper');
+
+            const newFolderInput = document.createElement('input');
+            newFolderInput.type = 'text';
+            newFolderInput.placeholder = "Введіть назву папки";
+            newFolderInput.name = "folders";
+            newFolderInput.value = folder;
+
+            const minusIcon = document.createElement('i');
+            minusIcon.classList.add('bx', 'bx-minus-circle', 'icon', 'remove-folder');
+
+            const minusButton = document.createElement('div');
+            minusButton.classList.add('add', 'minus-folder-input');
+
+            folderWrapper.appendChild(newFolderInput);
+            minusButton.appendChild(minusIcon);
+            folderWrapper.appendChild(minusButton);
+            folderInputs.appendChild(folderWrapper);
+
+            minusButton.addEventListener('click', function () {
+                folderInputs.removeChild(folderWrapper);
+                folderCount--;
+            });
+        });
+    }
+
+
+    // ADD EXISTING TAGS
+    const tagInputs = document.getElementById('tag-inputs');
+    const existingTags = {% if task_assignment.tags.all %}
+    [{% for tag in task_assignment.tags.all %}"{{ tag.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}]
+    {% else %} []
+    {% endif %};
+    let tagCount = existingTags.length > 0 ? existingTags.length : 1;
+
+    if (existingTags.length > 0) {
+        existingTags.forEach(tag => {
+            const tagWrapper = document.createElement('div');
+            tagWrapper.classList.add('tag-wrapper');
+
+            const newTagInput = document.createElement('input');
+            newTagInput.type = 'text';
+            newTagInput.name = 'tags';
+            newTagInput.placeholder = "Введіть тег";
+            newTagInput.value = tag;
+
+            const minusIcon = document.createElement('i');
+            minusIcon.classList.add('bx', 'bx-minus-circle', 'icon', 'remove-tag');
+
+            const minusButton = document.createElement('div');
+            minusButton.classList.add('add', 'minus-tag-input');
+
+            tagWrapper.appendChild(newTagInput);
+            minusButton.appendChild(minusIcon);
+            tagWrapper.appendChild(minusButton);
+            tagInputs.appendChild(tagWrapper);
+
+            minusButton.addEventListener('click', function () {
+                tagInputs.removeChild(tagWrapper);
+                tagCount--;
+            });
+        });
+    }
+
+</script>
+{% endblock %}

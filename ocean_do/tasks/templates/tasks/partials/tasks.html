@@ -1,0 +1,46 @@
+<div class="task-title">
+    <button class="title active">Виконання</button>
+    <button class="title">Моніторинг</button>
+</div>
+
+<div class="task-panel">
+    <form class="filter" method="POST">
+            {% csrf_token %}
+            <select name="sorting">
+                <option selected disabled=true>--Вибрати порядок--</option>
+                <option value="deadline">Найважливіші</option>
+                <option value="title">Від А до Я</option>
+            </select>
+            <select name="tag-filter">
+                <option selected disabled=true>--Вибрати тег--</option>
+                {% for tag in all_user_tags %}
+                <option>{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+            <select name="folder-filter">
+                <option selected disabled=true>--Вибрати папку--</option>
+                {% for folder in all_user_folders %}
+                <option>{{ folder.name }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Відобразити">
+    </form>
+    <a href="{% url 'tasks:create_task' %}" class="plus-task">
+        <i class='bx bx-plus-circle icon create-task-btn'></i>
+    </a>
+</div>
+
+<div class="important-tasks active" id="tasks-container">
+    {% for task, task_type in tasks_with_type %}
+    {% if task_type == 'assigned' %}
+    {% include 'tasks/task-type/assigned-task.html'%}
+    {% elif task_type == 'solo' %}
+    {% include 'tasks/task-type/solo-task.html'%}
+    {% endif %}
+    {% endfor %}
+</div>
+<div class="important-tasks" id="created-tasks-container">
+    {% for task in created_tasks %}
+    {% include 'tasks/task-type/created-task.html' %}
+    {% endfor %}
+</div>
